@@ -1,0 +1,79 @@
+name: incident-management-system
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: Rannamaari/incident-management-system
+    branch: main
+    deploy_on_push: true
+  run_command: heroku-php-apache2 public/
+  environment_slug: php
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 8080
+  routes:
+  - path: /
+  health_check:
+    http_path: /
+  envs:
+  - key: APP_NAME
+    value: "Incident Management System"
+  - key: APP_ENV
+    value: production
+  - key: APP_DEBUG
+    value: "false"
+  - key: APP_URL
+    value: ${APP_URL}
+  - key: LOG_CHANNEL
+    value: stderr
+  - key: LOG_STDERR_FORMATTER
+    value: Monolog\Formatter\JsonFormatter
+  - key: DB_CONNECTION
+    value: mysql
+  - key: DB_HOST
+    value: ${db.HOSTNAME}
+  - key: DB_PORT
+    value: ${db.PORT}
+  - key: DB_DATABASE
+    value: ${db.DATABASE}
+  - key: DB_USERNAME
+    value: ${db.USERNAME}
+  - key: DB_PASSWORD
+    value: ${db.PASSWORD}
+  - key: CACHE_DRIVER
+    value: file
+  - key: SESSION_DRIVER
+    value: file
+  - key: QUEUE_CONNECTION
+    value: database
+
+databases:
+- name: db
+  engine: MYSQL
+  version: "8"
+  num_nodes: 1
+  size: db-s-dev-database
+
+jobs:
+- name: migrate
+  source_dir: /
+  github:
+    repo: Rannamaari/incident-management-system
+    branch: main
+  environment_slug: php
+  run_command: php artisan migrate --force && php artisan db:seed --class=UserSeeder && php artisan db:seed --class=ResolutionTeamSeeder
+  envs:
+  - key: APP_ENV
+    value: production
+  - key: DB_CONNECTION
+    value: mysql
+  - key: DB_HOST
+    value: ${db.HOSTNAME}
+  - key: DB_PORT
+    value: ${db.PORT}
+  - key: DB_DATABASE
+    value: ${db.DATABASE}
+  - key: DB_USERNAME
+    value: ${db.USERNAME}
+  - key: DB_PASSWORD
+    value: ${db.PASSWORD}
