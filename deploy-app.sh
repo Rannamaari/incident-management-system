@@ -10,6 +10,14 @@ php artisan config:clear || echo "Config clear failed, continuing..."
 php artisan route:clear || echo "Route clear failed, continuing..."
 php artisan view:clear || echo "View clear failed, continuing..."
 
+# Create SQLite database file if it doesn't exist
+echo "Setting up database..."
+if [ "$DB_CONNECTION" = "sqlite" ]; then
+    mkdir -p $(dirname "$DB_DATABASE")
+    touch "$DB_DATABASE"
+    chmod 666 "$DB_DATABASE"
+fi
+
 # Run migrations
 echo "Running database migrations..."
 php artisan migrate --force
