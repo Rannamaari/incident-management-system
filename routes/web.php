@@ -5,6 +5,7 @@ use App\Http\Controllers\IncidentRCAController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,29 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+// Health check route for debugging
+Route::get('/health', function () {
+    try {
+        // Test database connection
+        DB::connection()->getPdo();
+        $dbStatus = 'OK';
+    } catch (Exception $e) {
+        $dbStatus = 'FAILED: ' . $e->getMessage();
+    }
+
+    return response()->json([
+        'status' => 'OK',
+        'app_env' => env('APP_ENV'),
+        'app_debug' => env('APP_DEBUG'),
+        'app_key_set' => !empty(env('APP_KEY')),
+        'database' => $dbStatus,
+        'php_version' => PHP_VERSION,
+        'laravel_version' => app()->version(),
+        'storage_writable' => is_writable(storage_path()),
+        'cache_writable' => is_writable(storage_path('framework/cache')),
+    ]);
+})->name('health');
 
 Route::get('/', function () {
     return redirect()->route('login');
