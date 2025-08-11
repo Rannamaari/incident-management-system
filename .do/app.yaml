@@ -21,13 +21,18 @@ services:
   - key: APP_ENV
     value: production
   - key: APP_DEBUG
-    value: "false"
+    value: "true"
+  - key: APP_KEY
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
   - key: APP_URL
     value: ${APP_URL}
   - key: LOG_CHANNEL
     value: stderr
   - key: LOG_STDERR_FORMATTER
     value: Monolog\Formatter\JsonFormatter
+  - key: LOG_LEVEL
+    value: debug
   - key: DB_CONNECTION
     value: mysql
   - key: DB_HOST
@@ -41,11 +46,17 @@ services:
   - key: DB_PASSWORD
     value: ${db.PASSWORD}
   - key: CACHE_DRIVER
-    value: file
+    value: array
   - key: SESSION_DRIVER
-    value: file
+    value: cookie
+  - key: SESSION_LIFETIME
+    value: "120"
   - key: QUEUE_CONNECTION
     value: database
+  - key: FILESYSTEM_DISK
+    value: local
+  - key: BROADCAST_DRIVER
+    value: log
 
 databases:
 - name: db
@@ -55,16 +66,19 @@ databases:
   size: db-s-dev-database
 
 jobs:
-- name: migrate
+- name: deploy
   source_dir: /
   github:
     repo: Rannamaari/incident-management-system
     branch: main
   environment_slug: php
-  run_command: php artisan migrate --force && php artisan db:seed --class=UserSeeder && php artisan db:seed --class=ResolutionTeamSeeder
+  run_command: ./deploy-app.sh
   envs:
   - key: APP_ENV
     value: production
+  - key: APP_KEY
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
   - key: DB_CONNECTION
     value: mysql
   - key: DB_HOST
@@ -77,3 +91,7 @@ jobs:
     value: ${db.USERNAME}
   - key: DB_PASSWORD
     value: ${db.PASSWORD}
+  - key: CACHE_DRIVER
+    value: array
+  - key: SESSION_DRIVER
+    value: cookie

@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(php artisan test:*)",
-      "Bash(php artisan make:controller:*)"
+      "Bash(php artisan make:controller:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
