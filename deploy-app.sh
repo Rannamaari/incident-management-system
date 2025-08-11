@@ -13,9 +13,11 @@ php artisan view:clear || echo "View clear failed, continuing..."
 # Create SQLite database file if it doesn't exist
 echo "Setting up database..."
 if [ "$DB_CONNECTION" = "sqlite" ]; then
+    echo "Creating SQLite database at: $DB_DATABASE"
     mkdir -p $(dirname "$DB_DATABASE")
     touch "$DB_DATABASE"
     chmod 666 "$DB_DATABASE"
+    ls -la "$DB_DATABASE"
 fi
 
 # Run migrations

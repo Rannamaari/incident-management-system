@@ -34,9 +34,9 @@ services:
   - key: LOG_LEVEL
     value: debug
   - key: DB_CONNECTION
-    value: sqlite
+    value: "sqlite"
   - key: DB_DATABASE
-    value: /tmp/database.sqlite
+    value: "/app/database.sqlite"
   - key: CACHE_DRIVER
     value: array
   - key: SESSION_DRIVER
@@ -66,9 +66,9 @@ jobs:
     scope: RUN_AND_BUILD_TIME
     type: SECRET
   - key: DB_CONNECTION
-    value: sqlite
+    value: "sqlite"
   - key: DB_DATABASE
-    value: /tmp/database.sqlite
+    value: "/app/database.sqlite"
   - key: CACHE_DRIVER
     value: array
   - key: SESSION_DRIVER
