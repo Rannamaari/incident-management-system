@@ -11,8 +11,21 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Basic styling instead of Vite -->
+        <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+            .min-h-screen { min-height: 100vh; }
+            .bg-white { background-color: white; }
+            .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+            .border-b { border-bottom-width: 1px; }
+            .border-gray-200 { border-color: rgb(229, 231, 235); }
+            .max-w-7xl { max-width: 80rem; }
+            .mx-auto { margin-left: auto; margin-right: auto; }
+            .py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+            .px-4 { padding-left: 1rem; padding-right: 1rem; }
+            .sm\:px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+            @media (min-width: 1024px) { .lg\:px-8 { padding-left: 2rem; padding-right: 2rem; } .lg\:py-8 { padding-top: 2rem; padding-bottom: 2rem; } }
+        </style>
     </head>
     <body class="font-sans antialiased bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 min-h-screen">
         <div class="min-h-screen">
