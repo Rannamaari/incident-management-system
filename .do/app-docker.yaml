@@ -1,0 +1,51 @@
+name: incident-management-system
+
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: Rannamaari/incident-management-system
+    branch: main
+    deploy_on_push: true
+  
+  # Use Docker container instead of buildpack
+  dockerfile_path: Dockerfile
+  
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 80
+  
+  routes:
+  - path: /
+  
+  health_check:
+    http_path: /health
+    initial_delay_seconds: 60
+    period_seconds: 10
+    timeout_seconds: 5
+    success_threshold: 1
+    failure_threshold: 3
+  
+  # Environment variables for the container
+  envs:
+  - key: APP_NAME
+    value: "Incident Management System"
+  - key: APP_ENV
+    value: production
+  - key: APP_DEBUG
+    value: "false"
+  - key: APP_KEY
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+  - key: APP_URL
+    value: ${APP_URL}
+  - key: DB_CONNECTION
+    value: sqlite
+  - key: DB_DATABASE
+    value: /var/www/html/database/database.sqlite
+  - key: LOG_CHANNEL
+    value: stderr
+  - key: LOG_STDERR_FORMATTER
+    value: Monolog\Formatter\JsonFormatter
+  - key: LOG_LEVEL
+    value: debug
