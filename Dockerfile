@@ -16,9 +16,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     sqlite3 \
     libsqlite3-dev \
-    nodejs \
-    npm \
     && docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# Install Node.js 20 (required for Vite)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -41,7 +43,8 @@ RUN chown -R www-data:www-data /var/www/html \
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs
 
-# Install and build frontend assets  
+# Install and build frontend assets (with dev dependencies for Vite)
+# Cache bust: 2025-08-12-v2
 RUN npm ci && npm run build
 
 # Create SQLite database directory
