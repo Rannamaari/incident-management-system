@@ -14,6 +14,9 @@
         <!-- Tailwind CSS via CDN -->
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
+        
+        <!-- Alpine.js for navigation interactions -->
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     </head>
     <body class="font-sans antialiased bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 min-h-screen">
         <div class="min-h-screen">
