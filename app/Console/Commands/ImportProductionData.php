@@ -21,7 +21,7 @@ class ImportProductionData extends Command
      *
      * @var string
      */
-    protected $signature = 'incidents:import {file=incidents_export.json}';
+    protected $signature = 'incidents:import {file}';
 
     /**
      * The console command description.
@@ -42,14 +42,21 @@ class ImportProductionData extends Command
             return 1;
         }
 
-        $this->info("Starting import from {$filePath}...");
+        $this->info("Starting import from: {$filePath}");
+        $this->info("File size: " . round(filesize($filePath) / 1024, 2) . " KB");
 
-        $data = json_decode(file_get_contents($filePath), true);
+        $jsonContent = file_get_contents($filePath);
+        $data = json_decode($jsonContent, true);
         
-        if (!$data) {
-            $this->error('Invalid JSON file');
+        if ($data === null) {
+            $this->error('Invalid JSON file: ' . json_last_error_msg());
+            $this->error('First 200 chars: ' . substr($jsonContent, 0, 200));
             return 1;
         }
+
+        $this->info('JSON parsed successfully');
+        $this->info('Data keys: ' . implode(', ', array_keys($data)));
+        $this->info('Incidents to import: ' . count($data['incidents'] ?? []));
 
         DB::beginTransaction();
         
@@ -70,6 +77,11 @@ class ImportProductionData extends Command
         } catch (\Exception $e) {
             DB::rollback();
             $this->error('Import failed: ' . $e->getMessage());
+            $this->error('Error on line: ' . $e->getLine());
+            $this->error('Error in file: ' . $e->getFile());
+            if ($this->option('verbose')) {
+                $this->error('Stack trace: ' . $e->getTraceAsString());
+            }
             return 1;
         }
 
