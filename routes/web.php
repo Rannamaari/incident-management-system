@@ -76,6 +76,24 @@ Route::get('/debug', function () {
     }
 });
 
+// Test route for permissions
+Route::get('/test-permissions', function () {
+    if (!auth()->check()) {
+        return response()->json(['error' => 'Not authenticated']);
+    }
+    
+    $user = auth()->user();
+    return response()->json([
+        'user_role' => $user->role,
+        'isAdmin' => $user->isAdmin(),
+        'isEditor' => $user->isEditor(),
+        'isViewer' => $user->isViewer(),
+        'canEditIncidents' => $user->canEditIncidents(),
+        'incidents_create_url' => route('incidents.create'),
+        'has_create_route' => Route::has('incidents.create'),
+    ]);
+})->middleware('auth');
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
