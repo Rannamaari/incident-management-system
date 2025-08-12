@@ -48,10 +48,10 @@ RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-pl
 RUN npm ci && npm run build
 
 # Create SQLite database directory
-RUN mkdir -p /var/www/html/database \
-    && touch /var/www/html/database/database.sqlite \
-    && chown www-data:www-data /var/www/html/database/database.sqlite \
-    && chmod 666 /var/www/html/database/database.sqlite
+RUN mkdir -p /app \
+    && touch /app/database.sqlite \
+    && chown www-data:www-data /app/database.sqlite \
+    && chmod 666 /app/database.sqlite
 
 # Copy production environment file
 COPY .env.production /var/www/html/.env
