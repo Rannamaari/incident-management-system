@@ -41,6 +41,9 @@ Route::get('/health', function () {
         'laravel_version' => app()->version(),
         'storage_writable' => is_writable(storage_path()),
         'cache_writable' => is_writable(storage_path('framework/cache')),
+        'laravel_log_exists' => file_exists(storage_path('logs/laravel.log')),
+        'last_error' => file_exists(storage_path('logs/laravel.log')) ? 
+            substr(file_get_contents(storage_path('logs/laravel.log')), -1000) : 'No log file'
     ]);
 })->name('health');
 
