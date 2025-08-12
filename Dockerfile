@@ -25,8 +25,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Enable Apache modules
+RUN a2enmod rewrite headers
 
 # Copy Apache configuration
 COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
