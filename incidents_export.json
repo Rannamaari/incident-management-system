@@ -489,7 +489,7 @@
             "email": "admin@incident.com",
             "email_verified_at": null,
             "created_at": "2025-08-11T16:37:55.000000Z",
-            "updated_at": "2025-08-11T16:37:55.000000Z",
+            "updated_at": "2025-08-12T18:52:49.000000Z",
             "role": "admin"
         },
         {
@@ -498,7 +498,7 @@
             "email": "editor@incident.com",
             "email_verified_at": null,
             "created_at": "2025-08-11T16:37:56.000000Z",
-            "updated_at": "2025-08-11T16:37:56.000000Z",
+            "updated_at": "2025-08-12T18:52:49.000000Z",
             "role": "editor"
         },
         {
@@ -507,7 +507,7 @@
             "email": "viewer@incident.com",
             "email_verified_at": null,
             "created_at": "2025-08-11T16:37:56.000000Z",
-            "updated_at": "2025-08-11T16:37:56.000000Z",
+            "updated_at": "2025-08-12T18:52:49.000000Z",
             "role": "viewer"
         }
     ],

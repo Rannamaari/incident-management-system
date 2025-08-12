@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@incident.com'],
             [
                 'name' => 'System Administrator',
-                'password' => Hash::make('admin123'),
+                'password' => Hash::make('Admin2025#Secure'),
                 'role' => User::ROLE_ADMIN,
             ]
         );
@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
             ['email' => 'editor@incident.com'],
             [
                 'name' => 'Incident Editor',
-                'password' => Hash::make('editor123'),
+                'password' => Hash::make('Editor2025#System'),
                 'role' => User::ROLE_EDITOR,
             ]
         );
@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
             ['email' => 'viewer@incident.com'],
             [
                 'name' => 'Incident Viewer',
-                'password' => Hash::make('viewer123'),
+                'password' => Hash::make('Viewer2025#Access'),
                 'role' => User::ROLE_VIEWER,
             ]
         );

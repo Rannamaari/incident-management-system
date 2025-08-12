@@ -44,11 +44,8 @@
             </div>
         </form>
         
-        <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; font-size: 14px; color: #666;">
-            <strong>Demo Accounts:</strong><br>
-            Admin: admin@incident.com / admin123<br>
-            Editor: editor@incident.com / editor123<br>
-            Viewer: viewer@incident.com / viewer123
+        <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
+            System by Munad 2025
         </div>
     </div>
 </body>
