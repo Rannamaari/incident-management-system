@@ -52,12 +52,20 @@ Route::get('/debug', function () {
     try {
         // Test basic Laravel features
         $user_count = DB::table('users')->count();
+        $categories = DB::table('categories')->count();
+        $fault_types = DB::table('fault_types')->count();
+        $resolution_teams = DB::table('resolution_teams')->count();
+        
         return response()->json([
             'laravel_working' => true,
             'users_table_exists' => true,
             'user_count' => $user_count,
+            'categories_count' => $categories,
+            'fault_types_count' => $fault_types,
+            'resolution_teams_count' => $resolution_teams,
             'auth_routes_loaded' => Route::has('login'),
-            'view_exists' => view()->exists('auth.login'),
+            'incidents_create_route_exists' => Route::has('incidents.create'),
+            'create_view_exists' => view()->exists('incidents.create'),
         ]);
     } catch (Exception $e) {
         return response()->json([
