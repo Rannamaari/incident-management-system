@@ -11,13 +11,14 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     unzip \
     sqlite3 \
     libsqlite3-dev \
     nodejs \
     npm \
-    && docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -38,10 +39,10 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html/bootstrap/cache
 
 # Install PHP dependencies
-RUN composer install --optimize-autoloader --no-dev --no-interaction
+RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs
 
-# Install and build frontend assets
-RUN npm install && npm run build
+# Install and build frontend assets  
+RUN npm ci --only=production && npm run build
 
 # Create SQLite database directory
 RUN mkdir -p /var/www/html/database \
