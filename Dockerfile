@@ -59,9 +59,8 @@ RUN mkdir -p /app \
 # Clear cache to pick up new .env and database
 RUN php artisan config:clear
 
-# Run Laravel optimizations
-RUN php artisan config:cache \
-    && php artisan route:cache \
+# Run Laravel optimizations (but not config:cache in production with .env)
+RUN php artisan route:cache \
     && php artisan view:cache
 
 # Run database migrations and seeders
