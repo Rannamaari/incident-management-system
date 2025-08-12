@@ -42,7 +42,7 @@ RUN chown -R www-data:www-data /var/www/html \
 RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs
 
 # Install and build frontend assets  
-RUN npm ci --only=production && npm run build
+RUN npm ci && npm run build
 
 # Create SQLite database directory
 RUN mkdir -p /var/www/html/database \
