@@ -26,7 +26,7 @@ class SecurityHeadersMiddleware
         
         // Content Security Policy for enhanced security
         if (config('app.env') === 'production') {
-            $csp = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' fonts.bunny.net; font-src 'self' fonts.bunny.net; img-src 'self' data:; connect-src 'self'";
+            $csp = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' fonts.bunny.net cdn.jsdelivr.net cdn.tailwindcss.com; font-src 'self' fonts.bunny.net; img-src 'self' data:; connect-src 'self'";
             $response->headers->set('Content-Security-Policy', $csp);
             
             // HSTS for production (only over HTTPS)
