@@ -34,11 +34,13 @@ COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 # Copy application files
 COPY . /var/www/html
 
-# Set proper permissions
+# Set proper permissions and create logs directory
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
     && chmod -R 777 /var/www/html/storage \
-    && chmod -R 777 /var/www/html/bootstrap/cache
+    && chmod -R 777 /var/www/html/bootstrap/cache \
+    && mkdir -p /var/www/html/storage/logs \
+    && chmod 777 /var/www/html/storage/logs
 
 # Install PHP dependencies
 RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-platform-reqs

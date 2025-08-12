@@ -47,6 +47,27 @@ Route::get('/health', function () {
     ]);
 })->name('health');
 
+// Debug route to test basic Laravel functionality
+Route::get('/debug', function () {
+    try {
+        // Test basic Laravel features
+        $user_count = DB::table('users')->count();
+        return response()->json([
+            'laravel_working' => true,
+            'users_table_exists' => true,
+            'user_count' => $user_count,
+            'auth_routes_loaded' => Route::has('login'),
+            'view_exists' => view()->exists('auth.login'),
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'laravel_working' => false,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+    }
+});
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
