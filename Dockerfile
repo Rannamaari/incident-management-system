@@ -47,14 +47,17 @@ RUN composer install --optimize-autoloader --no-dev --no-interaction --ignore-pl
 # Cache bust: 2025-08-12-v2
 RUN npm ci && npm run build
 
-# Create SQLite database directory
+# Copy production environment file
+COPY .env.production /var/www/html/.env
+
+# Create SQLite database directory BEFORE migrations
 RUN mkdir -p /app \
     && touch /app/database.sqlite \
     && chown www-data:www-data /app/database.sqlite \
     && chmod 666 /app/database.sqlite
 
-# Copy production environment file
-COPY .env.production /var/www/html/.env
+# Clear cache to pick up new .env and database
+RUN php artisan config:clear
 
 # Run Laravel optimizations
 RUN php artisan config:cache \
