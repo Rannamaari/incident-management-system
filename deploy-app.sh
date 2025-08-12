@@ -12,9 +12,17 @@ php artisan view:clear || echo "View clear failed, continuing..."
 
 # Create SQLite database file if it doesn't exist
 echo "Setting up database..."
-if [ "$DB_CONNECTION" = "sqlite" ]; then
+if [ "$APP_ENV" = "production" ]; then
+    DB_FILE="/app/database.sqlite"
+    echo "Creating SQLite database at: $DB_FILE"
+    mkdir -p $(dirname "$DB_FILE") 2>/dev/null || true
+    touch "$DB_FILE"
+    chmod 666 "$DB_FILE"
+    ls -la "$DB_FILE"
+    echo "Database file created successfully"
+elif [ "$DB_CONNECTION" = "sqlite" ]; then
     echo "Creating SQLite database at: $DB_DATABASE"
-    mkdir -p $(dirname "$DB_DATABASE")
+    mkdir -p $(dirname "$DB_DATABASE") 2>/dev/null || true
     touch "$DB_DATABASE"
     chmod 666 "$DB_DATABASE"
     ls -la "$DB_DATABASE"
