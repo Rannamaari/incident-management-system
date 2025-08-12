@@ -15,10 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
         
-        // Add security headers middleware to web group
-        $middleware->web(append: [
-            \App\Http\Middleware\SecurityHeadersMiddleware::class,
-        ]);
+        // Add security headers middleware to web group - temporarily disabled for debugging
+        // $middleware->web(append: [
+        //     \App\Http\Middleware\SecurityHeadersMiddleware::class,
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
