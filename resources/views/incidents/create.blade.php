@@ -420,6 +420,54 @@
                                     </div>
                                 </div>
 
+                                <!-- Action Points (Critical Incidents) -->
+                                <div class="border-t border-gray-200/50 pt-8" id="action-points-section" style="display: none;">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h4 class="text-lg font-semibold text-gray-900">Action Points</h4>
+                                        <button type="button" id="add-action-point-btn" 
+                                            class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                            Add Action Point
+                                        </button>
+                                    </div>
+                                    
+                                    <div id="action-points-container" class="space-y-4">
+                                        <!-- Action points will be dynamically added here -->
+                                    </div>
+                                    
+                                    <div id="action-point-template" class="hidden">
+                                        <div class="action-point-entry border border-gray-200 rounded-2xl p-4 bg-gray-50/50">
+                                            <div class="flex items-start gap-4">
+                                                <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
+                                                    <div class="md:col-span-2">
+                                                        <label class="block text-sm font-medium text-gray-700">Description</label>
+                                                        <textarea name="action_points[INDEX][description]" rows="2" 
+                                                            class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
+                                                            placeholder="Enter action point description..."></textarea>
+                                                    </div>
+                                                    <div class="md:col-span-1 flex flex-col">
+                                                        <label class="block text-sm font-medium text-gray-700">Due Date</label>
+                                                        <input type="date" name="action_points[INDEX][due_date]" 
+                                                            class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                                                        <div class="flex items-center mt-2">
+                                                            <input type="checkbox" name="action_points[INDEX][completed]" value="1" 
+                                                                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                                            <label class="ml-2 text-sm text-gray-600">Completed</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="remove-action-point-btn flex-shrink-0 text-red-500 hover:text-red-700 mt-6">
+                                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Actions -->
                                 <div class="flex items-center justify-end gap-4 pt-6">
                                     <a href="{{ route('incidents.index') }}"
@@ -487,12 +535,22 @@
         (function () {
             const select = document.getElementById('severity');
             const hint = document.getElementById('slaHint');
+            const actionPointsSection = document.getElementById('action-points-section');
             if (!select || !hint) return;
 
             const map = { Low: '12 hours', Medium: '6 hours', High: '2 hours', Critical: '2 hours' };
             const update = () => {
                 const v = select.value || 'Low';
                 hint.textContent = `SLA for ${v}: ${map[v]}.`;
+                
+                // Show/hide action points section for Critical incidents
+                if (actionPointsSection) {
+                    if (v === 'Critical') {
+                        actionPointsSection.style.display = 'block';
+                    } else {
+                        actionPointsSection.style.display = 'none';
+                    }
+                }
             };
             select.addEventListener('change', update);
             update();
@@ -593,6 +651,55 @@
                 const noteTextarea = templateClone.querySelector('textarea');
                 if (noteTextarea) {
                     setTimeout(() => noteTextarea.focus(), 100);
+                }
+            });
+        })();
+
+        // Action points repeater functionality
+        (function() {
+            let actionPointIndex = 0;
+            const addActionPointBtn = document.getElementById('add-action-point-btn');
+            const actionPointsContainer = document.getElementById('action-points-container');
+            const actionPointTemplate = document.getElementById('action-point-template');
+            
+            if (!addActionPointBtn || !actionPointsContainer || !actionPointTemplate) return;
+            
+            // Add new action point entry
+            addActionPointBtn.addEventListener('click', function() {
+                const templateClone = actionPointTemplate.cloneNode(true);
+                templateClone.id = '';
+                templateClone.classList.remove('hidden');
+                
+                // Replace INDEX placeholder with current index
+                const html = templateClone.innerHTML.replace(/INDEX/g, actionPointIndex);
+                templateClone.innerHTML = html;
+                
+                // Set default due date to tomorrow
+                const dueDateInput = templateClone.querySelector('input[type="date"]');
+                if (dueDateInput) {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    const year = tomorrow.getFullYear();
+                    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                    const day = String(tomorrow.getDate()).padStart(2, '0');
+                    dueDateInput.value = `${year}-${month}-${day}`;
+                }
+                
+                // Add remove functionality
+                const removeBtn = templateClone.querySelector('.remove-action-point-btn');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function() {
+                        templateClone.remove();
+                    });
+                }
+                
+                actionPointsContainer.appendChild(templateClone);
+                actionPointIndex++;
+                
+                // Focus on the description textarea
+                const descriptionTextarea = templateClone.querySelector('textarea');
+                if (descriptionTextarea) {
+                    setTimeout(() => descriptionTextarea.focus(), 100);
                 }
             });
         })();

@@ -98,32 +98,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Public routes that require only authentication (viewer and above)
-Route::middleware(['auth', 'role:viewer'])->group(function () {
-    // Redirect root to incidents
-    Route::get('/dashboard', function () {
-        return redirect()->route('incidents.index');
-    })->name('dashboard');
-
-    // View-only incident routes (viewer and above)
-    Route::get('incidents', [IncidentController::class, 'index'])->name('incidents.index');
-    Route::get('incidents/{incident}', [IncidentController::class, 'show'])->name('incidents.show');
-    
-    // Logs page routes (viewer and above)
-    Route::get('logs', [LogsController::class, 'index'])->name('logs.index');
-    
-    // Download RCA (viewer and above)
-    Route::get('incidents/{incident}/download-rca', [IncidentRCAController::class, 'download'])->name('incidents.download-rca');
-
-    // Profile routes (all authenticated users)
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-// Editor routes (editor and admin only)
+// Editor routes (editor and admin only) - Must come before viewer routes to avoid conflicts
 Route::middleware(['auth', 'role:editor'])->group(function () {
-    // Create and edit incidents
+    // Create and edit incidents (specific routes first)
     Route::get('incidents/create', [IncidentController::class, 'create'])->name('incidents.create');
     Route::post('incidents', [IncidentController::class, 'store'])->name('incidents.store');
     Route::get('incidents/{incident}/edit', [IncidentController::class, 'edit'])->name('incidents.edit');
@@ -137,6 +114,29 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     
     // RCA generation
     Route::post('incidents/{incident}/generate-rca', [IncidentRCAController::class, 'generate'])->name('incidents.generate-rca');
+});
+
+// Public routes that require only authentication (viewer and above)
+Route::middleware(['auth', 'role:viewer'])->group(function () {
+    // Redirect root to incidents
+    Route::get('/dashboard', function () {
+        return redirect()->route('incidents.index');
+    })->name('dashboard');
+
+    // View-only incident routes (viewer and above) - Wildcard routes last
+    Route::get('incidents', [IncidentController::class, 'index'])->name('incidents.index');
+    Route::get('incidents/{incident}', [IncidentController::class, 'show'])->name('incidents.show');
+    
+    // Logs page routes (viewer and above)
+    Route::get('logs', [LogsController::class, 'index'])->name('logs.index');
+    
+    // Download RCA (viewer and above)
+    Route::get('incidents/{incident}/download-rca', [IncidentRCAController::class, 'download'])->name('incidents.download-rca');
+
+    // Profile routes (all authenticated users)
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Admin-only routes
