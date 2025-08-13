@@ -35,6 +35,10 @@ COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 # Copy application files
 COPY . /var/www/html
 
+# Copy and make entrypoint script executable
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Set proper permissions and create logs directory
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html \
@@ -53,11 +57,7 @@ RUN npm ci && npm run build
 # Copy production environment file
 COPY .env.production /var/www/html/.env
 
-# Create SQLite database directory BEFORE migrations
-RUN mkdir -p /app \
-    && touch /app/database.sqlite \
-    && chown www-data:www-data /app/database.sqlite \
-    && chmod 666 /app/database.sqlite
+# Setup for PostgreSQL - no local database file needed
 
 # Clear cache to pick up new .env and database
 RUN php artisan config:clear
@@ -66,13 +66,11 @@ RUN php artisan config:clear
 RUN php artisan route:cache \
     && php artisan view:cache
 
-# Run database migrations and seeders
-RUN php artisan migrate --force \
-    && php artisan db:seed --class=UserSeeder --force \
-    && php artisan db:seed --class=ResolutionTeamSeeder --force
+# Remove the SQLite database setup since we're using PostgreSQL
+# Note: Database migrations will be run at runtime when environment variables are available
 
 # Expose port 80
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Use custom entrypoint script
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
