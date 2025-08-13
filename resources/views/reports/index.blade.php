@@ -62,7 +62,7 @@
         </div>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -118,6 +118,34 @@
                     </div>
                 </div>
             </div>
+
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">{{ $chartData['avgResolutionTime'] }}h</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-500">Avg Resolution</div>
+                        <div class="text-2xl font-bold text-gray-900">{{ $chartData['avgResolutionTime'] }}h</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-lg">{{ $chartData['rcaRequired'] }}</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-medium text-gray-500">RCA Required</div>
+                        <div class="text-2xl font-bold text-gray-900">{{ $chartData['rcaRequired'] }}</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Charts Grid -->
@@ -146,11 +174,43 @@
                 </div>
             </div>
 
+            <!-- Daily Trends -->
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Daily Incident Trends</h3>
+                <div class="relative">
+                    <canvas id="dailyChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
             <!-- Category Distribution -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Incidents by Category</h3>
                 <div class="relative">
                     <canvas id="categoryChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Resolution Time Distribution -->
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Resolution Time Distribution</h3>
+                <div class="relative">
+                    <canvas id="resolutionTimeChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Fault Types -->
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Incidents by Fault Type</h3>
+                <div class="relative">
+                    <canvas id="faultTypeChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Outage Types -->
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Incidents by Outage Type</h3>
+                <div class="relative">
+                    <canvas id="outageTypeChart" width="400" height="300"></canvas>
                 </div>
             </div>
 
@@ -341,6 +401,48 @@
         }
     });
 
+    // Daily Trends Chart
+    const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+    const dailyData = @json($chartData['dailyTrends']);
+    new Chart(dailyCtx, {
+        type: 'bar',
+        data: {
+            labels: dailyData.labels,
+            datasets: [{
+                label: 'Daily Incidents',
+                data: dailyData.data,
+                backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                borderColor: '#8b5cf6',
+                borderWidth: 1,
+                borderRadius: 4,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
     // Category Chart
     const categoryCtx = document.getElementById('categoryChart').getContext('2d');
     const categoryData = @json($chartData['categoryData']);
@@ -372,6 +474,104 @@
                     ticks: {
                         stepSize: 1
                     }
+                }
+            }
+        }
+    });
+
+    // Resolution Time Chart
+    const resolutionTimeCtx = document.getElementById('resolutionTimeChart').getContext('2d');
+    const resolutionTimeData = @json($chartData['resolutionTimeData']);
+    new Chart(resolutionTimeCtx, {
+        type: 'doughnut',
+        data: {
+            labels: resolutionTimeData.labels,
+            datasets: [{
+                data: resolutionTimeData.data,
+                backgroundColor: [
+                    '#10b981',
+                    '#3b82f6',
+                    '#f59e0b',
+                    '#ef4444',
+                    '#7c2d12'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Fault Type Chart
+    const faultTypeCtx = document.getElementById('faultTypeChart').getContext('2d');
+    const faultTypeData = @json($chartData['faultTypeData']);
+    new Chart(faultTypeCtx, {
+        type: 'pie',
+        data: {
+            labels: faultTypeData.labels,
+            datasets: [{
+                data: faultTypeData.data,
+                backgroundColor: [
+                    '#8b5cf6',
+                    '#06b6d4',
+                    '#10b981',
+                    '#f59e0b',
+                    '#ef4444',
+                    '#6366f1'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Outage Type Chart
+    const outageTypeCtx = document.getElementById('outageTypeChart').getContext('2d');
+    const outageTypeData = @json($chartData['outageTypeData']);
+    new Chart(outageTypeCtx, {
+        type: 'polarArea',
+        data: {
+            labels: outageTypeData.labels,
+            datasets: [{
+                data: outageTypeData.data,
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.7)',
+                    'rgba(16, 185, 129, 0.7)',
+                    'rgba(245, 158, 11, 0.7)',
+                    'rgba(239, 68, 68, 0.7)',
+                    'rgba(139, 92, 246, 0.7)',
+                    'rgba(6, 182, 212, 0.7)',
+                    'rgba(99, 102, 241, 0.7)',
+                    'rgba(236, 72, 153, 0.7)',
+                    'rgba(34, 197, 94, 0.7)'
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
                 }
             }
         }

@@ -77,12 +77,18 @@ class ReportsController extends Controller
             'severityData' => $this->getSeverityData($dateFilter),
             'statusData' => $this->getStatusData($dateFilter),
             'monthlyTrends' => $this->getMonthlyTrends($dateFilter),
+            'dailyTrends' => $this->getDailyTrends($dateFilter),
             'categoryData' => $this->getCategoryData($dateFilter),
             'slaPerformance' => $this->getSlaPerformance($dateFilter),
+            'resolutionTimeData' => $this->getResolutionTimeData($dateFilter),
+            'faultTypeData' => $this->getFaultTypeData($dateFilter),
+            'outageTypeData' => $this->getOutageTypeData($dateFilter),
             'totalIncidents' => $this->getIncidentQuery($dateFilter)->count(),
             'openIncidents' => $this->getIncidentQuery($dateFilter)->where('status', 'Open')->count(),
             'criticalIncidents' => $this->getIncidentQuery($dateFilter)->where('severity', 'Critical')->count(),
             'slaBreached' => $this->getIncidentQuery($dateFilter)->where('exceeded_sla', true)->count(),
+            'avgResolutionTime' => $this->getAvgResolutionTime($dateFilter),
+            'rcaRequired' => $this->getIncidentQuery($dateFilter)->where('rca_required', true)->count(),
         ];
     }
 
@@ -180,6 +186,50 @@ class ReportsController extends Controller
     }
 
     /**
+     * Get daily incident trends
+     */
+    private function getDailyTrends($dateFilter = [])
+    {
+        $days = [];
+        $data = [];
+        
+        // Determine the range - default to last 30 days or based on date filter
+        if (!empty($dateFilter['startDate']) && !empty($dateFilter['endDate'])) {
+            $startDate = $dateFilter['startDate']->copy();
+            $endDate = $dateFilter['endDate']->copy();
+        } else {
+            // Default to last 30 days
+            $startDate = Carbon::now()->subDays(29)->startOfDay();
+            $endDate = Carbon::now()->endOfDay();
+        }
+        
+        // Limit to reasonable range (max 90 days for performance)
+        $daysDiff = $startDate->diffInDays($endDate);
+        if ($daysDiff > 90) {
+            $startDate = $endDate->copy()->subDays(90);
+        }
+        
+        // Generate days between start and end date
+        $current = $startDate->copy();
+        
+        while ($current->lte($endDate)) {
+            $days[] = $current->format('M j');
+            
+            $count = $this->getIncidentQuery($dateFilter)
+                          ->whereDate('created_at', $current->format('Y-m-d'))
+                          ->count();
+            $data[] = $count;
+            
+            $current->addDay();
+        }
+        
+        return [
+            'labels' => $days,
+            'data' => $data
+        ];
+    }
+
+    /**
      * Get incident data by category
      */
     private function getCategoryData($dateFilter = [])
@@ -210,5 +260,107 @@ class ReportsController extends Controller
             'labels' => ['SLA Achieved', 'SLA Breached'],
             'data' => [$achieved, $breached]
         ];
+    }
+
+    /**
+     * Get resolution time distribution data
+     */
+    private function getResolutionTimeData($dateFilter = [])
+    {
+        $incidents = $this->getIncidentQuery($dateFilter)
+                          ->whereNotNull('resolved_at')
+                          ->get();
+
+        $ranges = [
+            '< 1 hour' => 0,
+            '1-4 hours' => 0,
+            '4-8 hours' => 0,
+            '8-24 hours' => 0,
+            '> 24 hours' => 0,
+        ];
+
+        foreach ($incidents as $incident) {
+            if ($incident->started_at && $incident->resolved_at) {
+                $hours = Carbon::parse($incident->started_at)->diffInHours(Carbon::parse($incident->resolved_at));
+                
+                if ($hours < 1) {
+                    $ranges['< 1 hour']++;
+                } elseif ($hours < 4) {
+                    $ranges['1-4 hours']++;
+                } elseif ($hours < 8) {
+                    $ranges['4-8 hours']++;
+                } elseif ($hours < 24) {
+                    $ranges['8-24 hours']++;
+                } else {
+                    $ranges['> 24 hours']++;
+                }
+            }
+        }
+
+        return [
+            'labels' => array_keys($ranges),
+            'data' => array_values($ranges)
+        ];
+    }
+
+    /**
+     * Get fault type distribution data
+     */
+    private function getFaultTypeData($dateFilter = [])
+    {
+        $faultTypes = $this->getIncidentQuery($dateFilter)
+                           ->select('fault_type')
+                           ->selectRaw('count(*) as count')
+                           ->whereNotNull('fault_type')
+                           ->groupBy('fault_type')
+                           ->orderBy('count', 'desc')
+                           ->get();
+
+        return [
+            'labels' => $faultTypes->pluck('fault_type')->toArray(),
+            'data' => $faultTypes->pluck('count')->toArray()
+        ];
+    }
+
+    /**
+     * Get outage category distribution data
+     */
+    private function getOutageTypeData($dateFilter = [])
+    {
+        $outageTypes = $this->getIncidentQuery($dateFilter)
+                            ->select('outage_category')
+                            ->selectRaw('count(*) as count')
+                            ->whereNotNull('outage_category')
+                            ->groupBy('outage_category')
+                            ->orderBy('count', 'desc')
+                            ->get();
+
+        return [
+            'labels' => $outageTypes->pluck('outage_category')->toArray(),
+            'data' => $outageTypes->pluck('count')->toArray()
+        ];
+    }
+
+    /**
+     * Get average resolution time in hours
+     */
+    private function getAvgResolutionTime($dateFilter = [])
+    {
+        $incidents = $this->getIncidentQuery($dateFilter)
+                          ->whereNotNull('resolved_at')
+                          ->whereNotNull('started_at')
+                          ->get();
+
+        if ($incidents->count() === 0) {
+            return 0;
+        }
+
+        $totalHours = 0;
+        foreach ($incidents as $incident) {
+            $hours = Carbon::parse($incident->started_at)->diffInHours(Carbon::parse($incident->resolved_at));
+            $totalHours += $hours;
+        }
+
+        return round($totalHours / $incidents->count(), 1);
     }
 }

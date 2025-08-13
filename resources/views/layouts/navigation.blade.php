@@ -22,7 +22,7 @@
                                     <div
                                         class="text-lg lg:text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent truncate">
                                         Incident Management</div>
-                                    <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">v2.1</span>
+                                    <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">v2.2</span>
                                 </div>
                                 <div
                                     class="text-xs lg:text-sm font-medium bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
