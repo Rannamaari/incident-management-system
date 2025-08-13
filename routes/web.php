@@ -103,9 +103,9 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     // Create and edit incidents (specific routes first)
     Route::get('incidents/create', [IncidentController::class, 'create'])->name('incidents.create');
     Route::post('incidents', [IncidentController::class, 'store'])->name('incidents.store');
-    Route::get('incidents/{incident}/edit', [IncidentController::class, 'edit'])->name('incidents.edit');
-    Route::put('incidents/{incident}', [IncidentController::class, 'update'])->name('incidents.update');
-    Route::patch('incidents/{incident}', [IncidentController::class, 'update']);
+    Route::get('incidents/{incident}/edit', [IncidentController::class, 'edit'])->where('incident', '[0-9]+')->name('incidents.edit');
+    Route::put('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+')->name('incidents.update');
+    Route::patch('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+');
     
     // Export routes
     Route::get('incidents-export-preview', [IncidentController::class, 'exportPreview'])->name('incidents.export.preview');
@@ -113,7 +113,7 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     Route::get('logs-export', [LogsController::class, 'export'])->name('logs.export');
     
     // RCA generation
-    Route::post('incidents/{incident}/generate-rca', [IncidentRCAController::class, 'generate'])->name('incidents.generate-rca');
+    Route::post('incidents/{incident}/generate-rca', [IncidentRCAController::class, 'generate'])->where('incident', '[0-9]+')->name('incidents.generate-rca');
 });
 
 // Public routes that require only authentication (viewer and above)
@@ -125,13 +125,13 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
 
     // View-only incident routes (viewer and above) - Wildcard routes last
     Route::get('incidents', [IncidentController::class, 'index'])->name('incidents.index');
-    Route::get('incidents/{incident}', [IncidentController::class, 'show'])->name('incidents.show');
+    Route::get('incidents/{incident}', [IncidentController::class, 'show'])->where('incident', '[0-9]+')->name('incidents.show');
     
     // Logs page routes (viewer and above)
     Route::get('logs', [LogsController::class, 'index'])->name('logs.index');
     
     // Download RCA (viewer and above)
-    Route::get('incidents/{incident}/download-rca', [IncidentRCAController::class, 'download'])->name('incidents.download-rca');
+    Route::get('incidents/{incident}/download-rca', [IncidentRCAController::class, 'download'])->where('incident', '[0-9]+')->name('incidents.download-rca');
 
     // Profile routes (all authenticated users)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -142,7 +142,7 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
 // Admin-only routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Delete incidents (admin only)
-    Route::delete('incidents/{incident}', [IncidentController::class, 'destroy'])->name('incidents.destroy');
+    Route::delete('incidents/{incident}', [IncidentController::class, 'destroy'])->where('incident', '[0-9]+')->name('incidents.destroy');
 });
 
 require __DIR__.'/auth.php';
