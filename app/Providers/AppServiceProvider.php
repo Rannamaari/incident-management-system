@@ -19,9 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Force HTTPS URLs in production - temporarily disabled for debugging
-        // if (config('app.env') === 'production') {
-        //     URL::forceScheme('https');
-        // }
+        // Force HTTPS URLs in production
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }
