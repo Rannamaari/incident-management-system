@@ -4,6 +4,7 @@ use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IncidentRCAController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -130,6 +131,9 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
     // Logs page routes (viewer and above)
     Route::get('logs', [LogsController::class, 'index'])->name('logs.index');
     
+    // Reports page routes (viewer and above)
+    Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
+    
     // Download RCA (viewer and above)
     Route::get('incidents/{incident}/download-rca', [IncidentRCAController::class, 'download'])->where('incident', '[0-9]+')->name('incidents.download-rca');
 
@@ -146,7 +150,5 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
