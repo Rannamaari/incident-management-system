@@ -100,11 +100,11 @@ class ReportsController extends Controller
         $query = Incident::query();
         
         if (!empty($dateFilter['startDate'])) {
-            $query->where('created_at', '>=', $dateFilter['startDate']);
+            $query->where('started_at', '>=', $dateFilter['startDate']);
         }
         
         if (!empty($dateFilter['endDate'])) {
-            $query->where('created_at', '<=', $dateFilter['endDate']);
+            $query->where('started_at', '<=', $dateFilter['endDate']);
         }
         
         return $query;
@@ -155,8 +155,8 @@ class ReportsController extends Controller
             $months[] = $current->format('M Y');
             
             $count = $this->getIncidentQuery($dateFilter)
-                          ->whereYear('created_at', $current->year)
-                          ->whereMonth('created_at', $current->month)
+                          ->whereYear('started_at', $current->year)
+                          ->whereMonth('started_at', $current->month)
                           ->count();
             $data[] = $count;
             
@@ -172,8 +172,8 @@ class ReportsController extends Controller
                 $months[] = $month->format('M Y');
                 
                 $count = $this->getIncidentQuery($dateFilter)
-                              ->whereYear('created_at', $month->year)
-                              ->whereMonth('created_at', $month->month)
+                              ->whereYear('started_at', $month->year)
+                              ->whereMonth('started_at', $month->month)
                               ->count();
                 $data[] = $count;
             }
@@ -216,7 +216,7 @@ class ReportsController extends Controller
             $days[] = $current->format('M j');
             
             $count = $this->getIncidentQuery($dateFilter)
-                          ->whereDate('created_at', $current->format('Y-m-d'))
+                          ->whereDate('started_at', $current->format('Y-m-d'))
                           ->count();
             $data[] = $count;
             
