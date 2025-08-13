@@ -12,11 +12,12 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
+    libpq-dev \
     zip \
     unzip \
     sqlite3 \
     libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd zip
+    && docker-php-ext-install pdo pdo_sqlite pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip
 
 # Install Node.js 20 (required for Vite)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
