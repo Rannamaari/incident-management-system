@@ -5,6 +5,7 @@ use App\Http\Controllers\IncidentRCAController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -108,6 +109,10 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     Route::put('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+')->name('incidents.update');
     Route::patch('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+');
     
+    // Import routes
+    Route::get('incidents/import', [IncidentController::class, 'showImport'])->name('incidents.import');
+    Route::post('incidents/import', [IncidentController::class, 'import'])->name('incidents.import.store');
+    
     // Export routes
     Route::get('incidents-export-preview', [IncidentController::class, 'exportPreview'])->name('incidents.export.preview');
     Route::get('incidents-export', [IncidentController::class, 'export'])->name('incidents.export');
@@ -147,6 +152,17 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Delete incidents (admin only)
     Route::delete('incidents/{incident}', [IncidentController::class, 'destroy'])->where('incident', '[0-9]+')->name('incidents.destroy');
+    
+    // User management routes (admin only)
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::get('/create', [UserController::class, 'create'])->name('create');
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{user}', [UserController::class, 'show'])->name('show');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
 });
 
 require __DIR__.'/auth.php';
