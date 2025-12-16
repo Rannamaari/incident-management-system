@@ -45,7 +45,7 @@
         </form>
         
         <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
-            System developed and designed by Ibrahim Husham Abdullah
+            System developed and designed by Ibrahim Husham
         </div>
     </div>
 </body>
