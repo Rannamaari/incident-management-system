@@ -84,15 +84,77 @@
 
                         <!-- Affected Services -->
                         <div>
-                            <label for="affected_services" class="block text-sm font-medium text-gray-700">Affected Systems/Services *</label>
-                            <input type="text" 
-                                   name="affected_services" 
-                                   id="affected_services" 
-                                   value="{{ old('affected_services', $incident->affected_services) }}"
-                                   class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('affected_services') border-red-300 @enderror">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Affected Systems/Services *</label>
+                            <p class="text-xs text-gray-500 mb-2">Select one or more affected systems/services</p>
+                            <div class="mt-2 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+                                @php
+                                    $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data'];
+                                    $currentValues = old('affected_services', []);
+                                    if (empty($currentValues) && $incident->affected_services) {
+                                        $currentValues = is_array($incident->affected_services) 
+                                            ? $incident->affected_services 
+                                            : explode(', ', $incident->affected_services);
+                                    }
+                                    if (is_string($currentValues)) {
+                                        $currentValues = explode(',', $currentValues);
+                                    }
+                                @endphp
+                                @foreach($affectedServicesOptions as $option)
+                                    <div class="flex items-center">
+                                        <input type="checkbox" 
+                                               name="affected_services[]" 
+                                               id="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}" 
+                                               value="{{ $option }}"
+                                               {{ in_array(trim($option), array_map('trim', $currentValues)) ? 'checked' : '' }}
+                                               class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 transition-all duration-200">
+                                        <label for="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}" 
+                                               class="ml-2 text-sm font-medium text-gray-700 cursor-pointer hover:text-blue-600 transition-colors">
+                                            {{ $option }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <input type="hidden" name="affected_services_validation" value="1">
                             @error('affected_services')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
+                            @error('affected_services.*')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Status and Severity Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Status -->
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Incident Status *</label>
+                                <select name="status" 
+                                        id="status"
+                                        class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('status') border-red-300 @enderror">
+                                    @foreach(\App\Models\Incident::STATUSES as $status)
+                                        <option value="{{ $status }}" {{ old('status', $incident->status) === $status ? 'selected' : '' }}>{{ $status }}</option>
+                                    @endforeach
+                                </select>
+                                @error('status')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Severity -->
+                            <div>
+                                <label for="severity" class="block text-sm font-medium text-gray-700">Severity Level *</label>
+                                <select name="severity" 
+                                        id="severity"
+                                        class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('severity') border-red-300 @enderror">
+                                    @foreach(\App\Models\Incident::SEVERITIES as $severity)
+                                        <option value="{{ $severity }}" {{ old('severity', $incident->severity) === $severity ? 'selected' : '' }}>{{ $severity }}</option>
+                                    @endforeach
+                                </select>
+                                <p id="slaHint" class="mt-1 text-sm text-gray-500">SLA is derived from Severity.</p>
+                                @error('severity')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <!-- Started At -->
@@ -243,40 +305,37 @@
                             @enderror
                         </div>
 
-                        <!-- Status and Severity Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700">Incident Status *</label>
-                                <select name="status" 
-                                        id="status" 
-                                        class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('status') border-red-300 @enderror">
-                                    @foreach(\App\Models\Incident::STATUSES as $status)
-                                        <option value="{{ $status }}" {{ old('status', $incident->status) === $status ? 'selected' : '' }}>
-                                            {{ $status }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('status')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="severity" class="block text-sm font-medium text-gray-700">Severity Level *</label>
-                                <select name="severity" 
-                                        id="severity" 
-                                        class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('severity') border-red-300 @enderror">
-                                    @foreach(\App\Models\Incident::SEVERITIES as $severity)
-                                        <option value="{{ $severity }}" {{ old('severity', $incident->severity) === $severity ? 'selected' : '' }}>
-                                            {{ $severity }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <p class="mt-1 text-sm text-gray-500">SLA is derived from Severity</p>
-                                @error('severity')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        <!-- RCA File -->
+                        <div>
+                            <label for="rca_file" class="block text-sm font-medium text-gray-700">
+                                RCA File (PDF, DOC, DOCX)
+                                @if(in_array($incident->severity, ['High', 'Critical']) && !$incident->hasRcaFile())
+                                    <span class="text-red-500">*</span>
+                                @endif
+                            </label>
+                            @if($incident->hasRcaFile())
+                                <div class="mt-2 mb-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                    <p class="text-sm text-green-700">
+                                        <svg class="inline h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Current RCA file: <a href="{{ route('incidents.download-rca', $incident) }}" class="text-blue-600 hover:underline font-medium">{{ basename($incident->rca_file_path) }}</a>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">Upload a new file to replace the existing one.</p>
+                                </div>
+                            @endif
+                            <input type="file" 
+                                   name="rca_file" 
+                                   id="rca_file" 
+                                   accept=".pdf,.doc,.docx"
+                                   class="mt-2 block w-full cursor-pointer rounded-2xl border border-dashed border-gray-300/50 bg-gray-50/80 backdrop-blur-sm p-4 text-sm file:mr-4 file:rounded-xl file:border-0 file:bg-gradient-to-r file:from-blue-50 file:to-blue-100 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:from-blue-100 hover:file:to-blue-200 transition-all duration-300 @error('rca_file') border-red-300 @enderror">
+                            <p class="mt-1 text-sm text-gray-500">Max size: 10MB. Accepted formats: PDF, DOC, DOCX</p>
+                            @if(in_array($incident->severity, ['High', 'Critical']) && !$incident->hasRcaFile())
+                                <p class="mt-1 text-sm text-red-600 font-medium">⚠️ RCA file is required for {{ $incident->severity }} severity incidents.</p>
+                            @endif
+                            @error('rca_file')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Structured RCA Fields -->
@@ -583,6 +642,25 @@
 
         // Initialize counter on page load
         updateCharCount('summary', 1000);
+
+        // Validate affected services checkboxes
+        (function() {
+            const form = document.querySelector('form[action*="incidents"]');
+            if (!form) return;
+            
+            form.addEventListener('submit', function(e) {
+                const checkboxes = form.querySelectorAll('input[name="affected_services[]"]:checked');
+                if (checkboxes.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one Affected System/Service.');
+                    const firstCheckbox = form.querySelector('input[name="affected_services[]"]');
+                    if (firstCheckbox) {
+                        firstCheckbox.focus();
+                    }
+                    return false;
+                }
+            });
+        })();
 
         // Show/hide resolved_at field based on status
         function toggleResolvedAtField() {

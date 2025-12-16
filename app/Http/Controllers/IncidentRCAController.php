@@ -58,7 +58,9 @@ class IncidentRCAController extends Controller
             return back()->withErrors(['error' => 'RCA document not found.']);
         }
 
-        $filename = "RCA_{$incident->incident_code}.docx";
+        // Get file extension from stored path
+        $extension = pathinfo($incident->rca_file_path, PATHINFO_EXTENSION);
+        $filename = "RCA_{$incident->incident_code}.{$extension}";
         
         return Storage::download($incident->rca_file_path, $filename);
     }

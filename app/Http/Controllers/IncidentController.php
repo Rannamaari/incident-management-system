@@ -77,6 +77,9 @@ class IncidentController extends Controller
         $this->fillIncidentData($incident, $validated, $request);
         $incident->save();
 
+        // Handle RCA file upload
+        $this->handleRcaFileUpload($incident, $request);
+
         // Handle log entries and action points
         $this->handleIncidentLogs($incident, $validated);
         $this->handleIncidentActionPoints($incident, $validated);
@@ -138,6 +141,9 @@ class IncidentController extends Controller
         $this->fillIncidentData($incident, $validated, $request);
         $incident->save();
 
+        // Handle RCA file upload
+        $this->handleRcaFileUpload($incident, $request);
+
         // Handle log entries and action points
         $this->handleIncidentLogs($incident, $validated);
         $this->handleIncidentActionPoints($incident, $validated);
@@ -152,8 +158,11 @@ class IncidentController extends Controller
     public function destroy(Incident $incident)
     {
         // Delete RCA file if exists
-        if ($incident->rca_file_path && Storage::disk('public')->exists($incident->rca_file_path)) {
-            Storage::disk('public')->delete($incident->rca_file_path);
+        if ($incident->rca_file_path) {
+            $filePath = storage_path('app/' . $incident->rca_file_path);
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
         }
 
         $incident->delete();
@@ -322,6 +331,12 @@ class IncidentController extends Controller
         // Pre-process logs and action points to remove empty/template entries before validation
         $requestData = $request->all();
         
+        // Handle affected_services - convert string to array if needed (for close modal compatibility)
+        if (isset($requestData['affected_services']) && is_string($requestData['affected_services'])) {
+            // If it's a string (from close modal), convert to array for validation
+            $requestData['affected_services'] = array_filter(array_map('trim', explode(',', $requestData['affected_services'])));
+        }
+        
         // Filter logs - remove empty entries and template entries with "INDEX"
         if (isset($requestData['logs']) && is_array($requestData['logs'])) {
             $requestData['logs'] = array_filter($requestData['logs'], function ($log) {
@@ -357,7 +372,8 @@ class IncidentController extends Controller
             'new_category_name' => ['nullable', 'string', 'max:255'],
             'new_fault_type_name' => ['nullable', 'string', 'max:255'],
             'new_resolution_team_name' => ['nullable', 'string', 'max:255'],
-            'affected_services' => ['required', 'string', 'max:255'],
+            'affected_services' => ['required', 'array', 'min:1'],
+            'affected_services.*' => ['required', 'string', 'in:Cell,Single FBB,Single Site,Multiple Site,P2P,ILL,SIP,IPTV,Peering,Mobile Data'],
             'started_at' => ['required', 'date'],
             'resolved_at' => ['nullable', 'date', 'after_or_equal:started_at'],
             'duration_minutes' => ['nullable', 'integer', 'min:0'],
@@ -386,7 +402,8 @@ class IncidentController extends Controller
             'action_points' => ['nullable', 'array'],
             'action_points.*.description' => ['required', 'string'],
             'action_points.*.due_date' => ['required', 'date'],
-            'action_points.*.completed' => ['boolean']
+            'action_points.*.completed' => ['boolean'],
+            'rca_file' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'], // 10MB max
         ]);
     }
 
@@ -397,6 +414,11 @@ class IncidentController extends Controller
     {
         // Remove logs and action_points from validated data before filling
         unset($validated['logs'], $validated['action_points']);
+        
+        // Convert affected_services array to comma-separated string
+        if (isset($validated['affected_services']) && is_array($validated['affected_services'])) {
+            $validated['affected_services'] = implode(', ', $validated['affected_services']);
+        }
         
         $incident->fill($validated);
 
@@ -553,6 +575,67 @@ class IncidentController extends Controller
     }
 
     /**
+     * Handle RCA file upload.
+     */
+    private function handleRcaFileUpload(Incident $incident, Request $request): void
+    {
+        if ($request->hasFile('rca_file')) {
+            $file = $request->file('rca_file');
+            
+            // Validate file type (PDF, DOC, DOCX)
+            $allowedMimes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            $allowedExtensions = ['pdf', 'doc', 'docx'];
+            
+            $fileExtension = strtolower($file->getClientOriginalExtension());
+            $fileMimeType = $file->getMimeType();
+            
+            // Validate extension
+            if (!in_array($fileExtension, $allowedExtensions)) {
+                throw new \Illuminate\Validation\ValidationException(
+                    validator([], []),
+                    ['rca_file' => ['The RCA file must be a PDF or Word document (PDF, DOC, or DOCX).']]
+                );
+            }
+            
+            // Validate MIME type
+            if (!in_array($fileMimeType, $allowedMimes)) {
+                throw new \Illuminate\Validation\ValidationException(
+                    validator([], []),
+                    ['rca_file' => ['The RCA file must be a valid PDF or Word document.']]
+                );
+            }
+            
+            // Validate file size (10MB max)
+            if ($file->getSize() > 10 * 1024 * 1024) {
+                throw new \Illuminate\Validation\ValidationException(
+                    validator([], []),
+                    ['rca_file' => ['The RCA file size must not exceed 10MB.']]
+                );
+            }
+            
+            // Delete old RCA file if exists
+            if ($incident->rca_file_path) {
+                $oldPath = storage_path('app/' . $incident->rca_file_path);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+            
+            // Generate unique filename
+            $filename = $incident->incident_code . '-' . time() . '.' . $fileExtension;
+            
+            // Store file in storage/app/rca directory (not public)
+            $path = $file->storeAs('rca', $filename);
+            
+            // Update incident with RCA file info
+            $incident->update([
+                'rca_file_path' => $path,
+                'rca_received_at' => now(),
+            ]);
+        }
+    }
+
+    /**
      * Build export query with filters.
      */
     private function buildExportQuery(Request $request)
@@ -586,6 +669,225 @@ class IncidentController extends Controller
         $query->orderBy('started_at', 'desc');
 
         return $query;
+    }
+
+    /**
+     * Show the Excel import form.
+     */
+    public function showImport()
+    {
+        return view('incidents.import');
+    }
+
+    /**
+     * Handle Excel file import.
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:10240', // 10MB max
+        ]);
+
+        try {
+            $file = $request->file('excel_file');
+            $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file->getRealPath());
+            $worksheet = $spreadsheet->getActiveSheet();
+            $rows = $worksheet->toArray();
+
+            if (empty($rows) || count($rows) < 2) {
+                return back()->withErrors(['excel_file' => 'Excel file is empty or has no data rows.']);
+            }
+
+            // First row is headers - find column indices
+            $headers = array_map('strtolower', array_map('trim', $rows[0]));
+            $headerMap = [];
+            
+            // Map common column name variations
+            foreach ($headers as $index => $header) {
+                $header = strtolower(trim($header));
+                if (stripos($header, 'summary') !== false || stripos($header, 'incident summary') !== false || stripos($header, 'description') !== false) {
+                    $headerMap['summary'] = $index;
+                } elseif (stripos($header, 'start') !== false && (stripos($header, 'date') !== false || stripos($header, 'time') !== false)) {
+                    $headerMap['started_at'] = $index;
+                } elseif (stripos($header, 'resolution') !== false && (stripos($header, 'date') !== false || stripos($header, 'time') !== false)) {
+                    $headerMap['resolved_at'] = $index;
+                } elseif (stripos($header, 'resolved') !== false && (stripos($header, 'date') !== false || stripos($header, 'time') !== false)) {
+                    $headerMap['resolved_at'] = $index;
+                } elseif (stripos($header, 'severity') !== false) {
+                    $headerMap['severity'] = $index;
+                }
+            }
+
+            // Validate required columns
+            $required = ['summary', 'started_at', 'severity'];
+            $missing = [];
+            foreach ($required as $field) {
+                if (!isset($headerMap[$field])) {
+                    $missing[] = $field;
+                }
+            }
+
+            if (!empty($missing)) {
+                return back()->withErrors([
+                    'excel_file' => 'Missing required columns: ' . implode(', ', $missing) . '. Please ensure your Excel file has columns for: Incident Summary, Start Date/Time, and Severity.'
+                ])->withInput();
+            }
+
+            $imported = 0;
+            $skipped = 0;
+            $errors = [];
+
+            // Process data rows (skip header row)
+            for ($i = 1; $i < count($rows); $i++) {
+                $row = $rows[$i];
+                
+                // Skip empty rows
+                if (empty(array_filter($row))) {
+                    continue;
+                }
+
+                try {
+                    // Extract data based on header map
+                    $summary = isset($headerMap['summary']) && isset($row[$headerMap['summary']]) 
+                        ? trim($row[$headerMap['summary']]) : '';
+                    
+                    if (empty($summary)) {
+                        $skipped++;
+                        continue;
+                    }
+
+                    $startedAt = null;
+                    if (isset($headerMap['started_at']) && isset($row[$headerMap['started_at']])) {
+                        $startedAt = $this->parseExcelDate($row[$headerMap['started_at']]);
+                    }
+
+                    $resolvedAt = null;
+                    if (isset($headerMap['resolved_at']) && isset($row[$headerMap['resolved_at']])) {
+                        $resolvedAt = $this->parseExcelDate($row[$headerMap['resolved_at']]);
+                    }
+
+                    $severity = isset($headerMap['severity']) && isset($row[$headerMap['severity']]) 
+                        ? trim($row[$headerMap['severity']]) : 'Low';
+                    
+                    // Validate severity
+                    if (!in_array($severity, Incident::SEVERITIES)) {
+                        $severity = 'Low'; // Default to Low if invalid
+                    }
+
+                    // Determine status based on resolved_at
+                    $status = $resolvedAt ? 'Closed' : 'Open';
+
+                    // Check if delay_reason is needed (duration > 5 hours for closed incidents)
+                    $delayReason = null;
+                    if ($status === 'Closed' && $startedAt && $resolvedAt) {
+                        $durationHours = $startedAt->diffInHours($resolvedAt);
+                        if ($durationHours > 5) {
+                            // Set a default delay reason for imports
+                            $delayReason = 'Imported from Excel - duration exceeded 5 hours';
+                        }
+                    }
+
+                    // Create incident
+                    $incident = Incident::create([
+                        'summary' => $summary,
+                        'started_at' => $startedAt ?: now(),
+                        'resolved_at' => $resolvedAt,
+                        'severity' => $severity,
+                        'status' => $status,
+                        'affected_services' => 'Cell', // Default value (will be stored as string)
+                        'category' => 'ICT', // Default value
+                        'outage_category' => 'Unknown', // Default value (required field)
+                        'delay_reason' => $delayReason,
+                    ]);
+
+                    $imported++;
+                } catch (\Exception $e) {
+                    $errorMsg = $e->getMessage();
+                    // Get more detailed error info
+                    if ($e instanceof \Illuminate\Database\QueryException) {
+                        $errorMsg = 'Database error: ' . $e->getMessage();
+                    } elseif ($e instanceof \InvalidArgumentException) {
+                        $errorMsg = 'Validation error: ' . $e->getMessage();
+                    }
+                    $errors[] = "Row " . ($i + 1) . ": " . $errorMsg;
+                    $skipped++;
+                    
+                    // Log first few errors for debugging
+                    if (count($errors) <= 5) {
+                        \Log::error("Import error on row " . ($i + 1), [
+                            'error' => $errorMsg,
+                            'summary' => $summary ?? 'N/A',
+                            'started_at' => $startedAt ?? 'N/A',
+                            'resolved_at' => $resolvedAt ?? 'N/A',
+                            'severity' => $severity ?? 'N/A',
+                        ]);
+                    }
+                }
+            }
+
+            $message = "Import completed: {$imported} incidents imported";
+            if ($skipped > 0) {
+                $message .= ", {$skipped} rows skipped";
+            }
+            if (!empty($errors)) {
+                $message .= ". Errors: " . count($errors);
+                // Show first 10 errors in the message
+                $errorPreview = array_slice($errors, 0, 10);
+                $message .= "\n\nFirst errors:\n" . implode("\n", $errorPreview);
+                if (count($errors) > 10) {
+                    $message .= "\n... and " . (count($errors) - 10) . " more errors";
+                }
+            }
+
+            $redirect = redirect()->route('incidents.index');
+            
+            if ($imported > 0) {
+                $redirect->with('success', $message);
+            } else {
+                $redirect->with('error', $message);
+            }
+            
+            if (!empty($errors)) {
+                $redirect->with('import_errors', $errors);
+            }
+            
+            return $redirect;
+
+        } catch (\Exception $e) {
+            return back()->withErrors(['excel_file' => 'Error processing Excel file: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Parse Excel date value.
+     */
+    private function parseExcelDate($value)
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        // If it's already a DateTime object
+        if ($value instanceof \DateTime) {
+            return \Carbon\Carbon::instance($value)->setTimezone('Indian/Maldives');
+        }
+
+        // If it's a numeric value (Excel date serial number)
+        if (is_numeric($value)) {
+            try {
+                $date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($value);
+                return \Carbon\Carbon::instance($date)->setTimezone('Indian/Maldives');
+            } catch (\Exception $e) {
+                // Try parsing as string
+            }
+        }
+
+        // Try parsing as string date
+        try {
+            return \Carbon\Carbon::parse($value)->setTimezone('Indian/Maldives');
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
 }

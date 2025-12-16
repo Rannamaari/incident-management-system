@@ -127,14 +127,65 @@
 
                                         <!-- Affected Services -->
                                         <div class="md:col-span-2">
-                                            <label for="affected_services"
-                                                class="block text-sm font-medium text-gray-700">Affected Systems/Services
+                                            <label class="block text-sm font-medium text-gray-700 mb-3">Affected Systems/Services
                                                 <span class="text-red-500">*</span></label>
-                                            <input type="text" name="affected_services" id="affected_services"
-                                                value="{{ old('affected_services') }}"
-                                                class="mt-2 w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('affected_services') border-red-300 @enderror">
-                                            @error('affected_services') <p class="mt-1 text-sm text-red-600">{{ $message }}
-                                            </p> @enderror
+                                            <p class="text-xs text-gray-500 mb-2">Select one or more affected systems/services</p>
+                                            <div class="mt-2 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+                                                @php
+                                                    $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data'];
+                                                    $oldValues = old('affected_services', []);
+                                                    if (is_string($oldValues)) {
+                                                        $oldValues = explode(',', $oldValues);
+                                                    }
+                                                @endphp
+                                                @foreach($affectedServicesOptions as $option)
+                                                    <div class="flex items-center">
+                                                        <input type="checkbox" 
+                                                               name="affected_services[]" 
+                                                               id="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}" 
+                                                               value="{{ $option }}"
+                                                               {{ in_array($option, $oldValues) ? 'checked' : '' }}
+                                                               class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 transition-all duration-200">
+                                                        <label for="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}" 
+                                                               class="ml-2 text-sm font-medium text-gray-700 cursor-pointer hover:text-blue-600 transition-colors">
+                                                            {{ $option }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <input type="hidden" name="affected_services_validation" value="1">
+                                            @error('affected_services') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                                            @error('affected_services.*') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                                        </div>
+
+                                        <!-- Status -->
+                                        <div>
+                                            <label for="status" class="block text-sm font-medium text-gray-700">Incident
+                                                Status <span class="text-red-500">*</span></label>
+                                            <select name="status" id="status"
+                                                class="mt-2 w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('status') border-red-300 @enderror">
+                                                @foreach(\App\Models\Incident::STATUSES as $status)
+                                                    <option value="{{ $status }}" {{ old('status', 'Open') === $status ? 'selected' : '' }}>{{ $status }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('status') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Severity -->
+                                        <div>
+                                            <label for="severity" class="block text-sm font-medium text-gray-700">Severity
+                                                Level <span class="text-red-500">*</span></label>
+                                            <select name="severity" id="severity"
+                                                class="mt-2 w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('severity') border-red-300 @enderror">
+                                                @foreach(\App\Models\Incident::SEVERITIES as $severity)
+                                                    <option value="{{ $severity }}" {{ old('severity', 'Low') === $severity ? 'selected' : '' }}>{{ $severity }}</option>
+                                                @endforeach
+                                            </select>
+                                            <p id="slaHint" class="mt-1 text-sm text-gray-500">SLA is derived from Severity.
+                                            </p>
+                                            @error('severity') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -361,10 +412,9 @@
                                     </div>
                                 </div>
 
-                                <!-- Group 6: Status & Attachments -->
+                                <!-- Group 6: Attachments -->
                                 <div>
-                                    <h4 class="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">Status &
-                                        Attachments</h4>
+                                    <h4 class="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-700">Attachments</h4>
                                     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                                         <!-- PIR / RCA No -->
                                         <div>
@@ -374,36 +424,6 @@
                                                 value="{{ old('pir_rca_no') }}"
                                                 class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-600 focus:ring-blue-600 @error('pir_rca_no') border-red-300 @enderror">
                                             @error('pir_rca_no') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-
-                                        <!-- Status -->
-                                        <div>
-                                            <label for="status" class="block text-sm font-medium text-gray-700">Incident
-                                                Status <span class="text-red-500">*</span></label>
-                                            <select name="status" id="status"
-                                                class="mt-2 w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('status') border-red-300 @enderror">
-                                                @foreach(\App\Models\Incident::STATUSES as $status)
-                                                    <option value="{{ $status }}" {{ old('status', 'Open') === $status ? 'selected' : '' }}>{{ $status }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('status') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-
-                                        <!-- Severity -->
-                                        <div>
-                                            <label for="severity" class="block text-sm font-medium text-gray-700">Severity
-                                                Level <span class="text-red-500">*</span></label>
-                                            <select name="severity" id="severity"
-                                                class="mt-2 w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('severity') border-red-300 @enderror">
-                                                @foreach(\App\Models\Incident::SEVERITIES as $severity)
-                                                    <option value="{{ $severity }}" {{ old('severity', 'Low') === $severity ? 'selected' : '' }}>{{ $severity }}</option>
-                                                @endforeach
-                                            </select>
-                                            <p id="slaHint" class="mt-1 text-sm text-gray-500">SLA is derived from Severity.
-                                            </p>
-                                            @error('severity') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                             @enderror
                                         </div>
 
@@ -724,6 +744,25 @@
 
         // Initialize counter on page load
         updateCharCount('summary', 1000);
+
+        // Validate affected services checkboxes
+        (function() {
+            const form = document.querySelector('form[action="{{ route('incidents.store') }}"]');
+            if (!form) return;
+            
+            form.addEventListener('submit', function(e) {
+                const checkboxes = form.querySelectorAll('input[name="affected_services[]"]:checked');
+                if (checkboxes.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one Affected System/Service.');
+                    const firstCheckbox = form.querySelector('input[name="affected_services[]"]');
+                    if (firstCheckbox) {
+                        firstCheckbox.focus();
+                    }
+                    return false;
+                }
+            });
+        })();
 
         // Show/hide resolved_at field based on status
         function toggleResolvedAtField() {

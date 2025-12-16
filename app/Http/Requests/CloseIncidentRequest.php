@@ -81,6 +81,20 @@ class CloseIncidentRequest extends FormRequest
                 $rules['workaround'] = 'required|string';
                 $rules['solution'] = 'required|string';
                 $rules['recommendation'] = 'required|string';
+                
+                // Check if RCA file exists for High severity incidents
+                $incident = $this->route('incident');
+                if ($incident && !$incident->hasRcaFile() && !$this->hasFile('rca_file')) {
+                    $rules['rca_file'] = 'required|file|mimes:pdf,doc,docx|max:10240';
+                }
+            }
+            
+            // Rule 3.5: Critical severity incident RCA requirement
+            if ($severity === 'Critical') {
+                $incident = $this->route('incident');
+                if ($incident && !$incident->hasRcaFile() && !$this->hasFile('rca_file')) {
+                    $rules['rca_file'] = 'required|file|mimes:pdf,doc,docx|max:10240';
+                }
             }
 
             // Rule 4: Critical severity incident requirements
@@ -125,6 +139,12 @@ class CloseIncidentRequest extends FormRequest
             'action_points.min' => 'At least one action point is required for Critical severity incidents.',
             'action_points.*.description.required' => 'Action point description is required.',
             'action_points.*.due_date.required' => 'Action point due date is required.',
+            
+            // RCA file requirements
+            'rca_file.required' => 'RCA file (PDF or Word document) is required for High and Critical severity incidents.',
+            'rca_file.file' => 'RCA must be a valid file.',
+            'rca_file.mimes' => 'RCA file must be a PDF or Word document (PDF, DOC, or DOCX format).',
+            'rca_file.max' => 'RCA file size must not exceed 10MB.',
         ];
     }
 
