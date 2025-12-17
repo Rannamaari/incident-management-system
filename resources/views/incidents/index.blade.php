@@ -20,33 +20,39 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex flex-col gap-3 w-full lg:w-auto lg:flex-row lg:items-center lg:gap-4">
                     <!-- Month Selector -->
-                    <form method="GET" class="flex items-center gap-2">
-                        <label for="month" class="text-sm font-heading font-medium text-gray-700 whitespace-nowrap">View Month:</label>
-                        <input type="month" 
-                               id="month" 
-                               name="month" 
+                    <form method="GET" class="flex items-center gap-2 w-full lg:w-auto">
+                        <label for="month" class="text-sm font-heading font-medium text-gray-700 whitespace-nowrap hidden sm:inline">View Month:</label>
+                        <label for="month" class="text-sm font-heading font-medium text-gray-700 whitespace-nowrap sm:hidden">Month:</label>
+                        <input type="month"
+                               id="month"
+                               name="month"
                                value="{{ $selectedMonth }}"
                                onchange="this.form.submit()"
-                               class="rounded-xl border border-gray-300 px-3 py-2 text-sm font-medium bg-white shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all duration-200">
+                               class="flex-1 lg:flex-none rounded-xl border border-gray-300 px-3 py-2 text-sm font-medium bg-white shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all duration-200">
                     </form>
 
-                    <div class="flex items-center gap-3">
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2 w-full lg:w-auto">
                         @if(auth()->user()->canEditIncidents())
+                            <!-- Import Excel Button -->
                             <a href="{{ route('incidents.import') }}"
-                                class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-blue-700 hover:to-blue-800 transform">
-                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                class="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 rounded-xl lg:rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-2 lg:px-6 lg:py-3 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-blue-700 hover:to-blue-800 transform text-sm lg:text-base">
+                                <svg class="h-4 w-4 lg:h-5 lg:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
-                                Import Excel
+                                <span class="hidden sm:inline">Import Excel</span>
+                                <span class="sm:hidden">Import</span>
                             </a>
+                            <!-- New Incident Button -->
                             <a href="{{ route('incidents.create') }}"
-                                class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-3 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-red-700 hover:to-red-800 transform">
-                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                class="flex-1 lg:flex-none inline-flex items-center justify-center gap-2 rounded-xl lg:rounded-2xl bg-gradient-to-r from-red-600 to-red-700 px-3 py-2 lg:px-6 lg:py-3 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-red-700 hover:to-red-800 transform text-sm lg:text-base">
+                                <svg class="h-4 w-4 lg:h-5 lg:w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                 </svg>
-                                New Incident
+                                <span class="hidden sm:inline">New Incident</span>
+                                <span class="sm:hidden">New</span>
                             </a>
                         @endif
                     </div>
