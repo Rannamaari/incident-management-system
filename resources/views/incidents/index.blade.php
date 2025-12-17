@@ -272,6 +272,16 @@
                                                                             </svg>
                                                                             <span class="hidden xl:inline">Edit</span>
                                                                         </a>
+                                                                        <!-- Close Button (Only for Open/In Progress/Monitoring incidents) -->
+                                                                        @if($incident->status !== 'Closed')
+                                                                            <button type="button" onclick="openCloseModal({{ $incident->id }}, '{{ $incident->incident_code }}')"
+                                                                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-green-100 to-green-200 px-2.5 py-1.5 text-green-700 transition-all duration-300 hover:from-green-200 hover:to-green-300 transform hover:scale-105 text-xs">
+                                                                                <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                                </svg>
+                                                                                <span class="hidden xl:inline">Close</span>
+                                                                            </button>
+                                                                        @endif
                                                                     @endif
                                                                     <!-- Delete Button -->
                                                                     @if(auth()->user()->canDeleteIncidents())
@@ -381,7 +391,7 @@
                                                         </span>
                                                     @endif
                                                 </div>
-                                                <div class="flex gap-2" onclick="event.stopPropagation()">
+                                                <div class="flex gap-2 flex-wrap" onclick="event.stopPropagation()">
                                                     <a href="{{ route('incidents.show', $incident) }}"
                                                         class="inline-flex items-center rounded-lg bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1.5 text-xs font-heading font-medium text-blue-700 transition-all duration-300 hover:from-blue-200 hover:to-blue-300 transform hover:scale-105">
                                                         <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -390,14 +400,25 @@
                                                         </svg>
                                                         View
                                                     </a>
-                                                    <a href="{{ route('incidents.edit', $incident) }}"
-                                                        class="inline-flex items-center rounded-lg bg-gradient-to-r from-red-100 to-red-200 px-3 py-1.5 text-xs font-heading font-medium text-red-700 transition-all duration-300 hover:from-red-200 hover:to-red-300 transform hover:scale-105">
-                                                        <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                        </svg>
-                                                        Edit
-                                                    </a>
+                                                    @if(auth()->user()->canEditIncidents())
+                                                        <a href="{{ route('incidents.edit', $incident) }}"
+                                                            class="inline-flex items-center rounded-lg bg-gradient-to-r from-red-100 to-red-200 px-3 py-1.5 text-xs font-heading font-medium text-red-700 transition-all duration-300 hover:from-red-200 hover:to-red-300 transform hover:scale-105">
+                                                            <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                            </svg>
+                                                            Edit
+                                                        </a>
+                                                        @if($incident->status !== 'Closed')
+                                                            <button type="button" onclick="openCloseModal({{ $incident->id }}, '{{ $incident->incident_code }}')"
+                                                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-green-100 to-green-200 px-3 py-1.5 text-xs font-heading font-medium text-green-700 transition-all duration-300 hover:from-green-200 hover:to-green-300 transform hover:scale-105">
+                                                                <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                                Close
+                                                            </button>
+                                                        @endif
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -446,5 +467,94 @@
 
         </div>
     </div>
+
+    <!-- Close Incident Modal -->
+    <div id="closeModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-2xl bg-white">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-2xl font-heading font-bold text-gray-900">Close Incident</h3>
+                    <button onclick="closeCloseModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="closeIncidentForm" method="POST" action="">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600 mb-4">Closing incident: <span id="modalIncidentCode" class="font-heading font-semibold text-gray-900"></span></p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="resolved_at" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            Resolved Date and Time <span class="text-red-500">*</span>
+                        </label>
+                        <input type="datetime-local" id="resolved_at" name="resolved_at" required
+                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300">
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            Root Cause <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="root_cause" name="root_cause" rows="4" required
+                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
+                            placeholder="Enter the root cause of this incident..."></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Root cause is required when closing an incident</p>
+                    </div>
+
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeCloseModal()"
+                            class="px-6 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-heading font-medium hover:bg-gray-200 transition-colors duration-200">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-heading font-semibold shadow-lg transition-all duration-300 hover:from-green-700 hover:to-green-800 hover:shadow-xl">
+                            Close Incident
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openCloseModal(incidentId, incidentCode) {
+            const modal = document.getElementById('closeModal');
+            const form = document.getElementById('closeIncidentForm');
+            const codeSpan = document.getElementById('modalIncidentCode');
+            const resolvedAtInput = document.getElementById('resolved_at');
+
+            // Set form action
+            form.action = `/incidents/${incidentId}/close`;
+
+            // Set incident code
+            codeSpan.textContent = incidentCode;
+
+            // Set default resolved time to now
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            resolvedAtInput.value = now.toISOString().slice(0, 16);
+
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+
+        function closeCloseModal() {
+            const modal = document.getElementById('closeModal');
+            modal.classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('closeModal')?.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeCloseModal();
+            }
+        });
+    </script>
 
 @endsection

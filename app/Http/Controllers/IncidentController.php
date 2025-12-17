@@ -181,6 +181,27 @@ class IncidentController extends Controller
     }
 
     /**
+     * Close an incident with root cause.
+     */
+    public function close(Request $request, Incident $incident)
+    {
+        // Validate input
+        $validated = $request->validate([
+            'resolved_at' => ['required', 'date'],
+            'root_cause' => ['required', 'string', 'min:10'],
+        ]);
+
+        // Update incident
+        $incident->status = 'Closed';
+        $incident->resolved_at = $validated['resolved_at'];
+        $incident->root_cause = $validated['root_cause'];
+        $incident->save();
+
+        return redirect()->route('incidents.index')
+            ->with('success', 'Incident closed successfully.');
+    }
+
+    /**
      * Remove the specified incident from storage.
      */
     public function destroy(Incident $incident)

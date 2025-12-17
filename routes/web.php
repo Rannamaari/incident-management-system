@@ -109,7 +109,8 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     Route::get('incidents/{incident}/edit', [IncidentController::class, 'edit'])->where('incident', '[0-9]+')->name('incidents.edit');
     Route::put('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+')->name('incidents.update');
     Route::patch('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+');
-    
+    Route::put('incidents/{incident}/close', [IncidentController::class, 'close'])->where('incident', '[0-9]+')->name('incidents.close');
+
     // Import routes
     Route::get('incidents/import', [IncidentController::class, 'showImport'])->name('incidents.import');
     Route::post('incidents/import', [IncidentController::class, 'import'])->name('incidents.import.store');
