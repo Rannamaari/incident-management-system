@@ -147,7 +147,7 @@ class RcaController extends Controller
      */
     public function show(Rca $rca)
     {
-        $rca->load(['incident', 'timeLogs', 'actionPoints', 'creator', 'reviewer']);
+        $rca->load(['incident', 'timeLogs', 'actionPoints', 'creator', 'reviewer', 'activityLogs', 'activityLogs.user']);
 
         return view('rcas.show', compact('rca'));
     }

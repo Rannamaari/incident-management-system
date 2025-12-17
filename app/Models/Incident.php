@@ -46,6 +46,8 @@ class Incident extends Model
         'workaround',
         'solution',
         'recommendation',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
@@ -470,5 +472,29 @@ class Incident extends Model
     public function getPendingActionPointsCount(): int
     {
         return $this->actionPoints()->where('completed', false)->count();
+    }
+
+    /**
+     * Get the user who created the incident.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by');
+    }
+
+    /**
+     * Get the user who last updated the incident.
+     */
+    public function updater()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'updated_by');
+    }
+
+    /**
+     * Get all activity logs for this incident.
+     */
+    public function activityLogs()
+    {
+        return $this->morphMany(ActivityLog::class, 'loggable')->orderBy('created_at', 'desc');
     }
 }

@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Incident;
+use App\Models\Rca;
+use App\Observers\IncidentObserver;
+use App\Observers\RcaObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,5 +27,9 @@ class AppServiceProvider extends ServiceProvider
         if (config('app.env') === 'production') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
+
+        // Register model observers for activity logging
+        Incident::observe(IncidentObserver::class);
+        Rca::observe(RcaObserver::class);
     }
 }

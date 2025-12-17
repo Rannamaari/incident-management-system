@@ -55,6 +55,11 @@ class Rca extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
+    public function activityLogs()
+    {
+        return $this->morphMany(ActivityLog::class, 'loggable')->orderBy('created_at', 'desc');
+    }
+
     // Accessors & Helpers
     public function getStatusBadgeColorClass()
     {

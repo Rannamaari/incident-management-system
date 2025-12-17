@@ -103,6 +103,8 @@ class IncidentController extends Controller
 
         $incident = new Incident();
         $this->fillIncidentData($incident, $validated, $request);
+        $incident->created_by = auth()->id();
+        $incident->updated_by = auth()->id();
         $incident->save();
 
         // Handle RCA file upload
@@ -121,8 +123,8 @@ class IncidentController extends Controller
      */
     public function show(Incident $incident)
     {
-        $incident->load(['logs', 'actionPoints']); // Eager load logs and action points
-        
+        $incident->load(['logs', 'actionPoints', 'creator', 'updater', 'activityLogs', 'activityLogs.user']); // Eager load logs, action points, user tracking, and audit trail
+
         return view('incidents.show', compact('incident'));
     }
 
@@ -167,6 +169,7 @@ class IncidentController extends Controller
         }
 
         $this->fillIncidentData($incident, $validated, $request);
+        $incident->updated_by = auth()->id();
         $incident->save();
 
         // Handle RCA file upload
@@ -195,6 +198,7 @@ class IncidentController extends Controller
         $incident->status = 'Closed';
         $incident->resolved_at = $validated['resolved_at'];
         $incident->root_cause = $validated['root_cause'];
+        $incident->updated_by = auth()->id();
         $incident->save();
 
         return redirect()->route('incidents.index')

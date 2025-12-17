@@ -139,12 +139,26 @@
                     <h4 class="font-heading text-sm font-heading font-semibold text-gray-900 mb-3">Quick Stats</h4>
                     <dl class="space-y-2">
                         <div class="flex justify-between">
-                            <dt class="text-xs text-gray-500">Created</dt>
-                            <dd class="text-sm font-heading font-medium text-gray-900">{{ $incident->created_at->format('M j, Y') }}</dd>
+                            <dt class="text-xs text-gray-500">Created By</dt>
+                            <dd class="text-sm font-heading font-medium text-gray-900">
+                                @if($incident->creator)
+                                    {{ $incident->creator->name }}
+                                    <span class="text-xs text-gray-500">({{ $incident->created_at->format('M j, Y g:i A') }})</span>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </dd>
                         </div>
                         <div class="flex justify-between">
-                            <dt class="text-xs text-gray-500">Updated</dt>
-                            <dd class="text-sm font-heading font-medium text-gray-900">{{ $incident->updated_at->diffForHumans() }}</dd>
+                            <dt class="text-xs text-gray-500">Last Updated By</dt>
+                            <dd class="text-sm font-heading font-medium text-gray-900">
+                                @if($incident->updater)
+                                    {{ $incident->updater->name }}
+                                    <span class="text-xs text-gray-500">({{ $incident->updated_at->diffForHumans() }})</span>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </dd>
                         </div>
                         @if($incident->logs->count() > 0)
                         <div class="flex justify-between">
@@ -214,10 +228,10 @@
                         <div>
                             <dt class="text-sm font-heading font-medium text-gray-500">Duration</dt>
                             <dd class="mt-1 text-sm text-gray-900">
-                                @if($incident->duration_minutes)
-                                    {{ $incident->duration_hms }} ({{ $incident->duration_minutes }} minutes)
+                                @if($incident->duration_hms)
+                                    {{ $incident->duration_hms }}
                                 @else
-                                    {{ $incident->resolved_at ? $incident->started_at->diffForHumans($incident->resolved_at, true) : 'Ongoing' }}
+                                    -
                                 @endif
                             </dd>
                         </div>
@@ -302,6 +316,103 @@
                                                     </time>
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Activity Audit Trail -->
+            @if($incident->activityLogs->count() > 0)
+            <div class="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
+                <div class="border-b border-gray-200/50 bg-gradient-to-r from-purple-50/80 to-white/60 px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-purple-700 shadow-md">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-heading text-lg font-semibold text-gray-900">Audit Trail</h3>
+                            <p class="text-sm text-gray-600">Complete history of all changes made to this incident</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <div class="flow-root">
+                        <ul role="list" class="space-y-4">
+                            @foreach($incident->activityLogs as $log)
+                                <li>
+                                    <div class="relative flex gap-x-4 rounded-xl p-4 transition-all duration-200
+                                        @if($log->action === 'created') bg-green-50/50 hover:bg-green-50
+                                        @elseif($log->action === 'updated') bg-blue-50/50 hover:bg-blue-50
+                                        @elseif($log->action === 'deleted') bg-red-50/50 hover:bg-red-50
+                                        @else bg-gray-50/50 hover:bg-gray-50
+                                        @endif">
+
+                                        <!-- Icon -->
+                                        <div class="relative flex h-8 w-8 flex-none items-center justify-center rounded-full
+                                            @if($log->action === 'created') bg-green-100
+                                            @elseif($log->action === 'updated') bg-blue-100
+                                            @elseif($log->action === 'deleted') bg-red-100
+                                            @else bg-gray-100
+                                            @endif">
+                                            <div class="
+                                                @if($log->action === 'created') text-green-600
+                                                @elseif($log->action === 'updated') text-blue-600
+                                                @elseif($log->action === 'deleted') text-red-600
+                                                @else text-gray-600
+                                                @endif">
+                                                {!! $log->action_icon !!}
+                                            </div>
+                                        </div>
+
+                                        <!-- Content -->
+                                        <div class="flex-auto">
+                                            <div class="flex items-start justify-between gap-x-4">
+                                                <div class="flex-1">
+                                                    <p class="text-sm font-heading font-semibold text-gray-900">
+                                                        {{ $log->user ? $log->user->name : 'System' }}
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ml-2 {{ $log->action_color_class }}">
+                                                            {{ ucfirst($log->action) }}
+                                                        </span>
+                                                    </p>
+
+                                                    <p class="mt-1 text-sm text-gray-700">
+                                                        {{ $log->description }}
+                                                    </p>
+
+                                                    @if($log->field_name && $log->action === 'updated')
+                                                        <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                                            <div class="rounded-lg bg-white/80 border border-gray-200 p-2">
+                                                                <span class="font-heading font-medium text-gray-500">Previous:</span>
+                                                                <span class="text-gray-900 ml-1">{{ $log->old_value ?? '-' }}</span>
+                                                            </div>
+                                                            <div class="rounded-lg bg-white/80 border border-gray-200 p-2">
+                                                                <span class="font-heading font-medium text-gray-500">New:</span>
+                                                                <span class="text-gray-900 ml-1">{{ $log->new_value ?? '-' }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                <time datetime="{{ $log->created_at->toISOString() }}"
+                                                    class="flex-none text-xs text-gray-500 whitespace-nowrap">
+                                                    {{ $log->created_at->format('M j, Y') }}<br>
+                                                    {{ $log->created_at->format('g:i A') }}
+                                                </time>
+                                            </div>
+
+                                            @if($log->ip_address)
+                                                <p class="mt-2 text-xs text-gray-500">
+                                                    IP: {{ $log->ip_address }}
+                                                </p>
+                                            @endif
                                         </div>
                                     </div>
                                 </li>
