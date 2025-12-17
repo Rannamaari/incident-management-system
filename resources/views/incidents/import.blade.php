@@ -13,7 +13,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">Import Incidents</h1>
+                            <h1 class="font-heading text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">Import Incidents</h1>
                             <p class="mt-2 text-lg text-gray-600 font-medium">Upload Excel file to import incidents into the system</p>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
         <!-- Instructions Card -->
         <div class="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">📋 Excel File Requirements</h2>
+            <h2 class="font-heading text-xl font-semibold text-gray-900 mb-4">📋 Excel File Requirements</h2>
             <div class="space-y-3 text-sm text-gray-700">
                 <div class="flex items-start gap-3">
                     <span class="text-blue-600 font-bold">✓</span>
@@ -79,7 +79,7 @@
 
                 <!-- File Upload -->
                 <div>
-                    <label for="excel_file" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="excel_file" class="block text-sm font-heading font-medium text-gray-700 mb-2">
                         Select Excel File <span class="text-red-500">*</span>
                     </label>
                     <input type="file" 
@@ -97,7 +97,7 @@
                 <!-- Submit Button -->
                 <div class="flex items-center gap-4 pt-4">
                     <button type="submit"
-                        class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-blue-700 hover:to-blue-800 transform">
+                        class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-3 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-blue-700 hover:to-blue-800 transform">
                         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
@@ -113,15 +113,15 @@
 
         <!-- Example Format -->
         <div class="bg-gray-50 rounded-2xl border border-gray-200/50 p-6 mt-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 Example Excel Format</h3>
+            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">📊 Example Excel Format</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white border border-gray-300 rounded-lg">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b">Incident Summary</th>
-                            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b">Start Date and Time</th>
-                            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b">Resolution Date and Time</th>
-                            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 border-b">Severity</th>
+                            <th class="font-heading px-4 py-2 text-left text-sm font-heading font-semibold text-gray-700 border-b">Incident Summary</th>
+                            <th class="font-heading px-4 py-2 text-left text-sm font-heading font-semibold text-gray-700 border-b">Start Date and Time</th>
+                            <th class="font-heading px-4 py-2 text-left text-sm font-heading font-semibold text-gray-700 border-b">Resolution Date and Time</th>
+                            <th class="font-heading px-4 py-2 text-left text-sm font-heading font-semibold text-gray-700 border-b">Severity</th>
                         </tr>
                     </thead>
                     <tbody>

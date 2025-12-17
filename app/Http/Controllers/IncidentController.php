@@ -26,13 +26,41 @@ class IncidentController extends Controller
         $monthStart = \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->startOfMonth();
         $monthEnd = \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->endOfMonth();
 
+        // Return JSON for AJAX requests (for RCA incident search)
+        if ($request->wantsJson() || $request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            $incidents = Incident::query()
+                ->search($request->search)
+                ->orderByDesc('started_at')
+                ->limit(10)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $incidents
+            ]);
+        }
+
+        // Get per_page value from request, default to 15
+        $perPage = $request->input('per_page', 15);
+        // Validate per_page is one of the allowed values
+        $perPage = in_array($perPage, [15, 25, 50, 100]) ? $perPage : 15;
+
+        // Default to showing only Open incidents if no status filter is applied
+        $defaultStatus = $request->has('status') ? $request->status : 'Open';
+
         // Get incidents for display (with pagination and filters)
         $incidents = Incident::query()
             ->search($request->search)
-            ->status($request->status)
+            ->status($defaultStatus)
             ->severity($request->severity)
+            ->when($request->has('rca_required') && $request->rca_required === '1', function ($query) {
+                return $query->where('rca_required', true);
+            })
+            ->when($request->has('sla_breached') && $request->sla_breached === '1', function ($query) {
+                return $query->where('exceeded_sla', true);
+            })
             ->orderByDesc('started_at')
-            ->paginate(15)
+            ->paginate($perPage)
             ->withQueryString();
 
         // Get monthly KPI data (for the selected month only)

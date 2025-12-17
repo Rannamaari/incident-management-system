@@ -8,13 +8,28 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800;900&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
         <!-- Tailwind CSS via CDN -->
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
-        
+
+        <!-- Tailwind Custom Config for Fonts -->
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            'sans': ['Noto Sans', 'sans-serif'],
+                            'heading': ['Rubik', 'sans-serif'],
+                        }
+                    }
+                }
+            }
+        </script>
+
         <!-- Alpine.js for navigation interactions -->
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     </head>
@@ -32,7 +47,7 @@
             @endif
 
             <!-- Page Content -->
-            <main class="min-h-screen">
+            <main class="min-h-screen pb-16 md:pb-0">
                 <!-- Success Message -->
                 @if (session('success'))
                     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -70,7 +85,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                                 </svg>
                                 <div class="flex-1">
-                                    <h3 class="font-semibold mb-2">Import Errors (showing first 20):</h3>
+                                    <h3 class="font-heading font-semibold mb-2">Import Errors (showing first 20):</h3>
                                     <ul class="list-disc list-inside space-y-1 text-sm max-h-60 overflow-y-auto">
                                         @foreach(array_slice(session('import_errors'), 0, 20) as $error)
                                             <li>{{ $error }}</li>
@@ -96,7 +111,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-3">
-                                    <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+                                    <h3 class="font-heading text-sm font-medium text-red-800">Please fix the following errors:</h3>
                                     <div class="mt-2 text-sm text-red-700">
                                         <ul class="list-disc pl-5 space-y-1">
                                             @foreach ($errors->all() as $error)

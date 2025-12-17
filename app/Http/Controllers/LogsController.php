@@ -12,6 +12,8 @@ class LogsController extends Controller
      */
     public function index(Request $request)
     {
+        $perPage = $request->input('per_page', 15);
+
         $query = Incident::query()
             ->search($request->search)
             ->status($request->status)
@@ -25,9 +27,17 @@ class LogsController extends Controller
             $query->whereDate('started_at', '<=', $request->date_to);
         }
 
+        // Add advanced filters
+        if ($request->has('rca_required') && $request->rca_required === '1') {
+            $query->where('rca_required', true);
+        }
+        if ($request->has('sla_breached') && $request->sla_breached === '1') {
+            $query->where('exceeded_sla', true);
+        }
+
         $incidents = $query
             ->orderByDesc('started_at')
-            ->paginate(25) // More items per page for logs view
+            ->paginate($perPage)
             ->withQueryString();
 
         return view('logs.index', compact('incidents'));
@@ -56,6 +66,14 @@ class LogsController extends Controller
         }
         if ($request->filled('date_to')) {
             $query->whereDate('started_at', '<=', $request->date_to);
+        }
+
+        // Add advanced filters
+        if ($request->has('rca_required') && $request->rca_required === '1') {
+            $query->where('rca_required', true);
+        }
+        if ($request->has('sla_breached') && $request->sla_breached === '1') {
+            $query->where('exceeded_sla', true);
         }
 
         $query->orderBy('started_at', 'desc');

@@ -3,7 +3,7 @@
 @section('header')
     <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-            <h2 class="text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+            <h2 class="font-heading text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 {{ __('Edit Incident') }} - {{ $incident->incident_code }}
             </h2>
             <p class="mt-2 text-lg text-gray-600 font-medium">Update incident details and status</p>
@@ -30,7 +30,7 @@
 
                         <!-- Summary -->
                         <div>
-                            <label for="summary" class="block text-sm font-medium text-gray-700">Outage Details (Incident Summary) *</label>
+                            <label for="summary" class="block text-sm font-heading font-medium text-gray-700">Outage Details (Incident Summary) *</label>
                             <textarea name="summary" 
                                       id="summary" 
                                       rows="4" 
@@ -48,7 +48,7 @@
 
                         <!-- Outage Category -->
                         <div>
-                            <label for="outage_category" class="block text-sm font-medium text-gray-700">Outage Category *</label>
+                            <label for="outage_category" class="block text-sm font-heading font-medium text-gray-700">Outage Category *</label>
                             <input list="outage_categories" 
                                    name="outage_category" 
                                    id="outage_category" 
@@ -66,7 +66,7 @@
 
                         <!-- Category -->
                         <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700">Category *</label>
+                            <label for="category" class="block text-sm font-heading font-medium text-gray-700">Category *</label>
                             <input list="categories" 
                                    name="category" 
                                    id="category" 
@@ -84,7 +84,7 @@
 
                         <!-- Affected Services -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Affected Systems/Services *</label>
+                            <label class="block text-sm font-heading font-medium text-gray-700 mb-3">Affected Systems/Services *</label>
                             <p class="text-xs text-gray-500 mb-2">Select one or more affected systems/services</p>
                             <div class="mt-2 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
                                 @php
@@ -108,7 +108,7 @@
                                                {{ in_array(trim($option), array_map('trim', $currentValues)) ? 'checked' : '' }}
                                                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 transition-all duration-200">
                                         <label for="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}" 
-                                               class="ml-2 text-sm font-medium text-gray-700 cursor-pointer hover:text-blue-600 transition-colors">
+                                               class="ml-2 text-sm font-heading font-medium text-gray-700 cursor-pointer hover:text-blue-600 transition-colors">
                                             {{ $option }}
                                         </label>
                                     </div>
@@ -127,7 +127,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Status -->
                             <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700">Incident Status *</label>
+                                <label for="status" class="block text-sm font-heading font-medium text-gray-700">Incident Status *</label>
                                 <select name="status" 
                                         id="status"
                                         class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('status') border-red-300 @enderror">
@@ -142,7 +142,7 @@
 
                             <!-- Severity -->
                             <div>
-                                <label for="severity" class="block text-sm font-medium text-gray-700">Severity Level *</label>
+                                <label for="severity" class="block text-sm font-heading font-medium text-gray-700">Severity Level *</label>
                                 <select name="severity" 
                                         id="severity"
                                         class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('severity') border-red-300 @enderror">
@@ -159,7 +159,7 @@
 
                         <!-- Started At -->
                         <div>
-                            <label for="started_at" class="block text-sm font-medium text-gray-700">Start Date and Time *</label>
+                            <label for="started_at" class="block text-sm font-heading font-medium text-gray-700">Start Date and Time *</label>
                             <input type="datetime-local" 
                                    name="started_at" 
                                    id="started_at" 
@@ -172,7 +172,7 @@
 
                         <!-- Resolved At (Only shown when status is Closed) -->
                         <div id="resolved-at-field" style="{{ $incident->status === 'Closed' ? '' : 'display: none;' }}">
-                            <label for="resolved_at" class="block text-sm font-medium text-gray-700">Date and Time Resolved <span class="text-red-500">*</span></label>
+                            <label for="resolved_at" class="block text-sm font-heading font-medium text-gray-700">Date and Time Resolved <span class="text-red-500">*</span></label>
                             <input type="datetime-local" 
                                    name="resolved_at" 
                                    id="resolved_at" 
@@ -185,7 +185,7 @@
 
                         <!-- Manual Duration -->
                         <div>
-                            <label for="duration_minutes" class="block text-sm font-medium text-gray-700">Manual Duration (minutes, optional)</label>
+                            <label for="duration_minutes" class="block text-sm font-heading font-medium text-gray-700">Manual Duration (minutes, optional)</label>
                             <input type="number" 
                                    name="duration_minutes" 
                                    id="duration_minutes" 
@@ -200,7 +200,7 @@
 
                         <!-- Fault Type -->
                         <div>
-                            <label for="fault_type" class="block text-sm font-medium text-gray-700">Fault/Issue Type</label>
+                            <label for="fault_type" class="block text-sm font-heading font-medium text-gray-700">Fault/Issue Type</label>
                             <input list="fault_types" 
                                    name="fault_type" 
                                    id="fault_type" 
@@ -218,7 +218,7 @@
 
                         <!-- Root Cause -->
                         <div>
-                            <label for="root_cause" class="block text-sm font-medium text-gray-700">Root Cause</label>
+                            <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700">Root Cause</label>
                             <textarea name="root_cause" 
                                       id="root_cause" 
                                       rows="4"
@@ -230,7 +230,7 @@
 
                         <!-- Delay Reason -->
                         <div>
-                            <label for="delay_reason" class="block text-sm font-medium text-gray-700">Reason for Delay</label>
+                            <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700">Reason for Delay</label>
                             <textarea name="delay_reason" 
                                       id="delay_reason" 
                                       rows="4"
@@ -242,7 +242,7 @@
 
                         <!-- Resolution Team -->
                         <div>
-                            <label for="resolution_team" class="block text-sm font-medium text-gray-700">Resolution Team</label>
+                            <label for="resolution_team" class="block text-sm font-heading font-medium text-gray-700">Resolution Team</label>
                             <input type="text" 
                                    name="resolution_team" 
                                    id="resolution_team" 
@@ -256,7 +256,7 @@
                         <!-- Journey Times Grid -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="journey_started_at" class="block text-sm font-medium text-gray-700">Journey Start Time</label>
+                                <label for="journey_started_at" class="block text-sm font-heading font-medium text-gray-700">Journey Start Time</label>
                                 <input type="datetime-local" 
                                        name="journey_started_at" 
                                        id="journey_started_at" 
@@ -265,7 +265,7 @@
                             </div>
 
                             <div>
-                                <label for="island_arrival_at" class="block text-sm font-medium text-gray-700">Island Arrival Time</label>
+                                <label for="island_arrival_at" class="block text-sm font-heading font-medium text-gray-700">Island Arrival Time</label>
                                 <input type="datetime-local" 
                                        name="island_arrival_at" 
                                        id="island_arrival_at" 
@@ -274,7 +274,7 @@
                             </div>
 
                             <div>
-                                <label for="work_started_at" class="block text-sm font-medium text-gray-700">Work/Repair Start Time</label>
+                                <label for="work_started_at" class="block text-sm font-heading font-medium text-gray-700">Work/Repair Start Time</label>
                                 <input type="datetime-local" 
                                        name="work_started_at" 
                                        id="work_started_at" 
@@ -283,7 +283,7 @@
                             </div>
 
                             <div>
-                                <label for="work_completed_at" class="block text-sm font-medium text-gray-700">Repair Completion Time</label>
+                                <label for="work_completed_at" class="block text-sm font-heading font-medium text-gray-700">Repair Completion Time</label>
                                 <input type="datetime-local" 
                                        name="work_completed_at" 
                                        id="work_completed_at" 
@@ -294,7 +294,7 @@
 
                         <!-- PIR/RCA No -->
                         <div>
-                            <label for="pir_rca_no" class="block text-sm font-medium text-gray-700">PIR/RCA No</label>
+                            <label for="pir_rca_no" class="block text-sm font-heading font-medium text-gray-700">PIR/RCA No</label>
                             <input type="text" 
                                    name="pir_rca_no" 
                                    id="pir_rca_no" 
@@ -307,7 +307,7 @@
 
                         <!-- RCA File -->
                         <div>
-                            <label for="rca_file" class="block text-sm font-medium text-gray-700">
+                            <label for="rca_file" class="block text-sm font-heading font-medium text-gray-700">
                                 RCA File (PDF, DOC, DOCX)
                                 @if(in_array($incident->severity, ['High', 'Critical']) && !$incident->hasRcaFile())
                                     <span class="text-red-500">*</span>
@@ -340,14 +340,14 @@
 
                         <!-- Structured RCA Fields -->
                         <div class="border-t border-gray-200/50 pt-8" id="rca-fields" style="{{ in_array($incident->severity ?? '', ['High', 'Critical']) ? '' : 'display: none;' }}">
-                            <h4 class="text-lg font-semibold text-gray-900 mb-6">Root Cause Analysis</h4>
+                            <h4 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-6">Root Cause Analysis</h4>
                             
                             <!-- High Severity RCA Fields -->
                             <div id="high-severity-rca" style="{{ ($incident->severity ?? '') === 'High' ? '' : 'display: none;' }}">
                                 <div class="space-y-6">
                                     <!-- Corrective Actions -->
                                     <div>
-                                        <label for="corrective_actions" class="block text-sm font-medium text-gray-700">Corrective Actions *</label>
+                                        <label for="corrective_actions" class="block text-sm font-heading font-medium text-gray-700">Corrective Actions *</label>
                                         <textarea name="corrective_actions" 
                                                   id="corrective_actions" 
                                                   rows="4"
@@ -360,7 +360,7 @@
 
                                     <!-- Workaround -->
                                     <div>
-                                        <label for="workaround" class="block text-sm font-medium text-gray-700">Workaround *</label>
+                                        <label for="workaround" class="block text-sm font-heading font-medium text-gray-700">Workaround *</label>
                                         <textarea name="workaround" 
                                                   id="workaround" 
                                                   rows="4"
@@ -373,7 +373,7 @@
 
                                     <!-- Solution -->
                                     <div>
-                                        <label for="solution" class="block text-sm font-medium text-gray-700">Solution *</label>
+                                        <label for="solution" class="block text-sm font-heading font-medium text-gray-700">Solution *</label>
                                         <textarea name="solution" 
                                                   id="solution" 
                                                   rows="4"
@@ -386,7 +386,7 @@
 
                                     <!-- Recommendation -->
                                     <div>
-                                        <label for="recommendation" class="block text-sm font-medium text-gray-700">Recommendation *</label>
+                                        <label for="recommendation" class="block text-sm font-heading font-medium text-gray-700">Recommendation *</label>
                                         <textarea name="recommendation" 
                                                   id="recommendation" 
                                                   rows="4"
@@ -403,7 +403,7 @@
                         <!-- Incident Logs -->
                         <div class="border-t border-gray-200/50 pt-8">
                             <div class="flex items-center justify-between mb-6">
-                                <h4 class="text-lg font-semibold text-gray-900">Incident Logs</h4>
+                                <h4 class="font-heading text-lg font-heading font-semibold text-gray-900">Incident Logs</h4>
                                 <button type="button" id="add-log-btn" 
                                     class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -420,13 +420,13 @@
                                         <div class="flex items-start gap-4">
                                             <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
                                                 <div class="md:col-span-1">
-                                                    <label class="block text-sm font-medium text-gray-700">Occurred At</label>
+                                                    <label class="block text-sm font-heading font-medium text-gray-700">Occurred At</label>
                                                     <input type="datetime-local" name="logs[{{ $index }}][occurred_at]" 
                                                         value="{{ old('logs.' . $index . '.occurred_at', $log->occurred_at->format('Y-m-d\TH:i')) }}"
                                                         class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
                                                 </div>
                                                 <div class="md:col-span-2">
-                                                    <label class="block text-sm font-medium text-gray-700">Note</label>
+                                                    <label class="block text-sm font-heading font-medium text-gray-700">Note</label>
                                                     <textarea name="logs[{{ $index }}][note]" rows="2" 
                                                         class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
                                                         placeholder="Enter log note...">{{ old('logs.' . $index . '.note', $log->note) }}</textarea>
@@ -447,12 +447,12 @@
                                     <div class="flex items-start gap-4">
                                         <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
                                             <div class="md:col-span-1">
-                                                <label class="block text-sm font-medium text-gray-700">Occurred At</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700">Occurred At</label>
                                                 <input type="datetime-local" name="logs[INDEX][occurred_at]" 
                                                     class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
                                             </div>
                                             <div class="md:col-span-2">
-                                                <label class="block text-sm font-medium text-gray-700">Note</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700">Note</label>
                                                 <textarea name="logs[INDEX][note]" rows="2" 
                                                     class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
                                                     placeholder="Enter log note..."></textarea>
@@ -471,7 +471,7 @@
                         <!-- Action Points (Critical Incidents) -->
                         <div class="border-t border-gray-200/50 pt-8" id="action-points-section" style="{{ ($incident->severity ?? '') === 'Critical' ? '' : 'display: none;' }}">
                             <div class="flex items-center justify-between mb-6">
-                                <h4 class="text-lg font-semibold text-gray-900">Action Points</h4>
+                                <h4 class="font-heading text-lg font-heading font-semibold text-gray-900">Action Points</h4>
                                 <button type="button" id="add-action-point-btn" 
                                     class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -488,13 +488,13 @@
                                         <div class="flex items-start gap-4">
                                             <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
                                                 <div class="md:col-span-2">
-                                                    <label class="block text-sm font-medium text-gray-700">Description</label>
+                                                    <label class="block text-sm font-heading font-medium text-gray-700">Description</label>
                                                     <textarea name="action_points[{{ $index }}][description]" rows="2" 
                                                         class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
                                                         placeholder="Enter action point description...">{{ old('action_points.' . $index . '.description', $actionPoint->description) }}</textarea>
                                                 </div>
                                                 <div class="md:col-span-1 flex flex-col">
-                                                    <label class="block text-sm font-medium text-gray-700">Due Date</label>
+                                                    <label class="block text-sm font-heading font-medium text-gray-700">Due Date</label>
                                                     <input type="date" name="action_points[{{ $index }}][due_date]" 
                                                         value="{{ old('action_points.' . $index . '.due_date', $actionPoint->due_date->format('Y-m-d')) }}"
                                                         class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
@@ -521,13 +521,13 @@
                                     <div class="flex items-start gap-4">
                                         <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
                                             <div class="md:col-span-2">
-                                                <label class="block text-sm font-medium text-gray-700">Description</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700">Description</label>
                                                 <textarea name="action_points[INDEX][description]" rows="2" 
                                                     class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
                                                     placeholder="Enter action point description..."></textarea>
                                             </div>
                                             <div class="md:col-span-1 flex flex-col">
-                                                <label class="block text-sm font-medium text-gray-700">Due Date</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700">Due Date</label>
                                                 <input type="date" name="action_points[INDEX][due_date]" 
                                                     class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
                                                 <div class="flex items-center mt-2">
@@ -554,7 +554,7 @@
                                 Cancel
                             </a>
                             <button type="submit" 
-                                    class="rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-3 font-semibold text-white shadow-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                                    class="rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-3 font-heading font-semibold text-white shadow-lg hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
                                 Update Incident
                             </button>
                         </div>

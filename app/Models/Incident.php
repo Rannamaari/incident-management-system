@@ -442,6 +442,11 @@ class Incident extends Model
         return $this->hasMany(ActionPoint::class)->orderBy('due_date', 'asc');
     }
 
+    public function rca()
+    {
+        return $this->hasOne(Rca::class);
+    }
+
     /**
      * Check if all action points are completed (for Critical incidents)
      */

@@ -13,7 +13,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">Incident Logs</h1>
+                            <h1 class="font-heading text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">Logs</h1>
                             <p class="mt-2 text-lg text-gray-600 font-medium">Complete historical record of all incidents</p>
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                 <div class="flex items-center gap-4">
                     <div class="hidden lg:flex items-center gap-2 text-sm text-gray-600">
                         <span>Total records:</span>
-                        <span class="font-medium text-gray-900">{{ $incidents->total() }}</span>
+                        <span class="font-heading font-medium text-gray-900">{{ $incidents->total() }}</span>
                     </div>
 
                     <div class="flex items-center gap-3">
@@ -41,7 +41,7 @@
                         </a>
                         
                         <a href="{{ route('incidents.create') }}"
-                            class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-red-700 hover:to-red-800 transform">
+                            class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-3 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-red-700 hover:to-red-800 transform">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
@@ -60,7 +60,7 @@
 
             <!-- Filters (details/summary: no JS needed) -->
             <div class="mb-8 overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg">
-                <details class="group" @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to'])) open @endif>
+                <details class="group" @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached'])) open @endif>
                     <summary class="cursor-pointer list-none px-6 py-5 border-b border-gray-200/50 hover:bg-gray-50/50 transition-colors duration-200">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -71,10 +71,10 @@
                                             d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
                                     </svg>
                                 </div>
-                                <h3 class="text-lg font-semibold text-gray-900">Search & Filter Logs</h3>
-                                @if(request('search') || request('status') || request('severity') || request('date_from') || request('date_to'))
+                                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Search & Filter Logs</h3>
+                                @if(request('search') || request('status') || request('severity') || request('date_from') || request('date_to') || request('rca_required') || request('sla_breached'))
                                     <span
-                                        class="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">Active</span>
+                                        class="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-heading font-medium text-blue-800">Active</span>
                                 @endif
                             </div>
                             <div class="text-sm text-gray-600 transition group-open:rotate-180">
@@ -91,7 +91,7 @@
                             <!-- Search Row -->
                             <div class="flex flex-col lg:flex-row lg:items-end gap-6">
                                 <div class="flex-1">
-                                    <label for="search" class="mb-2 block text-sm font-semibold text-gray-700">Search Logs</label>
+                                    <label for="search" class="mb-2 block text-sm font-heading font-semibold text-gray-700">Search Logs</label>
                                     <div class="relative">
                                         <span class="pointer-events-none absolute inset-y-0 left-0 grid w-10 place-items-center text-gray-400">
                                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -106,7 +106,7 @@
                                 </div>
 
                                 <div class="w-full sm:w-56">
-                                    <label for="status" class="mb-2 block text-sm font-semibold text-gray-700">Status</label>
+                                    <label for="status" class="mb-2 block text-sm font-heading font-semibold text-gray-700">Status</label>
                                     <select id="status" name="status"
                                         class="w-full rounded-2xl border border-gray-300/50 py-3.5 px-4 text-sm lg:text-base shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white">
                                         <option value="">All Statuses</option>
@@ -118,7 +118,7 @@
                                 </div>
 
                                 <div class="w-full sm:w-56">
-                                    <label for="severity" class="mb-2 block text-sm font-semibold text-gray-700">Severity</label>
+                                    <label for="severity" class="mb-2 block text-sm font-heading font-semibold text-gray-700">Severity</label>
                                     <select id="severity" name="severity"
                                         class="w-full rounded-2xl border border-gray-300/50 py-3.5 px-4 text-sm lg:text-base shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white">
                                         <option value="">All Severities</option>
@@ -133,31 +133,48 @@
                             <!-- Date Range Row -->
                             <div class="flex flex-col lg:flex-row lg:items-end gap-6">
                                 <div class="w-full sm:w-56">
-                                    <label for="date_from" class="mb-2 block text-sm font-semibold text-gray-700">From Date</label>
+                                    <label for="date_from" class="mb-2 block text-sm font-heading font-semibold text-gray-700">From Date</label>
                                     <input type="date" id="date_from" name="date_from" value="{{ request('date_from') }}"
                                         class="w-full rounded-2xl border border-gray-300/50 py-3.5 px-4 text-sm lg:text-base shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white">
                                 </div>
 
                                 <div class="w-full sm:w-56">
-                                    <label for="date_to" class="mb-2 block text-sm font-semibold text-gray-700">To Date</label>
+                                    <label for="date_to" class="mb-2 block text-sm font-heading font-semibold text-gray-700">To Date</label>
                                     <input type="date" id="date_to" name="date_to" value="{{ request('date_to') }}"
                                         class="w-full rounded-2xl border border-gray-300/50 py-3.5 px-4 text-sm lg:text-base shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white">
                                 </div>
 
                                 <div class="flex-1"></div>
+                            </div>
 
-                                <div class="flex items-center gap-3">
+                            <!-- Advanced Filters Row -->
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2 border-t border-gray-200">
+                                <label class="text-sm font-heading font-semibold text-gray-700">Advanced Filters:</label>
+
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="rca_required" value="1" {{ request('rca_required') ? 'checked' : '' }}
+                                           class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="ml-2 text-sm font-heading font-medium text-gray-700">RCA Required</span>
+                                </label>
+
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="sla_breached" value="1" {{ request('sla_breached') ? 'checked' : '' }}
+                                           class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="ml-2 text-sm font-heading font-medium text-gray-700">SLA Breached</span>
+                                </label>
+
+                                <div class="flex items-center gap-3 ml-auto">
                                     <button type="submit"
-                                        class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3.5 font-semibold text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:-translate-y-0.5">
+                                        class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3.5 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:-translate-y-0.5">
                                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                         </svg>
                                         Filter & Search
                                     </button>
-                                    @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to']))
+                                    @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached']))
                                         <a href="{{ route('logs.index') }}"
-                                            class="rounded-2xl bg-gradient-to-r from-gray-100 to-gray-200 px-5 py-3.5 font-medium text-gray-700 transition-all duration-300 hover:from-gray-200 hover:to-gray-300 transform hover:-translate-y-0.5">Clear All</a>
+                                            class="rounded-2xl bg-gradient-to-r from-gray-100 to-gray-200 px-5 py-3.5 font-heading font-medium text-gray-700 transition-all duration-300 hover:from-gray-200 hover:to-gray-300 transform hover:-translate-y-0.5">Clear All</a>
                                     @endif
                                 </div>
                             </div>
@@ -166,25 +183,67 @@
                 </details>
             </div>
 
+            <!-- Per Page Selector -->
+            <div class="mb-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <label for="per_page" class="text-sm font-heading font-medium text-gray-700">Show:</label>
+                    <form method="GET" id="per-page-form" class="inline-block">
+                        <!-- Preserve existing filters -->
+                        @if(request('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+                        @if(request('status'))
+                            <input type="hidden" name="status" value="{{ request('status') }}">
+                        @endif
+                        @if(request('severity'))
+                            <input type="hidden" name="severity" value="{{ request('severity') }}">
+                        @endif
+                        @if(request('date_from'))
+                            <input type="hidden" name="date_from" value="{{ request('date_from') }}">
+                        @endif
+                        @if(request('date_to'))
+                            <input type="hidden" name="date_to" value="{{ request('date_to') }}">
+                        @endif
+                        @if(request('rca_required'))
+                            <input type="hidden" name="rca_required" value="{{ request('rca_required') }}">
+                        @endif
+                        @if(request('sla_breached'))
+                            <input type="hidden" name="sla_breached" value="{{ request('sla_breached') }}">
+                        @endif
+
+                        <select name="per_page" id="per_page" onchange="this.form.submit()"
+                            class="rounded-xl border border-gray-300 px-3 py-2 text-sm font-medium bg-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200">
+                            <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15 incidents</option>
+                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25 incidents</option>
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 incidents</option>
+                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100 incidents</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="text-sm text-gray-600">
+                    Showing <span class="font-medium">{{ $incidents->firstItem() ?? 0 }}</span>–<span class="font-medium">{{ $incidents->lastItem() ?? 0 }}</span> of <span class="font-medium">{{ $incidents->total() }}</span>
+                </div>
+            </div>
+
             <!-- Table/Card container -->
             <div class="overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg">
                 <!-- Desktop table -->
                 <div class="hidden lg:block">
-                    <div class="max-h-[75vh] overflow-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                        <table class="min-w-full text-sm">
+                    <table class="min-w-full text-sm">
                             <thead class="sticky top-0 z-10 bg-gradient-to-r from-gray-50 to-gray-100/80 backdrop-blur-sm text-xs uppercase tracking-wide text-gray-700 font-semibold">
                                 <tr>
-                                    <th class="px-2 xl:px-4 py-3 text-left">Incident</th>
-                                    <th class="px-2 xl:px-4 py-3 text-left">Summary</th>
-                                    <th class="px-2 xl:px-4 py-3 text-left">Priority</th>
-                                    <th class="px-2 xl:px-4 py-3 text-left">Duration</th>
-                                    <th class="px-2 xl:px-4 py-3 text-left">Status</th>
-                                    <th class="px-2 xl:px-4 py-3 text-left">Actions</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Incident</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Summary</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Priority</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Duration</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Status</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @forelse($incidents as $incident)
-                                    <tr class="transition-all duration-200 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-blue-50/30' }}">
+                                    <tr onclick="window.location='{{ route('incidents.show', $incident) }}'"
+                                        class="cursor-pointer transition-all duration-200 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-blue-50/30' }}">
                                         <td class="px-2 xl:px-4 py-4 whitespace-nowrap">
                                             <div class="flex items-center">
                                                 <div class="grid h-8 xl:h-10 w-8 xl:w-10 place-items-center rounded-lg
@@ -201,14 +260,14 @@
                                                     </svg>
                                                 </div>
                                                 <div class="ml-2 xl:ml-3">
-                                                    <div class="font-medium text-gray-900 text-xs xl:text-sm">{{ $incident->incident_code }}</div>
+                                                    <div class="font-heading font-medium text-gray-900 text-xs xl:text-sm">{{ $incident->incident_code }}</div>
                                                     <div class="text-xs text-gray-500 hidden xl:block">{{ $incident->category }}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="px-2 xl:px-4 py-4">
                                             <div class="max-w-xs xl:max-w-sm">
-                                                <div class="font-medium text-gray-900 break-words leading-relaxed text-xs xl:text-sm">{{ $incident->summary }}</div>
+                                                <div class="font-heading font-medium text-gray-900 break-words leading-relaxed text-xs xl:text-sm">{{ $incident->summary }}</div>
                                                 <div class="text-xs text-gray-500 mt-1 break-words hidden xl:block">{{ $incident->affected_services }}</div>
                                                 <div class="mt-1 xl:mt-2 text-xs text-gray-400">
                                                     {{ $incident->started_at->format('M d, H:i') }}</div>
@@ -216,7 +275,7 @@
                                         </td>
                                         <td class="px-2 xl:px-4 py-4 whitespace-nowrap">
                                             <span
-                                                class="inline-flex items-center rounded-full px-1.5 xl:px-2 py-1 text-xs font-medium
+                                                class="inline-flex items-center rounded-full px-1.5 xl:px-2 py-1 text-xs font-heading font-medium
                                                     {{ $incident->severity === 'Critical' ? 'bg-red-100 text-red-800' :
                                                         ($incident->severity === 'High' ? 'bg-orange-100 text-orange-800' :
                                                             ($incident->severity === 'Medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800')) }}">
@@ -239,7 +298,7 @@
                                         </td>
                                         <td class="px-2 xl:px-4 py-4 whitespace-nowrap">
                                             <div class="flex flex-col gap-1">
-                                                <span class="inline-flex w-fit items-center rounded-full px-1.5 xl:px-2 py-1 text-xs font-medium
+                                                <span class="inline-flex w-fit items-center rounded-full px-1.5 xl:px-2 py-1 text-xs font-heading font-medium
                                                     @if($incident->status === 'Open') bg-red-100 text-red-800
                                                     @elseif($incident->status === 'In Progress') bg-yellow-100 text-yellow-800
                                                     @elseif($incident->status === 'Monitoring') bg-blue-100 text-blue-800
@@ -248,13 +307,13 @@
                                                 </span>
                                                 @if($incident->rca_required)
                                                     <span
-                                                        class="inline-flex w-fit items-center rounded-full px-1.5 xl:px-2 py-1 text-xs font-medium {{ $incident->getRcaColorClass() }} hidden xl:inline-flex">
+                                                        class="inline-flex w-fit items-center rounded-full px-1.5 xl:px-2 py-1 text-xs font-heading font-medium {{ $incident->getRcaColorClass() }} hidden xl:inline-flex">
                                                         {{ $incident->getRcaStatus() }}
                                                     </span>
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap text-sm font-medium" onclick="event.stopPropagation()">
                                             <div class="flex items-center gap-1 xl:gap-2">
                                                 <a href="{{ route('incidents.show', $incident) }}"
                                                     class="inline-flex items-center rounded-lg bg-gradient-to-r from-blue-100 to-blue-200 px-2.5 py-1.5 text-blue-700 transition-all duration-300 hover:from-blue-200 hover:to-blue-300 transform hover:scale-105 text-xs">
@@ -284,7 +343,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                 </svg>
-                                                <p class="text-lg font-medium text-gray-600">No incident logs found</p>
+                                                <p class="text-lg font-heading font-medium text-gray-600">No incident logs found</p>
                                                 <p class="mt-1 text-sm text-gray-400">Try adjusting your search filters</p>
                                             </div>
                                         </td>
@@ -292,7 +351,6 @@
                                 @endforelse
                             </tbody>
                         </table>
-                    </div>
 
                     <!-- Pagination (desktop) -->
                     @if($incidents->hasPages())
@@ -310,7 +368,8 @@
                 <!-- Mobile list -->
                 <div class="lg:hidden divide-y divide-gray-100/50">
                     @forelse($incidents as $incident)
-                        <div class="p-4 sm:p-5 transition-all duration-300 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/30 hover:to-blue-50/20' }}">
+                        <div onclick="window.location='{{ route('incidents.show', $incident) }}'"
+                             class="cursor-pointer p-4 sm:p-5 transition-all duration-300 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/30 hover:to-blue-50/20' }}">
                             <div class="flex items-start gap-3">
                                 <div class="grid h-10 w-10 place-items-center rounded-lg
                                     {{ $incident->severity === 'Critical' ? 'bg-red-100' :
@@ -327,9 +386,9 @@
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <div class="mb-2 flex items-center justify-between">
-                                        <p class="text-sm font-medium text-gray-900">{{ $incident->incident_code }}</p>
+                                        <p class="text-sm font-heading font-medium text-gray-900">{{ $incident->incident_code }}</p>
                                         <span
-                                            class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium
+                                            class="inline-flex items-center rounded-full px-2 py-1 text-xs font-heading font-medium
                                                 {{ $incident->severity === 'Critical' ? 'bg-red-100 text-red-800' :
                                                     ($incident->severity === 'High' ? 'bg-orange-100 text-orange-800' :
                                                         ($incident->severity === 'Medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800')) }}">
@@ -355,7 +414,7 @@
                                     </div>
                                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                         <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium
+                                            <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-heading font-medium
                                                 @if($incident->status === 'Open') bg-red-100 text-red-800
                                                 @elseif($incident->status === 'In Progress') bg-yellow-100 text-yellow-800
                                                 @elseif($incident->status === 'Monitoring') bg-blue-100 text-blue-800
@@ -364,14 +423,14 @@
                                             </span>
                                             @if($incident->rca_required)
                                                 <span
-                                                    class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium {{ $incident->getRcaColorClass() }}">
+                                                    class="inline-flex items-center rounded-full px-2 py-1 text-xs font-heading font-medium {{ $incident->getRcaColorClass() }}">
                                                     {{ $incident->getRcaStatus() }}
                                                 </span>
                                             @endif
                                         </div>
-                                        <div class="flex gap-2 flex-shrink-0">
+                                        <div class="flex gap-2 flex-shrink-0" onclick="event.stopPropagation()">
                                             <a href="{{ route('incidents.show', $incident) }}"
-                                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1.5 text-xs font-medium text-blue-700 transition-all duration-300 hover:from-blue-200 hover:to-blue-300 transform hover:scale-105">
+                                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-blue-100 to-blue-200 px-3 py-1.5 text-xs font-heading font-medium text-blue-700 transition-all duration-300 hover:from-blue-200 hover:to-blue-300 transform hover:scale-105">
                                                 <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -379,7 +438,7 @@
                                                 View
                                             </a>
                                             <a href="{{ route('incidents.edit', $incident) }}"
-                                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-red-100 to-red-200 px-3 py-1.5 text-xs font-medium text-red-700 transition-all duration-300 hover:from-red-200 hover:to-red-300 transform hover:scale-105">
+                                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-red-100 to-red-200 px-3 py-1.5 text-xs font-heading font-medium text-red-700 transition-all duration-300 hover:from-red-200 hover:to-red-300 transform hover:scale-105">
                                                 <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -398,7 +457,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <p class="text-lg font-medium text-gray-600">No incident logs found</p>
+                            <p class="text-lg font-heading font-medium text-gray-600">No incident logs found</p>
                             <p class="mt-1 text-sm text-gray-400">Try adjusting your search filters</p>
                         </div>
                     @endforelse

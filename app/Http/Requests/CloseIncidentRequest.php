@@ -75,35 +75,38 @@ class CloseIncidentRequest extends FormRequest
             $rules['travel_time'] = 'nullable|integer|min:0';
             $rules['work_time'] = 'nullable|integer|min:0';
 
+            // Get the incident to check for RCA Management entry
+            $incident = $this->route('incident');
+            $hasRcaManagementEntry = $incident && $incident->rca;
+
             // Rule 3: High severity incident requirements
             if ($severity === 'High') {
                 $rules['corrective_actions'] = 'required|string';
                 $rules['workaround'] = 'required|string';
                 $rules['solution'] = 'required|string';
                 $rules['recommendation'] = 'required|string';
-                
-                // Check if RCA file exists for High severity incidents
-                $incident = $this->route('incident');
-                if ($incident && !$incident->hasRcaFile() && !$this->hasFile('rca_file')) {
-                    $rules['rca_file'] = 'required|file|mimes:pdf,doc,docx|max:10240';
-                }
-            }
-            
-            // Rule 3.5: Critical severity incident RCA requirement
-            if ($severity === 'Critical') {
-                $incident = $this->route('incident');
-                if ($incident && !$incident->hasRcaFile() && !$this->hasFile('rca_file')) {
+
+                // Check if RCA exists - either from RCA Management or uploaded file
+                if ($incident && !$hasRcaManagementEntry && !$incident->hasRcaFile() && !$this->hasFile('rca_file')) {
                     $rules['rca_file'] = 'required|file|mimes:pdf,doc,docx|max:10240';
                 }
             }
 
-            // Rule 4: Critical severity incident requirements
+            // Rule 3.5: Critical severity incident RCA requirement
             if ($severity === 'Critical') {
+                // Check if RCA exists - either from RCA Management or uploaded file
+                if ($incident && !$hasRcaManagementEntry && !$incident->hasRcaFile() && !$this->hasFile('rca_file')) {
+                    $rules['rca_file'] = 'required|file|mimes:pdf,doc,docx|max:10240';
+                }
+            }
+
+            // Rule 4: Critical severity incident requirements (only if no RCA Management entry)
+            if ($severity === 'Critical' && !$hasRcaManagementEntry) {
                 // At least one log entry required
                 $rules['logs'] = 'required|array|min:1';
                 $rules['logs.*.occurred_at'] = 'required|date';
                 $rules['logs.*.note'] = 'required|string|max:1000';
-                
+
                 // At least one action point required
                 $rules['action_points'] = 'required|array|min:1';
                 $rules['action_points.*.description'] = 'required|string';
@@ -141,7 +144,7 @@ class CloseIncidentRequest extends FormRequest
             'action_points.*.due_date.required' => 'Action point due date is required.',
             
             // RCA file requirements
-            'rca_file.required' => 'RCA file (PDF or Word document) is required for High and Critical severity incidents.',
+            'rca_file.required' => 'RCA is required for High and Critical severity incidents. Please either create an RCA through RCA Management or upload an RCA file (PDF or Word document).',
             'rca_file.file' => 'RCA must be a valid file.',
             'rca_file.mimes' => 'RCA file must be a PDF or Word document (PDF, DOC, or DOCX format).',
             'rca_file.max' => 'RCA file size must not exceed 10MB.',
@@ -159,9 +162,15 @@ class CloseIncidentRequest extends FormRequest
                 // Check if incident exists (for updates)
                 $incident = $this->route('incident');
                 if ($incident) {
-                    // For existing incidents, check if all action points are completed
-                    if (!$incident->hasAllActionPointsCompleted()) {
-                        $validator->errors()->add('action_points', 'All action points must be completed before closing a Critical incident.');
+                    // Check if RCA Management entry exists
+                    $hasRcaManagementEntry = $incident->rca;
+
+                    // Only check action points completion if no RCA Management entry exists
+                    if (!$hasRcaManagementEntry) {
+                        // For existing incidents, check if all action points are completed
+                        if (!$incident->hasAllActionPointsCompleted()) {
+                            $validator->errors()->add('action_points', 'All action points must be completed before closing a Critical incident.');
+                        }
                     }
                 }
             }

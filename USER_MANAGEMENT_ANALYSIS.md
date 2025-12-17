@@ -266,3 +266,4 @@ routes/
 
 **Note**: The system already has the foundation (User model, roles, middleware) - you just need to build the UI and controller logic for managing users!
 
+

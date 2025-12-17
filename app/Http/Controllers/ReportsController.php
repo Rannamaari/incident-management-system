@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Incident;
+use App\Models\Rca;
 use Carbon\Carbon;
 
 class ReportsController extends Controller
@@ -29,26 +30,34 @@ class ReportsController extends Controller
     {
         $startDate = null;
         $endDate = null;
-        
+
         if ($request->has('preset') && $request->preset) {
             // Handle preset date ranges
             $now = Carbon::now();
             switch ($request->preset) {
+                case 'this_week':
+                    $startDate = $now->copy()->startOfWeek();
+                    $endDate = $now->copy()->endOfWeek();
+                    break;
+                case 'last_week':
+                    $startDate = $now->copy()->subWeek()->startOfWeek();
+                    $endDate = $now->copy()->subWeek()->endOfWeek();
+                    break;
+                case 'this_month':
+                    $startDate = $now->copy()->startOfMonth();
+                    $endDate = $now->copy()->endOfMonth();
+                    break;
                 case 'last_month':
                     $startDate = $now->copy()->subMonth()->startOfMonth();
                     $endDate = $now->copy()->subMonth()->endOfMonth();
                     break;
+                case 'this_quarter':
+                    $startDate = $now->copy()->startOfQuarter();
+                    $endDate = $now->copy()->endOfQuarter();
+                    break;
                 case 'last_quarter':
                     $startDate = $now->copy()->subQuarter()->startOfQuarter();
                     $endDate = $now->copy()->subQuarter()->endOfQuarter();
-                    break;
-                case 'last_6_months':
-                    $startDate = $now->copy()->subMonths(6)->startOfMonth();
-                    $endDate = $now->copy()->endOfDay();
-                    break;
-                case 'last_year':
-                    $startDate = $now->copy()->subYear()->startOfYear();
-                    $endDate = $now->copy()->subYear()->endOfYear();
                     break;
                 case 'ytd':
                     $startDate = $now->copy()->startOfYear();
@@ -64,7 +73,7 @@ class ReportsController extends Controller
                 $endDate = Carbon::parse($request->end_date)->endOfDay();
             }
         }
-        
+
         return compact('startDate', 'endDate');
     }
 
@@ -89,6 +98,9 @@ class ReportsController extends Controller
             'slaBreached' => $this->getIncidentQuery($dateFilter)->where('exceeded_sla', true)->count(),
             'avgResolutionTime' => $this->getAvgResolutionTime($dateFilter),
             'rcaRequired' => $this->getIncidentQuery($dateFilter)->where('rca_required', true)->count(),
+            // RCA Statistics
+            'rcaStats' => $this->getRcaData($dateFilter),
+            'rcaStatusData' => $this->getRcaStatusData($dateFilter),
         ];
     }
 
@@ -362,5 +374,88 @@ class ReportsController extends Controller
         }
 
         return round($totalHours / $incidents->count(), 1);
+    }
+
+    /**
+     * Get base RCA query with date filtering
+     */
+    private function getRcaQuery($dateFilter = [])
+    {
+        $query = Rca::query();
+
+        if (!empty($dateFilter['startDate'])) {
+            $query->where('created_at', '>=', $dateFilter['startDate']);
+        }
+
+        if (!empty($dateFilter['endDate'])) {
+            $query->where('created_at', '<=', $dateFilter['endDate']);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get RCA statistics
+     */
+    private function getRcaData($dateFilter = [])
+    {
+        // Total RCAs created
+        $total = $this->getRcaQuery($dateFilter)->count();
+
+        // RCAs by status
+        $draft = $this->getRcaQuery($dateFilter)->where('status', 'Draft')->count();
+        $inReview = $this->getRcaQuery($dateFilter)->where('status', 'In Review')->count();
+        $approved = $this->getRcaQuery($dateFilter)->where('status', 'Approved')->count();
+        $closed = $this->getRcaQuery($dateFilter)->where('status', 'Closed')->count();
+
+        // Incidents requiring RCA (High and Critical severity)
+        $required = $this->getIncidentQuery($dateFilter)
+                         ->whereIn('severity', ['High', 'Critical'])
+                         ->doesntHave('rca')
+                         ->count();
+
+        // RCAs created for High/Critical incidents
+        $created = $this->getIncidentQuery($dateFilter)
+                        ->whereIn('severity', ['High', 'Critical'])
+                        ->has('rca')
+                        ->count();
+
+        // Total High/Critical incidents
+        $totalHighCritical = $this->getIncidentQuery($dateFilter)
+                                  ->whereIn('severity', ['High', 'Critical'])
+                                  ->count();
+
+        // Compliance rate
+        $compliance = $totalHighCritical > 0 ? round(($created / $totalHighCritical) * 100, 1) : 0;
+
+        return [
+            'total' => $total,
+            'draft' => $draft,
+            'inReview' => $inReview,
+            'approved' => $approved,
+            'closed' => $closed,
+            'required' => $required,
+            'created' => $created,
+            'compliance' => $compliance,
+            'pending' => $draft + $inReview,
+        ];
+    }
+
+    /**
+     * Get RCA status distribution data for Chart.js
+     */
+    private function getRcaStatusData($dateFilter = [])
+    {
+        $rcaStats = $this->getRcaData($dateFilter);
+
+        return [
+            'labels' => ['Draft', 'In Review', 'Approved', 'Closed'],
+            'data' => [
+                $rcaStats['draft'],
+                $rcaStats['inReview'],
+                $rcaStats['approved'],
+                $rcaStats['closed']
+            ]
+        ];
     }
 }

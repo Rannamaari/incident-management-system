@@ -8,32 +8,71 @@
             <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg p-6 border border-white/20">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div>
-                        <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        <h1 class="font-heading text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                             📊 Incident Reports & Analytics
                         </h1>
                         <p class="text-gray-600 mt-2">Comprehensive incident management insights and trends</p>
                     </div>
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                        <!-- Date Range Filter -->
-                        <form method="GET" action="{{ route('reports.index') }}" class="flex flex-col sm:flex-row gap-3" id="reportsFilterForm" data-force-get="true">
-                            <div class="flex flex-col sm:flex-row gap-2">
-                                <!-- Date Inputs -->
-                                <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="From Date" 
-                                       class="h-10 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent min-w-[120px]" 
-                                       title="Start Date">
-                                <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="To Date" 
-                                       class="h-10 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent min-w-[120px]" 
-                                       title="End Date">
-                            </div>
-                            
-                            <div class="flex gap-2">
-                                <button type="submit" class="h-10 px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center">
-                                    Apply Filter
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
+                        <!-- Enhanced Date Range Filter -->
+                        <form method="GET" action="{{ route('reports.index') }}" class="flex flex-col gap-3 w-full lg:w-auto" id="reportsFilterForm" data-force-get="true">
+                            <!-- Quick Presets -->
+                            <div class="flex flex-wrap gap-2">
+                                <button type="submit" name="preset" value="this_week"
+                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 {{ request('preset') == 'this_week' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400' }}">
+                                    This Week
                                 </button>
-                                <a href="{{ route('reports.index') }}" class="h-10 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all duration-200 flex items-center">
-                                    Reset
-                                </a>
+                                <button type="submit" name="preset" value="last_week"
+                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 {{ request('preset') == 'last_week' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400' }}">
+                                    Last Week
+                                </button>
+                                <button type="submit" name="preset" value="this_month"
+                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 {{ request('preset') == 'this_month' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400' }}">
+                                    This Month
+                                </button>
+                                <button type="submit" name="preset" value="last_month"
+                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 {{ request('preset') == 'last_month' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400' }}">
+                                    Last Month
+                                </button>
+                                <button type="submit" name="preset" value="this_quarter"
+                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 {{ request('preset') == 'this_quarter' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400' }}">
+                                    This Quarter
+                                </button>
+                                <button type="submit" name="preset" value="last_quarter"
+                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 {{ request('preset') == 'last_quarter' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400' }}">
+                                    Last Quarter
+                                </button>
+                                <button type="submit" name="preset" value="ytd"
+                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 {{ request('preset') == 'ytd' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400' }}">
+                                    YTD
+                                </button>
+                                <button type="button" onclick="toggleCustomRange()"
+                                        class="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 {{ (request('start_date') || request('end_date')) && !request('preset') ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md' : 'bg-white text-gray-700 border border-gray-300 hover:border-purple-400' }}">
+                                    Custom
+                                </button>
                             </div>
+
+                            <!-- Custom Date Range (hidden by default) -->
+                            <div id="customRangeInputs" class="{{ (request('start_date') || request('end_date')) && !request('preset') ? '' : 'hidden' }} flex flex-col sm:flex-row gap-2">
+                                <input type="date" name="start_date" value="{{ request('start_date') }}" placeholder="From Date"
+                                       class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent min-w-[140px]"
+                                       title="Start Date">
+                                <input type="date" name="end_date" value="{{ request('end_date') }}" placeholder="To Date"
+                                       class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent min-w-[140px]"
+                                       title="End Date">
+                                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg text-sm font-medium hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg">
+                                    Apply
+                                </button>
+                            </div>
+
+                            @if(request()->has('preset') || request('start_date') || request('end_date'))
+                            <a href="{{ route('reports.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-all duration-200 inline-flex items-center gap-2 w-fit">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                                Clear Filters
+                            </a>
+                            @endif
                         </form>
                         
                         <!-- Total Incidents Display -->
@@ -41,7 +80,7 @@
                             @if(request('start_date') || request('end_date'))
                                 <div class="absolute -top-2 -right-2 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
                             @endif
-                            <div class="text-2xl font-bold text-gray-900">{{ $chartData['totalIncidents'] }}</div>
+                            <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['totalIncidents'] }}</div>
                             <div class="text-sm text-gray-500">
                                 @if(request('start_date') || request('end_date'))
                                     🔍 Filtered Results
@@ -62,17 +101,18 @@
         </div>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Incidents Section -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">{{ $chartData['openIncidents'] }}</span>
+                            <span class="text-white font-heading font-bold text-lg">{{ $chartData['openIncidents'] }}</span>
                         </div>
                     </div>
                     <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-500">Open Incidents</div>
-                        <div class="text-2xl font-bold text-gray-900">{{ $chartData['openIncidents'] }}</div>
+                        <div class="text-sm font-heading font-medium text-gray-500">Open Incidents</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['openIncidents'] }}</div>
                     </div>
                 </div>
             </div>
@@ -81,40 +121,12 @@
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">{{ $chartData['criticalIncidents'] }}</span>
+                            <span class="text-white font-heading font-bold text-lg">{{ $chartData['criticalIncidents'] }}</span>
                         </div>
                     </div>
                     <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-500">Critical</div>
-                        <div class="text-2xl font-bold text-gray-900">{{ $chartData['criticalIncidents'] }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">{{ $chartData['slaBreached'] }}</span>
-                        </div>
-                    </div>
-                    <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-500">SLA Breached</div>
-                        <div class="text-2xl font-bold text-gray-900">{{ $chartData['slaBreached'] }}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">{{ $chartData['totalIncidents'] - $chartData['slaBreached'] }}</span>
-                        </div>
-                    </div>
-                    <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-500">SLA Achieved</div>
-                        <div class="text-2xl font-bold text-gray-900">{{ $chartData['totalIncidents'] - $chartData['slaBreached'] }}</div>
+                        <div class="text-sm font-heading font-medium text-gray-500">Critical</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['criticalIncidents'] }}</div>
                     </div>
                 </div>
             </div>
@@ -123,12 +135,41 @@
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">{{ $chartData['avgResolutionTime'] }}h</span>
+                            <span class="text-white font-heading font-bold text-sm">{{ $chartData['avgResolutionTime'] }}h</span>
                         </div>
                     </div>
                     <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-500">Avg Resolution</div>
-                        <div class="text-2xl font-bold text-gray-900">{{ $chartData['avgResolutionTime'] }}h</div>
+                        <div class="text-sm font-heading font-medium text-gray-500">Avg Resolution</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['avgResolutionTime'] }}h</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLA Section -->
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-heading font-bold text-lg">{{ $chartData['slaBreached'] }}</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-heading font-medium text-gray-500">SLA Breached</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['slaBreached'] }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-heading font-bold text-lg">{{ $chartData['totalIncidents'] - $chartData['slaBreached'] }}</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-heading font-medium text-gray-500">SLA Achieved</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['totalIncidents'] - $chartData['slaBreached'] }}</div>
                     </div>
                 </div>
             </div>
@@ -137,12 +178,60 @@
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                            <span class="text-white font-bold text-lg">{{ $chartData['rcaRequired'] }}</span>
+                            <span class="text-white font-heading font-bold text-lg">{{ $chartData['rcaRequired'] }}</span>
                         </div>
                     </div>
                     <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-500">RCA Required</div>
-                        <div class="text-2xl font-bold text-gray-900">{{ $chartData['rcaRequired'] }}</div>
+                        <div class="text-sm font-heading font-medium text-gray-500">RCA Required</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['rcaRequired'] }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RCA Section -->
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-heading font-bold text-lg">{{ $chartData['rcaStats']['total'] }}</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-heading font-medium text-gray-500">Total RCAs</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['rcaStats']['total'] }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-heading font-bold text-lg">{{ $chartData['rcaStats']['compliance'] }}%</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-heading font-medium text-gray-500">RCA Compliance</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['rcaStats']['compliance'] }}%</div>
+                        <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
+                                 style="width: {{ $chartData['rcaStats']['compliance'] }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-heading font-bold text-lg">{{ $chartData['rcaStats']['pending'] }}</span>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm font-heading font-medium text-gray-500">Pending RCAs</div>
+                        <div class="text-2xl font-heading font-bold text-gray-900">{{ $chartData['rcaStats']['pending'] }}</div>
+                        <div class="text-xs text-gray-500 mt-1">Draft + In Review</div>
                     </div>
                 </div>
             </div>
@@ -152,7 +241,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Severity Distribution -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Incidents by Severity</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">Incidents by Severity</h3>
                 <div class="relative">
                     <canvas id="severityChart" width="400" height="300"></canvas>
                 </div>
@@ -160,7 +249,7 @@
 
             <!-- Status Distribution -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Incidents by Status</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">Incidents by Status</h3>
                 <div class="relative">
                     <canvas id="statusChart" width="400" height="300"></canvas>
                 </div>
@@ -168,7 +257,7 @@
 
             <!-- Monthly Trends -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Monthly Incident Trends</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">Monthly Incident Trends</h3>
                 <div class="relative">
                     <canvas id="monthlyChart" width="400" height="300"></canvas>
                 </div>
@@ -176,7 +265,7 @@
 
             <!-- Daily Trends -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Daily Incident Trends</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">Daily Incident Trends</h3>
                 <div class="relative">
                     <canvas id="dailyChart" width="400" height="300"></canvas>
                 </div>
@@ -184,7 +273,7 @@
 
             <!-- Category Distribution -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Incidents by Category</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">Incidents by Category</h3>
                 <div class="relative">
                     <canvas id="categoryChart" width="400" height="300"></canvas>
                 </div>
@@ -192,7 +281,7 @@
 
             <!-- Resolution Time Distribution -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Resolution Time Distribution</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">Resolution Time Distribution</h3>
                 <div class="relative">
                     <canvas id="resolutionTimeChart" width="400" height="300"></canvas>
                 </div>
@@ -200,7 +289,7 @@
 
             <!-- Fault Types -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Incidents by Fault Type</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">Incidents by Fault Type</h3>
                 <div class="relative">
                     <canvas id="faultTypeChart" width="400" height="300"></canvas>
                 </div>
@@ -208,7 +297,7 @@
 
             <!-- Outage Types -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Incidents by Outage Type</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">Incidents by Outage Type</h3>
                 <div class="relative">
                     <canvas id="outageTypeChart" width="400" height="300"></canvas>
                 </div>
@@ -216,9 +305,25 @@
 
             <!-- SLA Performance -->
             <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20 lg:col-span-2">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">SLA Performance</h3>
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">SLA Performance</h3>
                 <div class="relative">
                     <canvas id="slaChart" width="800" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- RCA Status Distribution -->
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">RCA Status Distribution</h3>
+                <div class="relative">
+                    <canvas id="rcaStatusChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- RCA Compliance Overview -->
+            <div class="bg-white/90 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
+                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-4">RCA Compliance Overview</h3>
+                <div class="relative">
+                    <canvas id="rcaComplianceChart" width="400" height="300"></canvas>
                 </div>
             </div>
         </div>
@@ -601,5 +706,87 @@
             }
         }
     });
+
+    // RCA Status Distribution Chart
+    const rcaStatusCtx = document.getElementById('rcaStatusChart').getContext('2d');
+    const rcaStatusData = @json($chartData['rcaStatusData']);
+    new Chart(rcaStatusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: rcaStatusData.labels,
+            datasets: [{
+                data: rcaStatusData.data,
+                backgroundColor: [
+                    '#f59e0b', // Draft - amber
+                    '#3b82f6', // In Review - blue
+                    '#10b981', // Approved - green
+                    '#6b7280'  // Closed - gray
+                ],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // RCA Compliance Chart
+    const rcaComplianceCtx = document.getElementById('rcaComplianceChart').getContext('2d');
+    const rcaStats = @json($chartData['rcaStats']);
+    new Chart(rcaComplianceCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Required', 'Created', 'Gap'],
+            datasets: [{
+                label: 'RCAs',
+                data: [
+                    rcaStats.required + rcaStats.created,
+                    rcaStats.created,
+                    rcaStats.required
+                ],
+                backgroundColor: [
+                    'rgba(139, 92, 246, 0.8)',  // Total - purple
+                    'rgba(16, 185, 129, 0.8)',  // Created - green
+                    'rgba(239, 68, 68, 0.8)'    // Gap - red
+                ],
+                borderRadius: 8,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Toggle custom date range visibility
+    function toggleCustomRange() {
+        const customRangeInputs = document.getElementById('customRangeInputs');
+        if (customRangeInputs.classList.contains('hidden')) {
+            customRangeInputs.classList.remove('hidden');
+        } else {
+            customRangeInputs.classList.add('hidden');
+        }
+    }
 </script>
 @endsection

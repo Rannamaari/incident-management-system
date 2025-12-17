@@ -3,7 +3,7 @@
 @section('header')
     <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-            <h2 class="text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+            <h2 class="font-heading text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 Create New User
             </h2>
             <p class="mt-2 text-lg text-gray-600 font-medium">Add a new user to the system</p>
@@ -35,7 +35,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900">User Information</h3>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">User Information</h3>
                             <p class="text-sm text-gray-600">Fill in the fields below to create a new user</p>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
 
                         <!-- Name -->
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="name" class="block text-sm font-heading font-medium text-gray-700 mb-2">
                                 Full Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="name" id="name" value="{{ old('name') }}" required
@@ -60,7 +60,7 @@
 
                         <!-- Email -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="email" class="block text-sm font-heading font-medium text-gray-700 mb-2">
                                 Email Address <span class="text-red-500">*</span>
                             </label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}" required
@@ -73,7 +73,7 @@
 
                         <!-- Role -->
                         <div>
-                            <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="role" class="block text-sm font-heading font-medium text-gray-700 mb-2">
                                 Role <span class="text-red-500">*</span>
                             </label>
                             <select name="role" id="role" required
@@ -95,7 +95,7 @@
 
                         <!-- Password -->
                         <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="password" class="block text-sm font-heading font-medium text-gray-700 mb-2">
                                 Password <span class="text-red-500">*</span>
                             </label>
                             <input type="password" name="password" id="password" required
@@ -109,7 +109,7 @@
 
                         <!-- Password Confirmation -->
                         <div>
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="password_confirmation" class="block text-sm font-heading font-medium text-gray-700 mb-2">
                                 Confirm Password <span class="text-red-500">*</span>
                             </label>
                             <input type="password" name="password_confirmation" id="password_confirmation" required
@@ -124,7 +124,7 @@
                                 Cancel
                             </a>
                             <button type="submit"
-                                class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-blue-700 hover:to-blue-800 transform">
+                                class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-blue-700 hover:to-blue-800 transform">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                 </svg>
@@ -137,4 +137,5 @@
         </div>
     </div>
 @endsection
+
 

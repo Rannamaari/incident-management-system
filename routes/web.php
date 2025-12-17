@@ -6,6 +6,7 @@ use App\Http\Controllers\LogsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RcaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -120,6 +121,14 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     
     // RCA generation
     Route::post('incidents/{incident}/generate-rca', [IncidentRCAController::class, 'generate'])->where('incident', '[0-9]+')->name('incidents.generate-rca');
+
+    // RCA Management (editor and admin only)
+    Route::get('rcas/create', [RcaController::class, 'create'])->name('rcas.create');
+    Route::post('rcas', [RcaController::class, 'store'])->name('rcas.store');
+    Route::get('rcas/{rca}/edit', [RcaController::class, 'edit'])->where('rca', '[0-9]+')->name('rcas.edit');
+    Route::put('rcas/{rca}', [RcaController::class, 'update'])->where('rca', '[0-9]+')->name('rcas.update');
+    Route::patch('rcas/{rca}', [RcaController::class, 'update'])->where('rca', '[0-9]+');
+    Route::delete('rcas/{rca}', [RcaController::class, 'destroy'])->where('rca', '[0-9]+')->name('rcas.destroy');
 });
 
 // Public routes that require only authentication (viewer and above)
@@ -138,7 +147,11 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
     
     // Reports page routes (viewer and above)
     Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
-    
+
+    // RCA view routes (viewer and above)
+    Route::get('rcas', [RcaController::class, 'index'])->name('rcas.index');
+    Route::get('rcas/{rca}', [RcaController::class, 'show'])->where('rca', '[0-9]+')->name('rcas.show');
+
     // Download RCA (viewer and above)
     Route::get('incidents/{incident}/download-rca', [IncidentRCAController::class, 'download'])->where('incident', '[0-9]+')->name('incidents.download-rca');
 
