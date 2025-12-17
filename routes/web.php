@@ -98,6 +98,9 @@ Route::get('/test-permissions', function () {
 })->middleware('auth');
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('incidents.index');
+    }
     return redirect()->route('login');
 });
 
