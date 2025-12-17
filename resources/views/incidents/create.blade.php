@@ -289,10 +289,11 @@
                                     <label for="started_at" class="block text-sm font-heading font-medium text-gray-700 mb-2">Start
                                         Date and Time <span class="text-red-500">*</span></label>
                                     <input type="datetime-local" name="started_at" id="started_at"
-                                        value="{{ old('started_at', now()->format('Y-m-d\TH:i')) }}"
+                                        value="{{ old('started_at') }}"
                                         class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('started_at') border-red-300 @enderror">
                                     @error('started_at') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
+                                    <p class="mt-1 text-xs text-gray-500">Enter the actual time when the incident started</p>
                                 </div>
 
                                 <!-- Resolved At (Only shown when status is Closed) -->
