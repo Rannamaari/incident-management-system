@@ -6,7 +6,8 @@
       "Bash(git remote set-url:*)",
       "Bash(git add:*)",
       "Bash(curl:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd functional Profile Settings page\n\nFeatures:\n- Created comprehensive profile page showing user information\n- Displays user avatar with first letter of name\n- Shows all account details: name, email, role\n- Visual permission indicators (green checkmarks or gray X)\n- Shows permissions: View, Edit, Delete incidents, Manage Users\n- Displays member since and last updated dates\n- Role badge with color coding (Admin: red, Editor: blue, Viewer: green)\n- Informational note about contacting admin for changes\n\nUI/UX:\n- Two-column layout: Profile card (left) and detailed info (right)\n- Responsive design: stacks vertically on mobile\n- Consistent styling with rest of application\n- Indigo color theme to match profile icon\n- Success message when profile is updated\n\nNavigation:\n- Updated all 3 \"Profile Settings\" links in navigation\n- Desktop dropdown menu\n- Mobile navigation menu  \n- Mobile bottom \"More\" menu\n\nTechnical:\n- Uses existing ProfileController@edit method\n- Leverages existing user model methods (getRoleDisplayName, canEditIncidents, etc.)\n- Read-only view (admin manages profiles)\n- Follows application design patterns\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": []
   }

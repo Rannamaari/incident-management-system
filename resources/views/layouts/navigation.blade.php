@@ -147,7 +147,7 @@
 
                                 <!-- Menu Items -->
                                 <div class="py-2">
-                                    <a href="#"
+                                    <a href="{{ route('profile.edit') }}"
                                         class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 hover:text-red-600 transition-all duration-300 rounded-lg mx-2">
                                         <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -287,7 +287,7 @@
                     </a>
                 @endif
 
-                <a href="#"
+                <a href="{{ route('profile.edit') }}"
                     class="flex items-center px-4 py-3 rounded-xl text-base font-heading font-medium text-gray-700 hover:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 transition-all duration-300 transform hover:scale-105">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -432,7 +432,7 @@
 
                 <!-- Menu Items -->
                 <div class="px-4 py-4 space-y-2">
-                    <a href="#" @click="showMoreMenu = false"
+                    <a href="{{ route('profile.edit') }}" @click="showMoreMenu = false"
                        class="flex items-center px-4 py-3 rounded-xl text-base font-heading font-medium text-gray-700 hover:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 transition-all duration-200">
                         <svg class="w-6 h-6 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
