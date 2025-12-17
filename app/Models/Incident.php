@@ -177,8 +177,14 @@ class Incident extends Model
         return Attribute::make(
             get: function () {
                 $totalMinutes = null;
-                
-                // Try to use stored duration_minutes first
+
+                // For ongoing incidents (Open, In Progress, or Monitoring status), always calculate from started_at to now
+                if ($this->started_at && in_array($this->status, ['Open', 'In Progress', 'Monitoring'])) {
+                    $totalMinutes = $this->started_at->diffInMinutes(now());
+                    return $this->formatDuration($totalMinutes) . ' (ongoing)';
+                }
+
+                // For closed incidents, use stored duration_minutes first
                 if ($this->duration_minutes !== null) {
                     $totalMinutes = $this->duration_minutes;
                 }
@@ -186,16 +192,11 @@ class Incident extends Model
                 elseif ($this->started_at && $this->resolved_at) {
                     $totalMinutes = $this->started_at->diffInMinutes($this->resolved_at);
                 }
-                // If only started_at is available and incident is not resolved, show ongoing duration
-                elseif ($this->started_at && !$this->resolved_at && $this->status !== 'Closed') {
-                    $totalMinutes = $this->started_at->diffInMinutes(now());
-                    return $this->formatDuration($totalMinutes) . ' (ongoing)';
-                }
-                
+
                 if ($totalMinutes === null) {
                     return null;
                 }
-                
+
                 return $this->formatDuration($totalMinutes);
             }
         );
