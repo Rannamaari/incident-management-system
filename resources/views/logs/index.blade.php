@@ -331,6 +331,19 @@
                                                     </svg>
                                                     <span class="hidden xl:inline">Edit</span>
                                                 </a>
+                                                @if(auth()->user()->canDeleteIncidents())
+                                                    <form action="{{ route('incidents.destroy', $incident) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete incident {{ $incident->incident_code }}? This action cannot be undone.');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="inline-flex items-center rounded-lg bg-gradient-to-r from-gray-100 to-gray-200 px-2.5 py-1.5 text-gray-700 transition-all duration-300 hover:from-red-200 hover:to-red-300 hover:text-red-800 transform hover:scale-105 text-xs">
+                                                            <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                            <span class="hidden xl:inline">Delete</span>
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
