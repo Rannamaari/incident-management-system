@@ -497,32 +497,6 @@
                             </div>
                         </div>
 
-                        <!-- Group 6: Attachments -->
-                        <div>
-                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Attachments</h4>
-                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <!-- PIR / RCA No -->
-                                <div>
-                                    <label for="pir_rca_no" class="block text-sm font-heading font-medium text-gray-700 mb-2">PIR/RCA No</label>
-                                    <input type="text" name="pir_rca_no" id="pir_rca_no"
-                                        value="{{ old('pir_rca_no') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 @error('pir_rca_no') border-red-300 @enderror">
-                                    @error('pir_rca_no') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <!-- RCA File -->
-                                <div>
-                                    <label for="rca_file" class="block text-sm font-heading font-medium text-gray-700 mb-2">RCA File (PDF, DOC, DOCX)</label>
-                                    <input type="file" name="rca_file" id="rca_file" accept=".pdf,.doc,.docx"
-                                        class="w-full cursor-pointer rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:bg-blue-100 transition-all duration-300">
-                                    <p class="mt-2 text-sm text-gray-500">Max size: 10MB</p>
-                                    @error('rca_file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Action Points (Critical Incidents) -->
                         <div class="border-t border-gray-200 pt-8" id="action-points-section" style="display: none;">
                             <div class="flex items-center justify-between mb-6">

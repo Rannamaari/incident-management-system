@@ -8,6 +8,8 @@ use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RcaController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\TemporarySiteController;
+use App\Http\Controllers\SiteController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -157,6 +159,14 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
     Route::get('contacts', [ContactController::class, 'index'])->name('contacts.index');
     Route::get('contacts/{contact}', [ContactController::class, 'show'])->where('contact', '[0-9]+')->name('contacts.show');
 
+    // Temporary Sites routes
+    Route::get('temporary-sites', [TemporarySiteController::class, 'index'])->name('temporary-sites.index');
+    Route::get('temporary-sites/{temporarySite}', [TemporarySiteController::class, 'show'])->where('temporarySite', '[0-9]+')->name('temporary-sites.show');
+
+    // Sites routes
+    Route::get('sites', [SiteController::class, 'index'])->name('sites.index');
+    Route::get('sites/{site}', [SiteController::class, 'show'])->where('site', '[0-9]+')->name('sites.show');
+
     // RCA view routes (viewer and above)
     Route::get('rcas', [RcaController::class, 'index'])->name('rcas.index');
     Route::get('rcas/{rca}', [RcaController::class, 'show'])->where('rca', '[0-9]+')->name('rcas.show');
@@ -194,6 +204,28 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/{contact}', [ContactController::class, 'update'])->name('update');
         Route::delete('/{contact}', [ContactController::class, 'destroy'])->name('destroy');
         Route::post('/bulk-delete', [ContactController::class, 'destroyBulk'])->name('bulk-delete');
+    });
+
+    // Temporary Sites management routes (admin only)
+    Route::prefix('temporary-sites')->name('temporary-sites.')->group(function () {
+        Route::get('/create', [TemporarySiteController::class, 'create'])->name('create');
+        Route::post('/', [TemporarySiteController::class, 'store'])->name('store');
+        Route::get('/{temporarySite}/edit', [TemporarySiteController::class, 'edit'])->name('edit');
+        Route::put('/{temporarySite}', [TemporarySiteController::class, 'update'])->name('update');
+        Route::delete('/{temporarySite}', [TemporarySiteController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-delete', [TemporarySiteController::class, 'destroyBulk'])->name('bulk-delete');
+        Route::get('/import', [TemporarySiteController::class, 'importForm'])->name('import');
+        Route::post('/import', [TemporarySiteController::class, 'import'])->name('import.process');
+    });
+
+    // Sites management routes (admin only)
+    Route::prefix('sites')->name('sites.')->group(function () {
+        Route::get('/create', [SiteController::class, 'create'])->name('create');
+        Route::post('/', [SiteController::class, 'store'])->name('store');
+        Route::get('/{site}/edit', [SiteController::class, 'edit'])->name('edit');
+        Route::put('/{site}', [SiteController::class, 'update'])->name('update');
+        Route::delete('/{site}', [SiteController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-delete', [SiteController::class, 'destroyBulk'])->name('bulk-delete');
     });
 });
 

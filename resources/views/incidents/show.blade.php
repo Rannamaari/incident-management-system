@@ -134,16 +134,6 @@
                             </a>
                             <p class="text-xs text-gray-500 mt-1">{{ $incident->rca->rca_number }}</p>
                         </div>
-                        @elseif($incident->rca_file_path && $incident->hasRcaFile())
-                        <div>
-                            <a href="{{ route('incidents.download-rca', $incident) }}"
-                               class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Download RCA File
-                            </a>
-                        </div>
                         @endif
                     </div>
                 </div>
@@ -273,13 +263,6 @@
                         <div class="sm:col-span-2">
                             <dt class="text-sm font-heading font-medium text-gray-500">Reason for Delay</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $incident->delay_reason }}</dd>
-                        </div>
-                        @endif
-
-                        @if($incident->pir_rca_no)
-                        <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">PIR/RCA No</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->pir_rca_no }}</dd>
                         </div>
                         @endif
                     </dl>

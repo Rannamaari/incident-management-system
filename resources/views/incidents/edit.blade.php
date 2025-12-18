@@ -292,52 +292,6 @@
                             </div>
                         </div>
 
-                        <!-- PIR/RCA No -->
-                        <div>
-                            <label for="pir_rca_no" class="block text-sm font-heading font-medium text-gray-700">PIR/RCA No</label>
-                            <input type="text" 
-                                   name="pir_rca_no" 
-                                   id="pir_rca_no" 
-                                   value="{{ old('pir_rca_no', $incident->pir_rca_no) }}"
-                                   class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('pir_rca_no') border-red-300 @enderror">
-                            @error('pir_rca_no')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- RCA File -->
-                        <div>
-                            <label for="rca_file" class="block text-sm font-heading font-medium text-gray-700">
-                                RCA File (PDF, DOC, DOCX)
-                                @if(in_array($incident->severity, ['High', 'Critical']) && !$incident->hasRcaFile())
-                                    <span class="text-red-500">*</span>
-                                @endif
-                            </label>
-                            @if($incident->hasRcaFile())
-                                <div class="mt-2 mb-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                                    <p class="text-sm text-green-700">
-                                        <svg class="inline h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                        </svg>
-                                        Current RCA file: <a href="{{ route('incidents.download-rca', $incident) }}" class="text-blue-600 hover:underline font-medium">{{ basename($incident->rca_file_path) }}</a>
-                                    </p>
-                                    <p class="text-xs text-gray-500 mt-1">Upload a new file to replace the existing one.</p>
-                                </div>
-                            @endif
-                            <input type="file" 
-                                   name="rca_file" 
-                                   id="rca_file" 
-                                   accept=".pdf,.doc,.docx"
-                                   class="mt-2 block w-full cursor-pointer rounded-2xl border border-dashed border-gray-300/50 bg-gray-50/80 backdrop-blur-sm p-4 text-sm file:mr-4 file:rounded-xl file:border-0 file:bg-gradient-to-r file:from-blue-50 file:to-blue-100 file:px-4 file:py-2 file:font-semibold file:text-blue-700 hover:file:from-blue-100 hover:file:to-blue-200 transition-all duration-300 @error('rca_file') border-red-300 @enderror">
-                            <p class="mt-1 text-sm text-gray-500">Max size: 10MB. Accepted formats: PDF, DOC, DOCX</p>
-                            @if(in_array($incident->severity, ['High', 'Critical']) && !$incident->hasRcaFile())
-                                <p class="mt-1 text-sm text-red-600 font-medium">⚠️ RCA file is required for {{ $incident->severity }} severity incidents.</p>
-                            @endif
-                            @error('rca_file')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
                         <!-- Structured RCA Fields -->
                         <div class="border-t border-gray-200/50 pt-8" id="rca-fields" style="{{ in_array($incident->severity ?? '', ['High', 'Critical']) ? '' : 'display: none;' }}">
                             <h4 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-6">Root Cause Analysis</h4>

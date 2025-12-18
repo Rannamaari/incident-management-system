@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\OutageCategory;
 use App\Models\FaultType;
 use App\Models\ResolutionTeam;
+use App\Models\Rca;
 use App\Http\Requests\CloseIncidentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -171,6 +172,26 @@ class IncidentController extends Controller
         $this->fillIncidentData($incident, $validated, $request);
         $incident->updated_by = auth()->id();
         $incident->save();
+
+        // Auto-create RCA for Critical or High severity incidents when closed
+        if ($validated['status'] === 'Closed' && in_array($incident->severity, ['Critical', 'High'])) {
+            // Check if RCA doesn't already exist for this incident
+            if (!$incident->rca) {
+                // Generate RCA number
+                $latestRca = Rca::latest('id')->first();
+                $rcaNumber = 'RCA-' . date('Y') . '-' . str_pad(($latestRca ? $latestRca->id + 1 : 1), 4, '0', STR_PAD_LEFT);
+
+                // Create RCA
+                Rca::create([
+                    'incident_id' => $incident->id,
+                    'title' => 'RCA for ' . $incident->title,
+                    'rca_number' => $rcaNumber,
+                    'problem_description' => $incident->description ?? '',
+                    'status' => 'Draft',
+                    'created_by' => auth()->id(),
+                ]);
+            }
+        }
 
         // Handle RCA file upload
         $this->handleRcaFileUpload($incident, $request);

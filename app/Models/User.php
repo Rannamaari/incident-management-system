@@ -123,6 +123,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user can manage temporary sites.
+     */
+    public function canManageTemporarySites(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    /**
+     * Check if user can manage sites.
+     */
+    public function canManageSites(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    /**
      * Get role display name.
      */
     public function getRoleDisplayName(): string
