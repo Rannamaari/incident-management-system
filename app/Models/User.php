@@ -115,6 +115,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user can manage contacts.
+     */
+    public function canManageContacts(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    /**
      * Get role display name.
      */
     public function getRoleDisplayName(): string

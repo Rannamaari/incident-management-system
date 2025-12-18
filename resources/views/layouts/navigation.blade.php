@@ -65,6 +65,15 @@
                             <span class="lg:hidden">{{ __('RCA') }}</span>
                         </a>
 
+                        <a href="{{ route('contacts.index') }}"
+                            class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('contacts.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-sm border border-blue-200/50' : 'text-gray-600 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <span class="hidden lg:inline">{{ __('Phone Book') }}</span>
+                            <span class="lg:hidden">{{ __('Contacts') }}</span>
+                        </a>
+
                         @if(Auth::user()->canManageUsers())
                             <a href="{{ route('users.index') }}"
                                 class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm border border-indigo-200/50' : 'text-gray-600 hover:text-indigo-600 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-100' }}">

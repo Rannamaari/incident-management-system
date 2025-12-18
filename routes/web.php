@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RcaController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -148,9 +149,13 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
     
     // Logs page routes (viewer and above)
     Route::get('logs', [LogsController::class, 'index'])->name('logs.index');
-    
+
     // Reports page routes (viewer and above)
     Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
+
+    // Phone Book / Contacts routes (viewer and above)
+    Route::get('contacts', [ContactController::class, 'index'])->name('contacts.index');
+    Route::get('contacts/{contact}', [ContactController::class, 'show'])->where('contact', '[0-9]+')->name('contacts.show');
 
     // RCA view routes (viewer and above)
     Route::get('rcas', [RcaController::class, 'index'])->name('rcas.index');
@@ -179,6 +184,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
+
+    // Contact management routes (admin only)
+    Route::prefix('contacts')->name('contacts.')->group(function () {
+        Route::get('/create', [ContactController::class, 'create'])->name('create');
+        Route::post('/', [ContactController::class, 'store'])->name('store');
+        Route::get('/{contact}/edit', [ContactController::class, 'edit'])->name('edit');
+        Route::put('/{contact}', [ContactController::class, 'update'])->name('update');
+        Route::delete('/{contact}', [ContactController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-delete', [ContactController::class, 'destroyBulk'])->name('bulk-delete');
     });
 });
 

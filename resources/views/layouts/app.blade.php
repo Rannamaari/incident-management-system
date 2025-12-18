@@ -135,7 +135,7 @@
             <footer class="bg-white/80 backdrop-blur-sm border-t border-gray-200/50 mt-auto">
                 <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                     <div class="text-center text-sm text-gray-500">
-                        System developed and designed by Ibrahim Husham
+                        System developed and designed by Incident Management Team
                     </div>
                 </div>
             </footer>
