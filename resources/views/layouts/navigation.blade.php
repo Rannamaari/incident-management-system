@@ -366,15 +366,15 @@
                 <span class="text-xs font-heading font-medium">RCA</span>
             </a>
 
-            <!-- More -->
-            <button @click="showMoreMenu = true"
-                    class="flex flex-col items-center justify-center space-y-1 text-gray-600 transition-all duration-200 hover:bg-gray-50">
+            <!-- Phone Book -->
+            <a href="{{ route('contacts.index') }}"
+               class="flex flex-col items-center justify-center space-y-1 {{ request()->routeIs('contacts.*') ? 'text-blue-600 bg-blue-50/50' : 'text-gray-600' }} transition-all duration-200 hover:bg-gray-50">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4 6h16M4 12h16M4 18h16" />
+                          d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                <span class="text-xs font-heading font-medium">More</span>
-            </button>
+                <span class="text-xs font-heading font-medium">Phone Book</span>
+            </a>
         </div>
 
         <!-- More Menu Overlay -->
