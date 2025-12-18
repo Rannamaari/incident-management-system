@@ -34,8 +34,12 @@ class Contact extends Model
                   ->orWhereRaw('LOWER(phone) LIKE ?', ["%{$searchLower}%"])
                   ->orWhereRaw('LOWER(email) LIKE ?', ["%{$searchLower}%"])
                   ->orWhereRaw('LOWER(company) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('LOWER(role) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('LOWER(region) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('LOWER(atoll) LIKE ?', ["%{$searchLower}%"])
                   ->orWhereRaw('LOWER(island) LIKE ?', ["%{$searchLower}%"])
-                  ->orWhereRaw('LOWER(atoll) LIKE ?', ["%{$searchLower}%"]);
+                  ->orWhereRaw('LOWER(site) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('LOWER(notes) LIKE ?', ["%{$searchLower}%"]);
             });
         }
 
