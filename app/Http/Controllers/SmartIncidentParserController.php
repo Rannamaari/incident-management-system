@@ -264,7 +264,7 @@ class SmartIncidentParserController extends Controller
         // Determine outage type and affected services
         if ($isFBB && $cellCount <= 1) {
             // Single FBB outage
-            if (preg_match('/([A-Z]{2,4}_[A-Za-z]+)\s+FBB/i', $message, $matches)) {
+            if (preg_match('/([A-Z]{1,4}_[A-Za-z]+)\s+FBB/i', $message, $matches)) {
                 $data['summary'] = $matches[1] . ' FBB';
                 $data['affected_services'] = ['Single FBB'];
                 $data['category'] = 'FBB'; // Service affected is FBB
@@ -272,7 +272,7 @@ class SmartIncidentParserController extends Controller
         } elseif ($isSingleSite && $cellCount <= 1) {
             // Single Site outage (like 5G site)
             // Extract site name
-            if (preg_match('/([A-Z]{2,4}_[A-Za-z]+)\s+(5G|site)/i', $message, $matches)) {
+            if (preg_match('/([A-Z]{1,4}_[A-Za-z]+)\s+(5G|site|3G\/4G|4G|LTE)/i', $message, $matches)) {
                 $data['summary'] = $matches[1] . ' ' . $matches[2];
             } else {
                 $data['summary'] = trim(explode("\n", $message)[0]);
