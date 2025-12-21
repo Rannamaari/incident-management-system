@@ -250,8 +250,8 @@ Extract these fields (return null for any field that cannot be determined):
 {
   "summary": "Service/site name with technology (e.g., 'L_Hithadhoo FBB', 'Dh_Kandima_Resort 3G/4G')",
   "status": "Open or Closed (down/offline/not working = Open, on service/restored/back online = Closed)",
-  "started_at": "When the outage started in YYYY-MM-DD HH:MM format",
-  "resolved_at": "When service was restored in YYYY-MM-DD HH:MM format (null if still down)",
+  "started_at": "When the OUTAGE STARTED (service went DOWN) in YYYY-MM-DD HH:MM format",
+  "resolved_at": "When service was RESTORED (came back UP) in YYYY-MM-DD HH:MM format (null if still down)",
   "duration_minutes": "Total outage duration in minutes (calculate if not explicitly stated)",
   "root_cause": "What caused the outage",
   "delay_reason": "Why restoration took long (if mentioned via 'Note:' or context AND duration > 5 hours)",
@@ -259,6 +259,14 @@ Extract these fields (return null for any field that cannot be determined):
   "outage_category": "One of: Power, RAN, Transmission, International, Enterprise, FBB",
   "category": "Same as outage_category usually",
   "severity": "Low, Medium, or High (default to Low if not specified)"
+}
+
+EXAMPLE PARSING FOR CLARITY:
+Input: "GA_Kondey FBB is on service since 1220hrs 21/12/2025, Duration: 30mins"
+Output: {
+  "started_at": "2025-12-21 11:50",  ← Restoration time MINUS duration (1220 - 30 = 1150)
+  "resolved_at": "2025-12-21 12:20", ← "on service since" = restoration/resolved time
+  "duration_minutes": 30
 }
 
 CRITICAL INTELLIGENCE RULES:
@@ -280,10 +288,21 @@ CRITICAL INTELLIGENCE RULES:
    - Keywords for Open: down, offline, not working, outage, issue, problem
    - Keywords for Closed: restored, back online, on service, fixed, resolved, working again
 
-4. **Duration Calculation**:
+   CRITICAL: "on service since 1220hrs" means RESTORED at 1220, NOT started!
+   - If you see "on service since [TIME]" → that's the resolved_at time
+   - Then SUBTRACT duration to get started_at
+   - Example: "on service since 1220hrs, Duration: 30mins" → resolved: 12:20, started: 11:50
+
+4. **Duration Calculation & Time Logic**:
    - If start and end times given but no duration → Calculate it
    - If duration given (e.g., "took 3 hours") → Convert to minutes
    - "all day" ≈ 8-12 hours, "overnight" ≈ 8-10 hours
+
+   CRITICAL CALCULATION LOGIC:
+   - "on service since [TIME], Duration: [X]" → resolved_at = TIME, started_at = TIME - X
+   - "down since [TIME], Duration: [X]" → started_at = TIME, resolved_at = TIME + X
+   - "went down at [TIME1], restored at [TIME2]" → started_at = TIME1, resolved_at = TIME2
+   - Always calculate: duration = resolved_at - started_at
 
 5. **Cause Classification**:
    - Power keywords: power failure, power outage, DCDU, breaker, battery, generator
