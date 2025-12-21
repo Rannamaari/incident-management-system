@@ -88,7 +88,7 @@ Route::get('/test-permissions', function () {
     if (!auth()->check()) {
         return response()->json(['error' => 'Not authenticated']);
     }
-    
+
     $user = auth()->user();
     return response()->json([
         'user_role' => $user->role,
@@ -100,6 +100,20 @@ Route::get('/test-permissions', function () {
         'has_create_route' => Route::has('incidents.create'),
     ]);
 })->middleware('auth');
+
+// Test route for AI API connection
+Route::get('/test-ai', function () {
+    try {
+        $service = new \App\Services\AIIncidentParserService();
+        $result = $service->testConnection();
+        return response()->json($result);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
 
 Route::get('/', function () {
     if (auth()->check()) {

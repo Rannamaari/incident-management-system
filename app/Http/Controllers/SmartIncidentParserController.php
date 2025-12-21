@@ -312,6 +312,30 @@ class SmartIncidentParserController extends Controller
         // Otherwise keep the infrastructure-based outage category (RAN, International, Enterprise, etc.)
         // that was already set above based on the type of outage
 
+        // ========== AI-POWERED ENHANCEMENT ==========
+        // Use AI to extract summary if regex failed or produced low-quality results
+        $summaryNeedsAI = empty($data['summary']) ||
+                          strlen($data['summary']) > 200 || // Too long - probably extracted full sentence
+                          preg_match('/\b(is on service|is down|since|duration|cause)\b/i', $data['summary']); // Contains unwanted keywords
+
+        if ($summaryNeedsAI) {
+            try {
+                $aiService = new \App\Services\AIIncidentParserService();
+                $aiSummary = $aiService->extractSummary($message);
+
+                if (!empty($aiSummary)) {
+                    $data['summary'] = $aiSummary;
+                    $data['ai_extracted_summary'] = true; // Flag for debugging
+                }
+            } catch (\Exception $e) {
+                // If AI fails, keep the regex-extracted summary (or empty)
+                \Log::warning('AI Summary Extraction Failed', [
+                    'error' => $e->getMessage(),
+                    'message_preview' => substr($message, 0, 100),
+                ]);
+            }
+        }
+
         return $data;
     }
 }
