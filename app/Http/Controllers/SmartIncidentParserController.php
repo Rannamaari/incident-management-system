@@ -149,16 +149,16 @@ class SmartIncidentParserController extends Controller
         }
 
         // Extract restoration date and time for CLOSED incidents
-        // Pattern: "on service since 1220hrs 21/12/2025" or "on service since 1042hrs 21/12/2025"
-        if (preg_match('/on service since (\d{4})hrs (\d{2}\/\d{2}\/\d{4})/i', $message, $matches)) {
-            $timeStr = $matches[1]; // e.g., "1220"
-            $dateStr = $matches[2]; // e.g., "21/12/2025"
+        // Pattern: "on service since 1220hrs 21/12/2025" or "on service since 1903hrs. (12/6/2025)"
+        if (preg_match('/on service since (\d{4})hrs\.?\s*\(?\s*(\d{1,2}\/\d{1,2}\/\d{4})\)?/i', $message, $matches)) {
+            $timeStr = $matches[1]; // e.g., "1220" or "1903"
+            $dateStr = $matches[2]; // e.g., "21/12/2025" or "12/6/2025"
 
             $hours = substr($timeStr, 0, 2);
             $minutes = substr($timeStr, 2, 2);
 
             try {
-                $restorationDate = Carbon::createFromFormat('d/m/Y H:i', "$dateStr $hours:$minutes");
+                $restorationDate = Carbon::createFromFormat('j/n/Y H:i', "$dateStr $hours:$minutes");
                 $data['restoration_datetime'] = $restorationDate->format('Y-m-d H:i:s');
             } catch (\Exception $e) {
                 // If parsing fails, leave empty
@@ -219,10 +219,23 @@ class SmartIncidentParserController extends Controller
 
         // Extract root cause
         // Pattern: "Cause: Local power failure." or "Cause: Under investigation. Cells came on service after Resort IT gave power reset to RRU."
-        if (preg_match('/Cause:\s*(.+?)(?=\n\n|$)/is', $message, $matches)) {
+        if (preg_match('/Cause:\s*(.+?)(?=\nNote:|$)/is', $message, $matches)) {
             $data['root_cause'] = trim($matches[1]);
             // Remove any trailing slashes or extra whitespace
             $data['root_cause'] = rtrim($data['root_cause'], "\\ \t\n\r\0\x0B");
+        }
+
+        // Extract Note field (often contains delay reason for long outages)
+        // Pattern: "Note: Restoration was delayed due to bad weather..."
+        if (preg_match('/Note:\s*(.+?)(?=\n\n|$)/is', $message, $matches)) {
+            $data['note'] = trim($matches[1]);
+
+            // If duration > 5 hours and there's a Note, automatically use it as delay_reason
+            if (isset($data['duration_minutes']) && $data['duration_minutes'] > 300 && !empty($data['note'])) {
+                $data['delay_reason'] = $data['note'];
+                // Keep delay_reason_required flag for UI consistency
+                $data['delay_reason_required'] = true;
+            }
         }
 
         // Detect if it's FBB based on message content

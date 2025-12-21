@@ -177,6 +177,95 @@ PROMPT;
     }
 
     /**
+     * Comprehensive AI extraction of ALL incident fields.
+     * Use this as a fallback when regex parsing produces incomplete or poor results.
+     *
+     * @param string $message The full incident message
+     * @return array|null Extracted data or null if extraction fails
+     */
+    public function comprehensiveExtraction(string $message): ?array
+    {
+        try {
+            $prompt = $this->buildComprehensiveExtractionPrompt($message);
+
+            $response = $this->client->messages->create([
+                'model' => $this->model,
+                'max_tokens' => 500, // Longer response for comprehensive extraction
+                'messages' => [
+                    [
+                        'role' => 'user',
+                        'content' => $prompt,
+                    ],
+                ],
+            ]);
+
+            $jsonResponse = trim($response->content[0]->text);
+
+            // Parse JSON response
+            $extracted = json_decode($jsonResponse, true);
+
+            if ($extracted && is_array($extracted)) {
+                Log::info('AI Comprehensive Extraction', [
+                    'input' => substr($message, 0, 200),
+                    'output' => $extracted,
+                    'tokens_used' => $response->usage->input_tokens + $response->usage->output_tokens,
+                ]);
+
+                return $extracted;
+            }
+
+            return null;
+
+        } catch (Exception $e) {
+            Log::error('AI Comprehensive Extraction Failed', [
+                'error' => $e->getMessage(),
+                'message' => substr($message, 0, 200),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Build the prompt for comprehensive extraction.
+     *
+     * @param string $message The incident message
+     * @return string The formatted prompt
+     */
+    private function buildComprehensiveExtractionPrompt(string $message): string
+    {
+        return <<<PROMPT
+Extract ALL relevant fields from this incident message and return them as JSON.
+
+Message:
+{$message}
+
+Extract these fields (return null for any field that cannot be determined):
+{
+  "summary": "Service/site name with technology (e.g., 'L_Hithadhoo FBB', 'Dh_Kandima_Resort 3G/4G')",
+  "root_cause": "The cause description",
+  "delay_reason": "Extract from Note field if present and if duration > 5 hours",
+  "affected_services": ["Array of affected services like 'Single FBB', 'Cell', etc."],
+  "outage_category": "One of: Power, RAN, Transmission, International, Enterprise, FBB",
+  "category": "Same as outage_category usually"
+}
+
+Important Rules:
+1. summary: ONLY the service identifier, no dates, no "is on service", no descriptive text
+2. delay_reason: If you see a "Note:" field AND the duration is > 5 hours, extract the Note content as delay_reason
+3. affected_services: Determine from the service type (FBB → ["Single FBB"], cells → ["Cell"], etc.)
+4. outage_category & category:
+   - Power = power failure, DCDU tripped, breaker issues
+   - RAN = cell tower, AAU, RRU, site issues
+   - Transmission = fiber cut, cable damage
+   - FBB = fixed broadband
+   - If unclear, return null
+
+Return ONLY valid JSON, no explanation text.
+PROMPT;
+    }
+
+    /**
      * Test the API connection.
      *
      * @return array Test result with status and message
