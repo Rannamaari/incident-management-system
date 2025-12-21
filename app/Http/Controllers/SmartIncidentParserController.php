@@ -74,6 +74,7 @@ class SmartIncidentParserController extends Controller
                 'severity' => 'required|string',
                 'fault_type_id' => 'nullable|exists:fault_types,id',
                 'resolution_team_id' => 'nullable|exists:resolution_teams,id',
+                'delay_reason' => 'nullable|string', // Required if duration > 5 hours (validated by model)
             ]);
 
             // Convert affected_services array to comma-separated string
@@ -135,6 +136,7 @@ class SmartIncidentParserController extends Controller
             'affected_services' => [],
             'severity' => 'Low', // Always default to Low
             'status' => 'Open', // Default to Open
+            'delay_reason_required' => false, // Will be set to true if duration > 5 hours
         ];
 
         // Detect incident status based on keywords
@@ -197,6 +199,11 @@ class SmartIncidentParserController extends Controller
             }
 
             $data['duration_minutes'] = ($hours * 60) + $minutes;
+
+            // Check if delay reason is required (duration > 5 hours = 300 minutes)
+            if ($data['duration_minutes'] > 300) {
+                $data['delay_reason_required'] = true;
+            }
 
             // Calculate outage start time
             if (!empty($data['restoration_datetime']) && $data['duration_minutes']) {

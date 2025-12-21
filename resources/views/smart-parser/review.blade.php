@@ -280,6 +280,26 @@
                                     @enderror
                                 </div>
 
+                                <!-- Delay Reason - Only if duration > 5 hours -->
+                                @if(isset($parsedData['delay_reason_required']) && $parsedData['delay_reason_required'])
+                                <div>
+                                    <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                        Reason for Delay <span class="text-red-500">*</span>
+                                        <span class="text-xs text-orange-600">(Required: Duration > 5 hours)</span>
+                                    </label>
+                                    <textarea name="delay_reason" id="delay_reason" rows="3"
+                                        placeholder="Explain why this incident took more than 5 hours to resolve..."
+                                        class="w-full rounded-xl border border-orange-300 px-4 py-3 shadow-sm focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20 bg-orange-50/30 transition-all duration-300 @error('delay_reason') border-red-300 @enderror"
+                                    >{{ old('delay_reason') }}</textarea>
+                                    @error('delay_reason')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                    <p class="mt-1 text-xs text-orange-600">
+                                        ⚠️ This incident took {{ $parsedData['duration'] ?? 'more than 5 hours' }} to resolve. Please provide a reason for the delay.
+                                    </p>
+                                </div>
+                                @endif
+
                                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <!-- Fault Type -->
                                     <div>
