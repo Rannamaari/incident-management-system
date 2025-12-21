@@ -10,6 +10,7 @@ use App\Http\Controllers\RcaController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TemporarySiteController;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\SmartIncidentParserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -128,6 +129,11 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     
     // RCA generation
     Route::post('incidents/{incident}/generate-rca', [IncidentRCAController::class, 'generate'])->where('incident', '[0-9]+')->name('incidents.generate-rca');
+
+    // Smart Incident Parser routes (editor and admin only)
+    Route::get('smart-parser', [SmartIncidentParserController::class, 'index'])->name('smart-parser.index');
+    Route::post('smart-parser/parse', [SmartIncidentParserController::class, 'parse'])->name('smart-parser.parse');
+    Route::post('smart-parser/store', [SmartIncidentParserController::class, 'store'])->name('smart-parser.store');
 
     // RCA Management (editor and admin only)
     Route::get('rcas/create', [RcaController::class, 'create'])->name('rcas.create');

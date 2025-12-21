@@ -68,7 +68,7 @@
                         <!-- Extra Dropdown -->
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" @click.away="open = false"
-                                class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('contacts.*') || request()->routeIs('temporary-sites.*') || request()->routeIs('sites.*') ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 shadow-sm border border-green-200/50' : 'text-gray-600 hover:text-green-600 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100' }}">
+                                class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('smart-parser.*') || request()->routeIs('contacts.*') || request()->routeIs('temporary-sites.*') || request()->routeIs('sites.*') ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 shadow-sm border border-green-200/50' : 'text-gray-600 hover:text-green-600 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100' }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
@@ -89,6 +89,16 @@
                                 class="absolute left-0 z-50 mt-2 w-56 rounded-2xl shadow-2xl bg-white/95 backdrop-blur-md ring-1 ring-gray-200/50 border border-gray-100/50"
                                 style="display: none;">
                                 <div class="py-2">
+                                    @if(auth()->user()->canEditIncidents())
+                                    <a href="{{ route('smart-parser.index') }}"
+                                        class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:text-purple-600 transition-all duration-300 rounded-lg mx-2 {{ request()->routeIs('smart-parser.*') ? 'bg-purple-50 text-purple-600' : '' }}">
+                                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                        </svg>
+                                        <span class="font-medium">AI Logger</span>
+                                    </a>
+                                    @endif
+
                                     <a href="{{ route('contacts.index') }}"
                                         class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-600 transition-all duration-300 rounded-lg mx-2 {{ request()->routeIs('contacts.*') ? 'bg-blue-50 text-blue-600' : '' }}">
                                         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -326,6 +336,17 @@
                     </svg>
                     <span>RCA Management</span>
                 </a>
+
+                @if(Auth::user()->canEditIncidents())
+                <a href="{{ route('smart-parser.index') }}"
+                    class="flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('smart-parser.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 shadow-md border border-purple-200/50' : 'text-gray-700 hover:text-purple-600 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    <span>AI Logger</span>
+                </a>
+                @endif
 
                 <a href="{{ route('contacts.index') }}"
                     class="flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('contacts.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-md border border-blue-200/50' : 'text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100' }}">
