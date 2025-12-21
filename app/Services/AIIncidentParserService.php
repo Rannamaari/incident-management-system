@@ -234,8 +234,14 @@ PROMPT;
      */
     private function buildComprehensiveExtractionPrompt(string $message): string
     {
+        $today = now()->format('Y-m-d');
+        $currentTime = now()->format('H:i');
+
         return <<<PROMPT
-Extract ALL relevant fields from this incident message and return them as JSON.
+You are an intelligent incident parser. Extract ALL relevant fields from this incident message written in natural English and return them as JSON.
+
+TODAY'S DATE: {$today}
+CURRENT TIME: {$currentTime}
 
 Message:
 {$message}
@@ -243,25 +249,65 @@ Message:
 Extract these fields (return null for any field that cannot be determined):
 {
   "summary": "Service/site name with technology (e.g., 'L_Hithadhoo FBB', 'Dh_Kandima_Resort 3G/4G')",
-  "root_cause": "The cause description",
-  "delay_reason": "Extract from Note field if present and if duration > 5 hours",
-  "affected_services": ["Array of affected services like 'Single FBB', 'Cell', etc."],
+  "status": "Open or Closed (down/offline/not working = Open, on service/restored/back online = Closed)",
+  "started_at": "When the outage started in YYYY-MM-DD HH:MM format",
+  "resolved_at": "When service was restored in YYYY-MM-DD HH:MM format (null if still down)",
+  "duration_minutes": "Total outage duration in minutes (calculate if not explicitly stated)",
+  "root_cause": "What caused the outage",
+  "delay_reason": "Why restoration took long (if mentioned via 'Note:' or context AND duration > 5 hours)",
+  "affected_services": ["Array of affected services"],
   "outage_category": "One of: Power, RAN, Transmission, International, Enterprise, FBB",
-  "category": "Same as outage_category usually"
+  "category": "Same as outage_category usually",
+  "severity": "Low, Medium, or High (default to Low if not specified)"
 }
 
-Important Rules:
-1. summary: ONLY the service identifier, no dates, no "is on service", no descriptive text
-2. delay_reason: If you see a "Note:" field AND the duration is > 5 hours, extract the Note content as delay_reason
-3. affected_services: Determine from the service type (FBB → ["Single FBB"], cells → ["Cell"], etc.)
-4. outage_category & category:
-   - Power = power failure, DCDU tripped, breaker issues
-   - RAN = cell tower, AAU, RRU, site issues
-   - Transmission = fiber cut, cable damage
-   - FBB = fixed broadband
-   - If unclear, return null
+CRITICAL INTELLIGENCE RULES:
 
-Return ONLY valid JSON, no explanation text.
+1. **Natural English Understanding**:
+   - "yesterday at 8pm" → Calculate actual date/time from TODAY'S DATE
+   - "last night" → Yesterday evening
+   - "this morning" → Today morning
+   - "3 hours ago" → Calculate from CURRENT TIME
+   - "went down at 7pm, came back at 4am" → Calculate duration = 9 hours = 540 minutes
+
+2. **Service Identification**:
+   - Extract ONLY service identifier: "L_Hithadhoo FBB", "Kandima Resort 3G/4G"
+   - Recognize variations: "broadband", "FBB", "fixed line", "fiber" → FBB
+   - "cell sites", "tower", "base station", "AAU", "RRU" → RAN/Cell
+   - Handle informal naming: "the Hithadhoo fiber" → "L_Hithadhoo FBB"
+
+3. **Status Detection**:
+   - Keywords for Open: down, offline, not working, outage, issue, problem
+   - Keywords for Closed: restored, back online, on service, fixed, resolved, working again
+
+4. **Duration Calculation**:
+   - If start and end times given but no duration → Calculate it
+   - If duration given (e.g., "took 3 hours") → Convert to minutes
+   - "all day" ≈ 8-12 hours, "overnight" ≈ 8-10 hours
+
+5. **Cause Classification**:
+   - Power keywords: power failure, power outage, DCDU, breaker, battery, generator
+   - Transmission keywords: cable cut, fiber damaged, cable damaged, link down
+   - RAN keywords: equipment failure, AAU issue, RRU problem, site down
+   - Weather-related → Note the actual technical cause, weather goes in delay_reason
+
+6. **Delay Reason**:
+   - Extract if duration > 5 hours (300 minutes) AND reason is mentioned
+   - Look for: "delayed because", "took longer due to", "Note:", weather mentions, access issues
+
+7. **Affected Services**:
+   - Single FBB → ["Single FBB"]
+   - Multiple FBB → ["Multiple FBB"]
+   - Single site/tower → ["Single Site"]
+   - Multiple cells → ["Cell"]
+   - All services down → ["Multiple Site"] or specific services
+
+8. **Date/Time Parsing**:
+   - Convert ALL relative dates to absolute YYYY-MM-DD HH:MM format
+   - Use TODAY'S DATE and CURRENT TIME for calculations
+   - Default unknown times: morning=08:00, afternoon=14:00, evening=18:00, night=22:00
+
+Return ONLY valid JSON with NO markdown formatting, NO code blocks, NO explanatory text.
 PROMPT;
     }
 

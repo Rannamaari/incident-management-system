@@ -31,8 +31,16 @@ class SmartIncidentParserController extends Controller
 
         $message = $request->input('incident_message');
 
-        // Parse the message and extract details
-        $parsedData = $this->extractIncidentDetails($message);
+        // ========== AI-FIRST PARSING APPROACH ==========
+        // Try comprehensive AI extraction first for natural language understanding
+        $aiService = new \App\Services\AIIncidentParserService();
+        $aiData = $aiService->comprehensiveExtraction($message);
+
+        // Fallback to regex parsing if AI fails
+        $regexData = $this->extractIncidentDetails($message);
+
+        // Merge AI and regex results (AI takes priority, regex fills gaps)
+        $parsedData = $this->mergeParsingResults($aiData, $regexData);
 
         // Get available options for dropdowns
         $categories = Category::orderBy('name')->get();
@@ -52,6 +60,102 @@ class SmartIncidentParserController extends Controller
         }
 
         return view('smart-parser.review', compact('parsedData', 'categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'message'));
+    }
+
+    /**
+     * Intelligently merge AI and regex parsing results.
+     * AI results take priority, regex fills in gaps.
+     *
+     * @param array|null $aiData Results from AI extraction
+     * @param array $regexData Results from regex extraction
+     * @return array Merged results
+     */
+    private function mergeParsingResults(?array $aiData, array $regexData): array
+    {
+        // If AI failed completely, use regex
+        if (empty($aiData)) {
+            return $regexData;
+        }
+
+        // Start with regex data as base (has all fields)
+        $merged = $regexData;
+
+        // Override with AI data where AI provided better results
+        foreach ($aiData as $key => $value) {
+            // Skip null/empty AI values unless regex also has nothing
+            if ($value === null || $value === '' || $value === []) {
+                continue;
+            }
+
+            // AI wins for these critical fields
+            if (in_array($key, ['summary', 'status', 'root_cause', 'outage_category', 'category', 'affected_services'])) {
+                $merged[$key] = $value;
+            }
+
+            // For date/time fields, prefer AI if it looks valid
+            if (in_array($key, ['started_at', 'resolved_at']) && $this->isValidDateTime($value)) {
+                // Map AI fields to regex field names
+                if ($key === 'started_at') {
+                    $merged['outage_start_datetime'] = $value;
+                } elseif ($key === 'resolved_at') {
+                    $merged['restoration_datetime'] = $value;
+                }
+            }
+
+            // For duration, prefer AI if it calculated it
+            if ($key === 'duration_minutes' && is_numeric($value) && $value > 0) {
+                $merged['duration_minutes'] = $value;
+
+                // Format human-readable duration
+                $hours = floor($value / 60);
+                $mins = $value % 60;
+                if ($hours > 0) {
+                    $merged['duration'] = $hours . 'hrs ' . $mins . 'mins';
+                } else {
+                    $merged['duration'] = $mins . 'mins';
+                }
+
+                // Check if delay reason is required
+                if ($value > 300) {
+                    $merged['delay_reason_required'] = true;
+                }
+            }
+
+            // For delay_reason, prefer AI extraction
+            if ($key === 'delay_reason' && !empty($value)) {
+                $merged['delay_reason'] = $value;
+            }
+
+            // For severity, use AI if provided
+            if ($key === 'severity' && !empty($value)) {
+                $merged['severity'] = $value;
+            }
+        }
+
+        // Add marker that AI was used
+        $merged['ai_enhanced'] = true;
+
+        return $merged;
+    }
+
+    /**
+     * Check if a string is a valid datetime.
+     *
+     * @param mixed $datetime
+     * @return bool
+     */
+    private function isValidDateTime($datetime): bool
+    {
+        if (!is_string($datetime)) {
+            return false;
+        }
+
+        try {
+            \Carbon\Carbon::parse($datetime);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
