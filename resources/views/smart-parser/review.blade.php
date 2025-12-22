@@ -46,6 +46,52 @@
                 </div>
             </div>
 
+            <!-- Data Source Information -->
+            @if(isset($parsedData['field_sources']))
+            <div class="mb-6 rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 backdrop-blur-sm p-5 shadow-sm">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-md">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-heading mb-3 text-sm font-heading font-semibold uppercase tracking-wide text-blue-900">
+                            Parsing Method Used
+                        </h4>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                            @foreach($parsedData['field_sources'] as $field => $source)
+                                <div class="flex items-center gap-2">
+                                    @if($source === 'AI')
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-purple-100 text-purple-800 font-medium text-xs">
+                                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M13 7H7v6h6V7z"></path>
+                                                <path fill-rule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            AI
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 text-gray-800 font-medium text-xs">
+                                            <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            Regex
+                                        </span>
+                                    @endif
+                                    <span class="text-gray-600 text-xs">{{ ucwords(str_replace('_', ' ', $field)) }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                        <p class="mt-3 text-xs text-blue-700">
+                            <strong>AI</strong> = Intelligent natural language understanding | <strong>Regex</strong> = Pattern-based exact extraction
+                        </p>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Main Form -->
             <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
                 <!-- Section Header -->

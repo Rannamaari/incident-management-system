@@ -316,21 +316,28 @@ CRITICAL INTELLIGENCE RULES:
    CRITICAL: Check the PRIMARY action verb to determine status
 
    Status = Closed (service RESTORED) if message contains:
-   - "on service" (both singular and plural: "cell is on service" OR "cells are on service")
+   - "on service", "stable", "up"
    - "restored", "back online", "fixed", "resolved", "working again", "came back"
+   - Works with both singular and plural: "cell is stable" OR "cells are stable"
 
    Status = Open (service DOWN) if message contains:
-   - "down", "offline", "not working", "outage", "issue", "problem", "failure"
+   - "down", "offline", "off", "unstable"
+   - "not working", "outage", "issue", "problem", "failure"
 
    CRITICAL EXAMPLES:
-   - "Below mentioned cell is on service since..." → Status = Closed ✓
-   - "Below mentioned cells are on service since..." → Status = Closed ✓
-   - "Below mentioned cells are down since..." → Status = Open ✓
+   - "RHUB is stable since..." → Status = Closed ✓
+   - "cell is on service since..." → Status = Closed ✓
+   - "cells are up since..." → Status = Closed ✓
+   - "site is down since..." → Status = Open ✓
+   - "cells are off since..." → Status = Open ✓
+   - "link is unstable since..." → Status = Open ✓
 
-   CRITICAL: "on service since [TIME]" means RESTORED at that time, NOT started!
-   - If you see "on service since [TIME]" → status = Closed, resolved_at = TIME
+   CRITICAL: Status keywords with "since [TIME]" mean RESTORED at that time, NOT started!
+   - "on service since [TIME]" → status = Closed, resolved_at = TIME
+   - "stable since [TIME]" → status = Closed, resolved_at = TIME
+   - "up since [TIME]" → status = Closed, resolved_at = TIME
    - Then SUBTRACT duration to get started_at
-   - Example: "on service since 1220hrs, Duration: 30mins" → resolved: 12:20, started: 11:50
+   - Example: "stable since 1531hrs, Duration: 6 days 13hrs 57min" → resolved: 15:31, started: 15:31 - duration
 
 4. **Duration Calculation & Time Logic**:
    - If start and end times given but no duration → Calculate it

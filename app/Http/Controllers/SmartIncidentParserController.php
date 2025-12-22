@@ -103,14 +103,20 @@ class SmartIncidentParserController extends Controller
                 }
             }
 
-            // For duration, prefer AI if it calculated it
-            if ($key === 'duration_minutes' && is_numeric($value) && $value > 0) {
+            // For duration, prefer REGEX over AI (regex is more accurate for explicit duration)
+            // Only use AI duration if regex didn't extract it
+            if ($key === 'duration_minutes' && is_numeric($value) && $value > 0 && empty($merged['duration_minutes'])) {
                 $merged['duration_minutes'] = $value;
 
-                // Format human-readable duration
-                $hours = floor($value / 60);
-                $mins = $value % 60;
-                if ($hours > 0) {
+                // Format human-readable duration with days support
+                $days = floor($value / (24 * 60));
+                $remainingMins = $value % (24 * 60);
+                $hours = floor($remainingMins / 60);
+                $mins = $remainingMins % 60;
+
+                if ($days > 0) {
+                    $merged['duration'] = $days . ' days ' . $hours . 'hrs ' . $mins . 'mins';
+                } elseif ($hours > 0) {
                     $merged['duration'] = $hours . 'hrs ' . $mins . 'mins';
                 } else {
                     $merged['duration'] = $mins . 'mins';
@@ -135,6 +141,19 @@ class SmartIncidentParserController extends Controller
 
         // Add marker that AI was used
         $merged['ai_enhanced'] = true;
+
+        // Track which fields came from which source (for transparency)
+        $merged['field_sources'] = [
+            'summary' => isset($aiData['summary']) && !empty($aiData['summary']) ? 'AI' : 'Regex',
+            'status' => isset($aiData['status']) && !empty($aiData['status']) ? 'AI' : 'Regex',
+            'outage_start_datetime' => !empty($regexData['outage_start_datetime']) ? 'Regex' : 'AI',
+            'restoration_datetime' => !empty($regexData['restoration_datetime']) ? 'Regex' : 'AI',
+            'duration_minutes' => isset($aiData['duration_minutes']) && $aiData['duration_minutes'] > 0 ? 'AI' : 'Regex',
+            'root_cause' => isset($aiData['root_cause']) && !empty($aiData['root_cause']) ? 'AI' : 'Regex',
+            'outage_category' => isset($aiData['outage_category']) && !empty($aiData['outage_category']) ? 'AI' : 'Regex',
+            'affected_services' => isset($aiData['affected_services']) && !empty($aiData['affected_services']) ? 'AI' : 'Regex',
+            'delay_reason' => isset($aiData['delay_reason']) && !empty($aiData['delay_reason']) ? 'AI' : 'Regex',
+        ];
 
         return $merged;
     }
@@ -247,17 +266,17 @@ class SmartIncidentParserController extends Controller
         // Detect incident status based on keywords
         // "on service", "restored", "up" = Closed
         // "down", "outage", "offline" = Open/In Progress
-        if (preg_match('/\b(on service|restored|is up|back online|resolved)\b/i', $message)) {
+        if (preg_match('/\b(on service|stable|is up|back online|restored|resolved)\b/i', $message)) {
             $data['status'] = 'Closed';
-        } elseif (preg_match('/\b(down|outage|offline|not available)\b/i', $message)) {
+        } elseif (preg_match('/\b(down|off|unstable|outage|offline|not available)\b/i', $message)) {
             $data['status'] = 'Open';
         }
 
         // Extract restoration date and time for CLOSED incidents
-        // Pattern: "on service since 1220hrs 21/12/2025" or "on service since 1903hrs. (12/6/2025)"
-        if (preg_match('/on service since (\d{4})hrs\.?\s*\(?\s*(\d{1,2}\/\d{1,2}\/\d{4})\)?/i', $message, $matches)) {
-            $timeStr = $matches[1]; // e.g., "1220" or "1903"
-            $dateStr = $matches[2]; // e.g., "21/12/2025" or "12/6/2025"
+        // Pattern: "on service since", "stable since", "up since" + time + date
+        if (preg_match('/(on service|stable|up) since (\d{4})hrs\.?\s*\(?\s*(\d{1,2}\/\d{1,2}\/\d{4})\)?/i', $message, $matches)) {
+            $timeStr = $matches[2]; // e.g., "1220" or "1531"
+            $dateStr = $matches[3]; // e.g., "21/12/2025" or "26/11/2025"
 
             $hours = substr($timeStr, 0, 2);
             $minutes = substr($timeStr, 2, 2);
@@ -271,8 +290,8 @@ class SmartIncidentParserController extends Controller
         }
 
         // Extract start date and time for OPEN incidents
-        // Pattern: "down since 1430hrs 21/12/2025" or "offline since 1200hrs 20/12/2025"
-        if (preg_match('/(down|offline|outage)\s+since\s+(\d{4})hrs\s+(\d{2}\/\d{2}\/\d{4})/i', $message, $matches)) {
+        // Pattern: "down since", "off since", "unstable since" + time + date
+        if (preg_match('/(down|off|unstable|offline|outage)\s+since\s+(\d{4})hrs\s+(\d{2}\/\d{2}\/\d{4})/i', $message, $matches)) {
             $timeStr = $matches[2]; // e.g., "1430"
             $dateStr = $matches[3]; // e.g., "21/12/2025"
 
