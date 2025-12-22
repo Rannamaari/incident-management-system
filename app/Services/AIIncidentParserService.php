@@ -288,6 +288,15 @@ Output: {
   "status": "Closed"                  ← "cells are on service" = Closed (plural form)
 }
 
+Example 4 - Duration with DAYS:
+Input: "cells are on service since 1308hrs (26/11/2025) Duration: 3 days 4hrs 46mins"
+Output: {
+  "started_at": "2025-11-23 08:22",  ← Restoration MINUS duration (26th 13:08 - 76:46 = 23rd 08:22)
+  "resolved_at": "2025-11-26 13:08", ← "on service since 1308hrs" on 26/11/2025
+  "duration_minutes": 4606,           ← CRITICAL: 3*24*60 + 4*60 + 46 = 4320+240+46 = 4606 minutes
+  "status": "Closed"
+}
+
 CRITICAL INTELLIGENCE RULES:
 
 1. **Natural English Understanding**:
@@ -325,7 +334,10 @@ CRITICAL INTELLIGENCE RULES:
 
 4. **Duration Calculation & Time Logic**:
    - If start and end times given but no duration → Calculate it
-   - If duration given (e.g., "took 3 hours") → Convert to minutes
+   - If duration given, convert to minutes:
+     * "30mins" = 30 minutes
+     * "2hrs 12mins" = (2×60) + 12 = 132 minutes
+     * "3 days 4hrs 46mins" = (3×24×60) + (4×60) + 46 = 4606 minutes
    - "all day" ≈ 8-12 hours, "overnight" ≈ 8-10 hours
 
    CRITICAL: "Total Down Duration" Detection:

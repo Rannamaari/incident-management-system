@@ -92,12 +92,13 @@ class SmartIncidentParserController extends Controller
                 $merged[$key] = $value;
             }
 
-            // For date/time fields, prefer AI if it looks valid
+            // For date/time fields, prefer REGEX over AI (regex is more accurate for exact times)
+            // Only use AI datetime if regex didn't extract it
             if (in_array($key, ['started_at', 'resolved_at']) && $this->isValidDateTime($value)) {
                 // Map AI fields to regex field names
-                if ($key === 'started_at') {
+                if ($key === 'started_at' && empty($merged['outage_start_datetime'])) {
                     $merged['outage_start_datetime'] = $value;
-                } elseif ($key === 'resolved_at') {
+                } elseif ($key === 'resolved_at' && empty($merged['restoration_datetime'])) {
                     $merged['restoration_datetime'] = $value;
                 }
             }
@@ -291,13 +292,18 @@ class SmartIncidentParserController extends Controller
                                 preg_match('/\bTDD\b/', $message);
 
         // Extract duration
-        // Pattern: "Duration: 30mins" or "Duration: 2hrs 12mins" or "Duration: 1hr 43mins"
+        // Pattern: "Duration: 30mins" or "Duration: 2hrs 12mins" or "Duration: 3 days 4hrs 46mins"
         // SKIP auto-calculation if "total down duration" is mentioned
-        if (!$hasTotalDownDuration && preg_match('/Duration:\s*(\d+\s*hrs?\s*)?(\d+)?\s*mins?/i', $message, $matches)) {
+        if (!$hasTotalDownDuration && preg_match('/Duration:\s*(\d+\s*days?\s*)?(\d+\s*hrs?\s*)?(\d+)?\s*mins?/i', $message, $matches)) {
             $data['duration'] = trim($matches[0]);
 
+            $days = 0;
             $hours = 0;
             $minutes = 0;
+
+            if (preg_match('/(\d+)\s*days?/i', $data['duration'], $dayMatch)) {
+                $days = (int)$dayMatch[1];
+            }
 
             if (preg_match('/(\d+)\s*hrs?/i', $data['duration'], $hourMatch)) {
                 $hours = (int)$hourMatch[1];
@@ -307,7 +313,7 @@ class SmartIncidentParserController extends Controller
                 $minutes = (int)$minMatch[1];
             }
 
-            $data['duration_minutes'] = ($hours * 60) + $minutes;
+            $data['duration_minutes'] = ($days * 24 * 60) + ($hours * 60) + $minutes;
 
             // Check if delay reason is required (duration > 5 hours = 300 minutes)
             if ($data['duration_minutes'] > 300) {
