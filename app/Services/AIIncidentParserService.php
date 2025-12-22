@@ -250,23 +250,33 @@ Extract these fields (return null for any field that cannot be determined):
 {
   "summary": "Service/site name with technology (e.g., 'L_Hithadhoo FBB', 'Dh_Kandima_Resort 3G/4G')",
   "status": "Open or Closed (down/offline/not working = Open, on service/restored/back online = Closed)",
-  "started_at": "When the OUTAGE STARTED (service went DOWN) in YYYY-MM-DD HH:MM format",
-  "resolved_at": "When service was RESTORED (came back UP) in YYYY-MM-DD HH:MM format (null if still down)",
+  "started_at": "When the OUTAGE STARTED (service went DOWN). CRITICAL: If 'on service since 16:22, Duration 8:37', then started_at = 16:22 MINUS 8:37 = 07:45",
+  "resolved_at": "When service was RESTORED (came back UP). CRITICAL: 'on service since 16:22' means resolved_at = 16:22 (NOT started_at!)",
   "duration_minutes": "Total outage duration in minutes (calculate if not explicitly stated)",
-  "root_cause": "What caused the outage",
-  "delay_reason": "Why restoration took long (if mentioned via 'Note:' or context AND duration > 5 hours)",
+  "root_cause": "What caused the outage (exclude Note content)",
+  "delay_reason": "Why restoration took long (extract from 'Note:' if duration > 5 hours)",
   "affected_services": ["Array of affected services"],
   "outage_category": "One of: Power, RAN, Transmission, International, Enterprise, FBB",
   "category": "Same as outage_category usually",
   "severity": "Low, Medium, or High (default to Low if not specified)"
 }
 
-EXAMPLE PARSING FOR CLARITY:
+EXAMPLES FOR CLARITY:
+
+Example 1 - With date:
 Input: "GA_Kondey FBB is on service since 1220hrs 21/12/2025, Duration: 30mins"
 Output: {
-  "started_at": "2025-12-21 11:50",  ← Restoration time MINUS duration (1220 - 30 = 1150)
+  "started_at": "2025-12-21 11:50",  ← Restoration time MINUS duration (12:20 - 30min = 11:50)
   "resolved_at": "2025-12-21 12:20", ← "on service since" = restoration/resolved time
   "duration_minutes": 30
+}
+
+Example 2 - Without date (use TODAY):
+Input: "Below mentioned cell is on service since 1622hrs. Duration: 8hrs 37mins"
+Output: {
+  "started_at": "{TODAY} 07:45",    ← Restoration time MINUS duration (16:22 - 8:37 = 07:45)
+  "resolved_at": "{TODAY} 16:22",   ← "on service since" = restoration/resolved time
+  "duration_minutes": 517             ← 8*60 + 37 = 517 minutes
 }
 
 CRITICAL INTELLIGENCE RULES:
@@ -304,11 +314,13 @@ CRITICAL INTELLIGENCE RULES:
    - Set started_at and resolved_at to null if they can't be determined
    - This signals manual entry is required
 
-   CRITICAL CALCULATION LOGIC:
-   - "on service since [TIME], Duration: [X]" → resolved_at = TIME, started_at = TIME - X
-   - "down since [TIME], Duration: [X]" → started_at = TIME, resolved_at = TIME + X
+   CRITICAL CALCULATION LOGIC (DO NOT GET THIS WRONG):
+   - "on service since [TIME], Duration: [X]" → resolved_at = TIME, started_at = TIME - X (SUBTRACT!)
+     Example: "on service since 16:22, Duration: 8hrs 37mins" → resolved=16:22, started=07:45
+   - "down since [TIME], Duration: [X]" → started_at = TIME, resolved_at = TIME + X (ADD!)
+     Example: "down since 08:00, Duration: 2hrs" → started=08:00, resolved=10:00
    - "went down at [TIME1], restored at [TIME2]" → started_at = TIME1, resolved_at = TIME2
-   - Always calculate: duration = resolved_at - started_at
+   - Always verify: duration = resolved_at - started_at (must equal given duration)
 
 5. **Cause Classification**:
    - Power keywords: power failure, power outage, DCDU, breaker, battery, generator
@@ -324,17 +336,28 @@ CRITICAL INTELLIGENCE RULES:
    - Single FBB → ["Single FBB"]
    - Multiple FBB → ["Multiple FBB"]
    - Single site/tower → ["Single Site"]
-   - Multiple cells → ["Cell"] (default for multiple cells)
-   - ONLY use ["Multiple Site"] if message explicitly mentions the word "sites" or "site" in plural context
-   - Examples:
-     * "K_Cell1, K_Cell2, K_Cell3 are down" → ["Cell"] (no "sites" mentioned)
-     * "Multiple sites in Kandima are down" → ["Multiple Site"] ("sites" explicitly mentioned)
-     * "3 sites affected" → ["Multiple Site"] ("sites" explicitly mentioned)
+   - CRITICAL: For multiple cells → ["Cell"] (this is the default)
+   - ONLY use ["Multiple Site"] if the message text LITERALLY contains the word "sites" (plural)
+   - NEVER use "Multiple Site" just because there are multiple cells - you MUST see "sites" in the text
+   - Examples that should be ["Cell"]:
+     * "Below mentioned cells are down..." → ["Cell"] (says "cells", not "sites")
+     * "K_Cell1, K_Cell2, K_Cell3 are down" → ["Cell"] (no "sites" word found)
+     * "The following cells went offline" → ["Cell"] (says "cells", not "sites")
+   - Examples that should be ["Multiple Site"]:
+     * "Multiple sites in Kandima are down" → ["Multiple Site"] (contains "sites")
+     * "3 sites affected" → ["Multiple Site"] (contains "sites")
+     * "Several sites are offline" → ["Multiple Site"] (contains "sites")
 
 8. **Date/Time Parsing**:
    - Convert ALL relative dates to absolute YYYY-MM-DD HH:MM format
    - Use TODAY'S DATE and CURRENT TIME for calculations
    - Default unknown times: morning=08:00, afternoon=14:00, evening=18:00, night=22:00
+
+   CRITICAL: 4-digit time format parsing:
+   - "1622hrs" = 16:22 (split as HH:MM → 16:22)
+   - "0945hrs" = 09:45 (split as HH:MM → 09:45)
+   - "2119hrs" = 21:19 (split as HH:MM → 21:19)
+   - ALWAYS split 4-digit numbers as first 2 digits = hours, last 2 digits = minutes
 
 Return ONLY valid JSON with NO markdown formatting, NO code blocks, NO explanatory text.
 PROMPT;
