@@ -258,17 +258,24 @@ Extract these fields (return null for any field that cannot be determined):
   "affected_services": ["Array of affected services"],
   "outage_category": "One of: Power, RAN, Transmission, International, Enterprise, FBB",
   "category": "Same as outage_category usually",
-  "severity": "Low, Medium, or High (default to Low if not specified)"
+  "severity": "Low, Medium, or High (default to Low if not specified)",
+  "sites_2g_impacted": "Number of 2G sites impacted (integer, null if not applicable)",
+  "sites_3g_impacted": "Number of 3G sites impacted (integer, null if not applicable)",
+  "sites_4g_impacted": "Number of 4G sites impacted (integer, null if not applicable)",
+  "sites_5g_impacted": "Number of 5G sites impacted (integer, null if not applicable)",
+  "fbb_impacted": "Number of FBB (Fixed Broadband) sites impacted (integer, null if not applicable)"
 }
 
 EXAMPLES FOR CLARITY:
 
-Example 1 - With date:
+Example 1 - With date (FBB):
 Input: "GA_Kondey FBB is on service since 1220hrs 21/12/2025, Duration: 30mins"
 Output: {
   "started_at": "2025-12-21 11:50",  ← Restoration time MINUS duration (12:20 - 30min = 11:50)
   "resolved_at": "2025-12-21 12:20", ← "on service since" = restoration/resolved time
-  "duration_minutes": 30
+  "duration_minutes": 30,
+  "affected_services": ["Single FBB"],
+  "fbb_impacted": 1                   ← Single FBB site
 }
 
 Example 2 - Without date (use TODAY):
@@ -285,7 +292,8 @@ Output: {
   "started_at": "2025-12-20 11:59",  ← Restoration time MINUS duration (19:09 - 7:10 = 11:59)
   "resolved_at": "2025-12-20 19:09", ← "on service since 1909hrs" = 19:09 (split 1909 as 19:09)
   "duration_minutes": 430,            ← 7*60 + 10 = 430 minutes
-  "status": "Closed"                  ← "cells are on service" = Closed (plural form)
+  "status": "Closed",                 ← "cells are on service" = Closed (plural form)
+  "affected_services": ["Cell"]       ← Says "cells", not "sites"
 }
 
 Example 4 - Duration with DAYS:
@@ -295,6 +303,33 @@ Output: {
   "resolved_at": "2025-11-26 13:08", ← "on service since 1308hrs" on 26/11/2025
   "duration_minutes": 4606,           ← CRITICAL: 3*24*60 + 4*60 + 46 = 4320+240+46 = 4606 minutes
   "status": "Closed"
+}
+
+Example 5 - Site with technology (Site Impact):
+Input: "Dh_Kandima_Resort 3G/4G is on service since 1545hrs. Duration: 2hrs 15mins. Root Cause: Power failure"
+Output: {
+  "summary": "Dh_Kandima_Resort 3G/4G",
+  "started_at": "{TODAY} 13:30",     ← 15:45 - 2:15 = 13:30
+  "resolved_at": "{TODAY} 15:45",
+  "duration_minutes": 135,            ← 2*60 + 15 = 135
+  "status": "Closed",
+  "affected_services": ["Single Site"],
+  "sites_3g_impacted": 1,             ← CRITICAL: Site has 3G technology
+  "sites_4g_impacted": 1,             ← CRITICAL: Site has 4G technology
+  "outage_category": "Power",
+  "root_cause": "Power failure"
+}
+
+Example 6 - Multiple sites with 5G:
+Input: "3 sites affected in GDh region (all 5G). Restored at 1830hrs. Duration: 4hrs 20mins"
+Output: {
+  "summary": "GDh region 5G sites",
+  "started_at": "{TODAY} 14:10",     ← 18:30 - 4:20 = 14:10
+  "resolved_at": "{TODAY} 18:30",
+  "duration_minutes": 260,            ← 4*60 + 20 = 260
+  "status": "Closed",
+  "affected_services": ["Multiple Site"], ← Contains word "sites"
+  "sites_5g_impacted": 3              ← CRITICAL: 3 sites, all 5G technology
 }
 
 CRITICAL INTELLIGENCE RULES:
@@ -371,7 +406,7 @@ CRITICAL INTELLIGENCE RULES:
    - Extract if duration > 5 hours (300 minutes) AND reason is mentioned
    - Look for: "delayed because", "took longer due to", "Note:", weather mentions, access issues
 
-7. **Affected Services**:
+7. **Affected Services & Site Impact Counting**:
    - Single FBB → ["Single FBB"]
    - Multiple FBB → ["Multiple FBB"]
    - Single site/tower → ["Single Site"]
@@ -386,6 +421,42 @@ CRITICAL INTELLIGENCE RULES:
      * "Multiple sites in Kandima are down" → ["Multiple Site"] (contains "sites")
      * "3 sites affected" → ["Multiple Site"] (contains "sites")
      * "Several sites are offline" → ["Multiple Site"] (contains "sites")
+
+   **Site Impact Counting Rules**:
+   CRITICAL: When "Single Site" or "Multiple Site" is selected, you MUST count impacted sites by technology.
+
+   - Look for technology indicators in service names:
+     * "3G", "3G/4G" → Count as 3G impacted
+     * "4G", "LTE", "3G/4G" → Count as 4G impacted
+     * "5G" → Count as 5G impacted
+     * "2G", "GSM" → Count as 2G impacted
+     * "FBB", "broadband", "fiber" → Count as FBB impacted
+
+   - Counting logic:
+     * "Dh_Kandima_Resort 3G/4G" → sites_3g_impacted: 1, sites_4g_impacted: 1
+     * "GA_Kondey FBB" → fbb_impacted: 1
+     * "GDh_Thinadhoo 5G" → sites_5g_impacted: 1
+     * "3 sites affected (2x 4G, 1x 5G)" → sites_4g_impacted: 2, sites_5g_impacted: 1
+     * "Multiple 3G sites down" → sites_3g_impacted: 1 (minimum, unless specific count given)
+
+   - If affected_services contains "Single Site" or "Multiple Site":
+     * Count each unique site mentioned in the summary
+     * Determine technology from site name or description
+     * If technology not specified, make best guess from context
+     * Set appropriate sites_Xg_impacted or fbb_impacted fields
+
+   - If affected_services is ["Single FBB"]:
+     * Set fbb_impacted: 1
+
+   - If affected_services is ["Multiple FBB"]:
+     * Count number of FBB sites mentioned
+     * Set fbb_impacted to that count (minimum 1)
+
+   **Examples**:
+   - "Dh_Kandima_Resort 3G/4G is down" → affected_services: ["Single Site"], sites_3g_impacted: 1, sites_4g_impacted: 1
+   - "GA_Kondey FBB and L_Hithadhoo FBB down" → affected_services: ["Multiple FBB"], fbb_impacted: 2
+   - "GDh_Thinadhoo 5G restored" → affected_services: ["Single Site"], sites_5g_impacted: 1
+   - "3 LTE sites affected in Male" → affected_services: ["Multiple Site"], sites_4g_impacted: 3
 
 8. **Date/Time Parsing**:
    - Convert ALL relative dates to absolute YYYY-MM-DD HH:MM format
