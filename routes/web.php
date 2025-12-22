@@ -233,6 +233,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/bulk-delete', [TemporarySiteController::class, 'destroyBulk'])->name('bulk-delete');
         Route::get('/import', [TemporarySiteController::class, 'importForm'])->name('import');
         Route::post('/import', [TemporarySiteController::class, 'import'])->name('import.process');
+        Route::post('/{temporarySite}/toggle-status', [TemporarySiteController::class, 'toggleTechStatus'])->name('toggle-status');
     });
 
     // Sites management routes (admin only)

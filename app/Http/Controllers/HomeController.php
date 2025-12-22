@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Incident;
+use App\Models\TemporarySite;
 
 class HomeController extends Controller
 {
@@ -46,6 +47,64 @@ class HomeController extends Controller
             ];
         }
 
+        // Calculate Temporary Sites statistics
+        if (config('sites.temp_sites_enabled', false)) {
+            $tempSites = TemporarySite::where('status', 'Temporary')->get();
+
+            $tempStats = [
+                '2g' => ['total' => 0, 'online' => 0, 'offline' => 0],
+                '3g' => ['total' => 0, 'online' => 0, 'offline' => 0],
+                '4g' => ['total' => 0, 'online' => 0, 'offline' => 0],
+            ];
+
+            foreach ($tempSites as $site) {
+                $coverage = strtolower($site->coverage);
+
+                // Count 2G
+                if (str_contains($coverage, '2g')) {
+                    $tempStats['2g']['total']++;
+                    if ($site->is_2g_online) {
+                        $tempStats['2g']['online']++;
+                    } else {
+                        $tempStats['2g']['offline']++;
+                    }
+                }
+
+                // Count 3G
+                if (str_contains($coverage, '3g')) {
+                    $tempStats['3g']['total']++;
+                    if ($site->is_3g_online) {
+                        $tempStats['3g']['online']++;
+                    } else {
+                        $tempStats['3g']['offline']++;
+                    }
+                }
+
+                // Count 4G
+                if (str_contains($coverage, '4g')) {
+                    $tempStats['4g']['total']++;
+                    if ($site->is_4g_online) {
+                        $tempStats['4g']['online']++;
+                    } else {
+                        $tempStats['4g']['offline']++;
+                    }
+                }
+            }
+
+            // Calculate total and percentage for temp sites
+            $tempTotal = $tempStats['2g']['total'] + $tempStats['3g']['total'] + $tempStats['4g']['total'];
+            $tempOnline = $tempStats['2g']['online'] + $tempStats['3g']['online'] + $tempStats['4g']['online'];
+            $tempOffline = $tempStats['2g']['offline'] + $tempStats['3g']['offline'] + $tempStats['4g']['offline'];
+
+            $siteStats['temp_sites'] = [
+                'total' => $tempTotal,
+                'online' => $tempOnline,
+                'offline' => $tempOffline,
+                'online_percentage' => $tempTotal > 0 ? round($tempOnline / $tempTotal * 100, 1) : 100,
+                'breakdown' => $tempStats,
+            ];
+        }
+
         // Separate incidents into site outages and FBB outages
         $siteOutages = $openIncidents->filter(function ($incident) {
             $services = is_array($incident->affected_services)
@@ -63,6 +122,11 @@ class HomeController extends Controller
             return in_array('Single FBB', $services);
         });
 
-        return view('home', compact('siteStats', 'siteOutages', 'fbbOutages', 'openIncidents'));
+        // Get temp sites for offline list display
+        $tempSites = config('sites.temp_sites_enabled', false)
+            ? TemporarySite::where('status', 'Temporary')->get()
+            : collect();
+
+        return view('home', compact('siteStats', 'siteOutages', 'fbbOutages', 'openIncidents', 'tempSites'));
     }
 }

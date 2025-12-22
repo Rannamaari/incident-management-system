@@ -128,6 +128,7 @@
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Atoll</th>
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Site Name</th>
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Coverage</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Site Status</th>
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Added Date</th>
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Status</th>
                                     <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
@@ -148,6 +149,48 @@
                                         <td class="px-4 py-4 text-sm text-gray-900">{{ $site->atoll_code }}</td>
                                         <td class="px-4 py-4 text-sm text-gray-900">{{ $site->site_name }}</td>
                                         <td class="px-4 py-4 text-sm text-gray-900">{{ $site->coverage }}</td>
+                                        <td class="px-4 py-4">
+                                            <div class="flex flex-col gap-1.5">
+                                                @if(str_contains(strtolower($site->coverage), '2g'))
+                                                    <label class="inline-flex items-center gap-2 cursor-pointer group">
+                                                        <input type="checkbox"
+                                                               data-site-id="{{ $site->id }}"
+                                                               data-tech="2g"
+                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-600"
+                                                               {{ $site->is_2g_online ? 'checked' : '' }}>
+                                                        <span class="text-xs font-medium {{ $site->is_2g_online ? 'text-green-600' : 'text-red-600' }}">
+                                                            2G {{ $site->is_2g_online ? 'Online' : 'Offline' }}
+                                                        </span>
+                                                    </label>
+                                                @endif
+
+                                                @if(str_contains(strtolower($site->coverage), '3g'))
+                                                    <label class="inline-flex items-center gap-2 cursor-pointer group">
+                                                        <input type="checkbox"
+                                                               data-site-id="{{ $site->id }}"
+                                                               data-tech="3g"
+                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                                                               {{ $site->is_3g_online ? 'checked' : '' }}>
+                                                        <span class="text-xs font-medium {{ $site->is_3g_online ? 'text-green-600' : 'text-red-600' }}">
+                                                            3G {{ $site->is_3g_online ? 'Online' : 'Offline' }}
+                                                        </span>
+                                                    </label>
+                                                @endif
+
+                                                @if(str_contains(strtolower($site->coverage), '4g'))
+                                                    <label class="inline-flex items-center gap-2 cursor-pointer group">
+                                                        <input type="checkbox"
+                                                               data-site-id="{{ $site->id }}"
+                                                               data-tech="4g"
+                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-600"
+                                                               {{ $site->is_4g_online ? 'checked' : '' }}>
+                                                        <span class="text-xs font-medium {{ $site->is_4g_online ? 'text-green-600' : 'text-red-600' }}">
+                                                            4G {{ $site->is_4g_online ? 'Online' : 'Offline' }}
+                                                        </span>
+                                                    </label>
+                                                @endif
+                                            </div>
+                                        </td>
                                         <td class="px-4 py-4 text-sm text-gray-600">{{ $site->added_date->format('d M Y') }}</td>
                                         <td class="px-4 py-4">
                                             <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold
@@ -193,7 +236,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-4 py-12 text-center">
+                                        <td colspan="9" class="px-4 py-12 text-center">
                                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                             </svg>
@@ -453,4 +496,77 @@
             });
         </script>
     @endif
+
+    <!-- Technology Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const techToggles = document.querySelectorAll('.tech-toggle');
+
+            techToggles.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const siteId = this.dataset.siteId;
+                    const tech = this.dataset.tech;
+                    const isOnline = this.checked;
+                    const label = this.nextElementSibling;
+
+                    // Update UI immediately for better UX
+                    if (isOnline) {
+                        label.textContent = `${tech.toUpperCase()} Online`;
+                        label.classList.remove('text-red-600');
+                        label.classList.add('text-green-600');
+                    } else {
+                        label.textContent = `${tech.toUpperCase()} Offline`;
+                        label.classList.remove('text-green-600');
+                        label.classList.add('text-red-600');
+                    }
+
+                    // Send AJAX request to update the database
+                    fetch(`/temporary-sites/${siteId}/toggle-status`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            tech: tech,
+                            is_online: isOnline
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Status updated successfully');
+                        } else {
+                            console.error('Failed to update status');
+                            // Revert UI changes
+                            this.checked = !isOnline;
+                            if (!isOnline) {
+                                label.textContent = `${tech.toUpperCase()} Online`;
+                                label.classList.remove('text-red-600');
+                                label.classList.add('text-green-600');
+                            } else {
+                                label.textContent = `${tech.toUpperCase()} Offline`;
+                                label.classList.remove('text-green-600');
+                                label.classList.add('text-red-600');
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Revert UI changes
+                        this.checked = !isOnline;
+                        if (!isOnline) {
+                            label.textContent = `${tech.toUpperCase()} Online`;
+                            label.classList.remove('text-red-600');
+                            label.classList.add('text-green-600');
+                        } else {
+                            label.textContent = `${tech.toUpperCase()} Offline`;
+                            label.classList.remove('text-green-600');
+                            label.classList.add('text-red-600');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 @endsection

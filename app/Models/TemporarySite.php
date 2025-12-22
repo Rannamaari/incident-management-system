@@ -15,6 +15,9 @@ class TemporarySite extends Model
         'atoll_code',
         'site_name',
         'coverage',
+        'is_2g_online',
+        'is_3g_online',
+        'is_4g_online',
         'added_date',
         'transmission_or_backhaul',
         'remarks',
@@ -27,6 +30,9 @@ class TemporarySite extends Model
     protected $casts = [
         'added_date' => 'date',
         'review_date' => 'date',
+        'is_2g_online' => 'boolean',
+        'is_3g_online' => 'boolean',
+        'is_4g_online' => 'boolean',
     ];
 
     protected static function booted()

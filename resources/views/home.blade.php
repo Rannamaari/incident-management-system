@@ -32,11 +32,11 @@
 @endsection
 
 @section('content')
-    <div class="py-4 sm:py-6 lg:py-8">
-        <div class="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8">
+    <div class="py-6 sm:py-8 lg:py-10">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
 
-            <!-- Site Status Cards -->
-            <div class="mb-6 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-5 lg:gap-6">
+            <!-- Site Status Cards - Mobile View -->
+            <div class="mb-6 lg:hidden space-y-3">
                 @foreach(['2g', '3g', '4g', '5g', 'fbb'] as $type)
                     @php
                         $stats = $siteStats[$type] ?? ['total' => 0, 'online' => 0, 'offline' => 0, 'online_percentage' => 100];
@@ -45,32 +45,73 @@
                         $config = $colors[$type] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600', 'icon_bg' => 'bg-gray-100', 'accent' => 'from-gray-50'];
                         $label = $labels[$type] ?? strtoupper($type);
                     @endphp
-                    <div class="group relative rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm p-3 sm:p-5 lg:p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-gray-200/70 hover:shadow-2xl hover:bg-white/90">
-                        <!-- Card Content -->
-                        <div class="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 mb-3 sm:mb-5">
-                            <div class="flex-1 min-w-0">
-                                <p class="mb-2 sm:mb-3 text-xs sm:text-sm lg:text-base font-heading font-medium text-gray-600">{{ $label }}</p>
-                                <p class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight {{ $config['text'] }}">
-                                    {{ $stats['online'] }}
-                                </p>
-                                <p class="mt-1 sm:mt-2 text-xs lg:text-sm text-gray-500">of {{ $stats['total'] }} online</p>
-                            </div>
-                            <div class="flex-shrink-0 self-end sm:self-auto rounded-xl sm:rounded-2xl p-2 sm:p-3 lg:p-4 {{ $config['icon_bg'] }} transition-colors">
-                                <svg class="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 {{ $config['text'] }}" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <div class="rounded-xl border border-gray-100/50 bg-white/80 backdrop-blur-sm p-4 shadow-md">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0 rounded-xl p-3 {{ $config['icon_bg'] }}">
+                                <svg class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
                                 </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-heading font-medium text-gray-600 mb-1">{{ $label }}</p>
+                                <div class="flex items-baseline gap-2">
+                                    <p class="text-2xl font-bold tracking-tight {{ $config['text'] }}">{{ $stats['online'] }}</p>
+                                    <p class="text-xs text-gray-500">/ {{ $stats['total'] }}</p>
+                                </div>
+                                <div class="mt-2 flex items-center justify-between text-xs">
+                                    <span class="text-gray-600">{{ $stats['online_percentage'] }}% online</span>
+                                    @if($stats['offline'] > 0)
+                                        <span class="text-red-600 font-semibold">{{ $stats['offline'] }} offline</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full {{ $config['bg'] }} transition-all duration-500"
+                                 style="width: {{ $stats['online_percentage'] }}%"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Site Status Cards - Desktop View -->
+            <div class="mb-8 hidden lg:grid grid-cols-3 gap-8 xl:grid-cols-5 xl:gap-6">
+                @foreach(['2g', '3g', '4g', '5g', 'fbb'] as $type)
+                    @php
+                        $stats = $siteStats[$type] ?? ['total' => 0, 'online' => 0, 'offline' => 0, 'online_percentage' => 100];
+                        $colors = config('sites.colors');
+                        $labels = config('sites.labels');
+                        $config = $colors[$type] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600', 'icon_bg' => 'bg-gray-100', 'accent' => 'from-gray-50'];
+                        $label = $labels[$type] ?? strtoupper($type);
+                    @endphp
+                    <div class="group relative rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm p-6 lg:p-7 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-gray-200/70 hover:shadow-2xl hover:bg-white/90">
+                        <!-- Card Content -->
+                        <div class="flex flex-col gap-4 mb-5">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex-1 min-w-0">
+                                    <p class="mb-3 text-sm sm:text-base font-heading font-semibold text-gray-600">{{ $label }}</p>
+                                    <p class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight {{ $config['text'] }}">
+                                        {{ $stats['online'] }}
+                                    </p>
+                                    <p class="mt-2 text-sm text-gray-500">of {{ $stats['total'] }} online</p>
+                                </div>
+                                <div class="flex-shrink-0 rounded-2xl p-3 lg:p-4 {{ $config['icon_bg'] }} transition-colors">
+                                    <svg class="h-10 w-10 lg:h-12 lg:w-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Status Bar -->
-                        <div class="space-y-1.5 sm:space-y-2">
-                            <div class="flex justify-between text-xs text-gray-600">
-                                <span class="text-[10px] sm:text-xs">Online: {{ $stats['online_percentage'] }}%</span>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm text-gray-600">
+                                <span class="font-medium">Online: {{ $stats['online_percentage'] }}%</span>
                                 @if($stats['offline'] > 0)
-                                    <span class="text-red-600 font-semibold text-[10px] sm:text-xs">{{ $stats['offline'] }} offline</span>
+                                    <span class="text-red-600 font-bold">{{ $stats['offline'] }} offline</span>
                                 @endif
                             </div>
-                            <div class="h-1.5 sm:h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
                                 <div class="h-full {{ $config['bg'] }} transition-all duration-500"
                                      style="width: {{ $stats['online_percentage'] }}%"></div>
                             </div>
@@ -78,10 +119,138 @@
 
                         <!-- Gradient Overlay -->
                         <div class="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-all duration-300 group-hover:opacity-30 bg-gradient-to-br {{ $config['accent'] }} to-transparent"></div>
-                        <div class="absolute top-4 right-4 w-2 h-2 rounded-full bg-gradient-to-r {{ $config['accent'] }} opacity-60"></div>
+                        <div class="absolute top-5 right-5 w-2 h-2 rounded-full bg-gradient-to-r {{ $config['accent'] }} opacity-60"></div>
                     </div>
                 @endforeach
             </div>
+
+            <!-- Temporary Sites Section -->
+            @if(config('sites.temp_sites_enabled', false) && isset($siteStats['temp_sites']))
+                @php
+                    $tempStats = $siteStats['temp_sites'];
+                    $tempConfig = config('sites.colors.temp_sites');
+                @endphp
+                <div class="mb-8">
+                    <h2 class="text-lg sm:text-xl lg:text-2xl font-heading font-bold text-gray-900 mb-4 lg:mb-6 flex items-center gap-2">
+                        <svg class="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                        </svg>
+                        Temporary Sites
+                    </h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                        <!-- Left: Overall Stats -->
+                        <div class="rounded-xl lg:rounded-2xl border border-teal-100/50 bg-white/80 backdrop-blur-sm p-4 sm:p-5 lg:p-6 shadow-lg">
+                            <div class="flex items-start justify-between gap-3 lg:gap-4 mb-4 lg:mb-6">
+                                <div class="flex-1">
+                                    <h3 class="text-base lg:text-lg font-heading font-bold text-gray-900 mb-3 lg:mb-4">Overall Status</h3>
+                                    <div class="flex items-baseline gap-2 lg:gap-3">
+                                        <p class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight {{ $tempConfig['text'] }}">
+                                            {{ $tempStats['online'] }}
+                                        </p>
+                                        <p class="text-sm lg:text-base text-gray-500">of {{ $tempStats['total'] }}</p>
+                                    </div>
+                                    <div class="mt-3 lg:mt-4 space-y-1.5 lg:space-y-2">
+                                        <div class="flex justify-between items-center text-xs lg:text-sm">
+                                            <span class="font-medium text-gray-600">Online:</span>
+                                            <span class="font-bold text-green-600">{{ $tempStats['online_percentage'] }}%</span>
+                                        </div>
+                                        @if($tempStats['offline'] > 0)
+                                            <div class="flex justify-between items-center text-xs lg:text-sm">
+                                                <span class="font-medium text-gray-600">Offline:</span>
+                                                <span class="font-bold text-red-600">{{ $tempStats['offline'] }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0 rounded-xl lg:rounded-2xl p-3 lg:p-4 {{ $tempConfig['icon_bg'] }}">
+                                    <svg class="h-10 w-10 lg:h-12 lg:w-12 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Technology Breakdown -->
+                            <div class="border-t border-gray-200 pt-3 lg:pt-4">
+                                <h4 class="text-xs lg:text-sm font-heading font-semibold text-gray-700 mb-2 lg:mb-3">Breakdown by Technology</h4>
+                                <div class="space-y-2 lg:space-y-3">
+                                    @foreach(['2g', '3g', '4g'] as $tech)
+                                        @if($tempStats['breakdown'][$tech]['total'] > 0)
+                                            <div>
+                                                <div class="flex justify-between items-center mb-1.5">
+                                                    <span class="text-sm font-semibold text-gray-700">{{ strtoupper($tech) }}</span>
+                                                    <span class="text-sm font-bold {{ $tempStats['breakdown'][$tech]['offline'] > 0 ? 'text-red-600' : 'text-green-600' }}">
+                                                        {{ $tempStats['breakdown'][$tech]['online'] }}/{{ $tempStats['breakdown'][$tech]['total'] }}
+                                                    </span>
+                                                </div>
+                                                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                    <div class="h-full bg-gradient-to-r {{ $tempStats['breakdown'][$tech]['offline'] > 0 ? 'from-red-500 to-red-600' : 'from-green-500 to-green-600' }} transition-all duration-500"
+                                                         style="width: {{ $tempStats['breakdown'][$tech]['total'] > 0 ? round($tempStats['breakdown'][$tech]['online'] / $tempStats['breakdown'][$tech]['total'] * 100) : 100 }}%"></div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Offline Sites List -->
+                        <div class="rounded-xl lg:rounded-2xl border border-red-100/50 bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
+                            <div class="bg-gradient-to-r from-red-50 to-rose-50 px-4 sm:px-5 lg:px-6 py-3 lg:py-4 border-b border-red-100">
+                                <h3 class="text-base lg:text-lg font-heading font-bold text-red-900 flex items-center gap-2">
+                                    <svg class="h-4 w-4 lg:h-5 lg:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                    Offline Sites
+                                </h3>
+                            </div>
+                            <div class="divide-y divide-gray-100 max-h-64 sm:max-h-80 lg:max-h-96 overflow-y-auto">
+                                @php
+                                    $offlineSites = collect($tempSites ?? [])->filter(function($site) {
+                                        return !$site->is_2g_online || !$site->is_3g_online || !$site->is_4g_online;
+                                    });
+                                @endphp
+
+                                @forelse($offlineSites as $site)
+                                    <div class="p-3 lg:p-4 hover:bg-gray-50 transition-colors">
+                                        <div class="flex items-start justify-between gap-3 lg:gap-4">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs lg:text-sm font-semibold text-gray-900 leading-tight">{{ $site->site_name }}</p>
+                                                <p class="text-[10px] lg:text-xs text-gray-500 mt-1">{{ $site->temp_site_id }} • {{ $site->atoll_code }}</p>
+                                                <div class="mt-2 flex flex-wrap gap-1.5 lg:gap-2">
+                                                    @if(str_contains(strtolower($site->coverage), '2g'))
+                                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold {{ $site->is_2g_online ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                            2G {{ $site->is_2g_online ? 'Online' : 'Offline' }}
+                                                        </span>
+                                                    @endif
+                                                    @if(str_contains(strtolower($site->coverage), '3g'))
+                                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold {{ $site->is_3g_online ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                            3G {{ $site->is_3g_online ? 'Online' : 'Offline' }}
+                                                        </span>
+                                                    @endif
+                                                    @if(str_contains(strtolower($site->coverage), '4g'))
+                                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold {{ $site->is_4g_online ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                            4G {{ $site->is_4g_online ? 'Online' : 'Offline' }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="p-6 lg:p-8 text-center">
+                                        <svg class="mx-auto h-10 w-10 lg:h-12 lg:w-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <p class="mt-3 lg:mt-4 text-xs lg:text-sm font-medium text-gray-900">All Sites Online</p>
+                                        <p class="mt-1 text-[10px] lg:text-xs text-gray-500">No offline sites</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Active Outages Section -->
             @if($siteOutages->count() > 0 || $fbbOutages->count() > 0)

@@ -296,4 +296,39 @@ class TemporarySiteController extends Controller
         // Fallback to Carbon parse
         return Carbon::parse($dateString)->format('Y-m-d');
     }
+
+    /**
+     * Toggle technology status (online/offline) for a temporary site.
+     */
+    public function toggleTechStatus(Request $request, TemporarySite $temporarySite)
+    {
+        $request->validate([
+            'tech' => 'required|in:2g,3g,4g',
+            'is_online' => 'required|boolean',
+        ]);
+
+        $tech = $request->input('tech');
+        $isOnline = $request->input('is_online');
+
+        // Map tech to database field
+        $fieldMap = [
+            '2g' => 'is_2g_online',
+            '3g' => 'is_3g_online',
+            '4g' => 'is_4g_online',
+        ];
+
+        $field = $fieldMap[$tech];
+
+        // Update the status
+        $temporarySite->update([
+            $field => $isOnline,
+            'updated_by' => Auth::id(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => ucfirst($tech) . ' status updated successfully',
+            'is_online' => $isOnline,
+        ]);
+    }
 }

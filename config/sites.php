@@ -20,6 +20,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Temporary Sites - Calculated Dynamically
+    |--------------------------------------------------------------------------
+    |
+    | Temporary sites are counted from the database based on their coverage field.
+    | The dashboard calculates online/offline status based on is_Xg_online flags.
+    |
+    */
+    'temp_sites_enabled' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Site Labels
     |--------------------------------------------------------------------------
     |
@@ -32,6 +43,7 @@ return [
         '4g' => '4G Sites',
         '5g' => '5G Sites',
         'fbb' => 'FBB',
+        'temp_sites' => 'Temp Sites',
     ],
 
     /*
@@ -72,6 +84,12 @@ return [
             'text' => 'text-orange-700',
             'icon_bg' => 'bg-gradient-to-br from-orange-500 to-amber-600 group-hover:from-orange-600 group-hover:to-amber-700 shadow-lg',
             'accent' => 'from-orange-500',
+        ],
+        'temp_sites' => [
+            'bg' => 'bg-gradient-to-r from-teal-500 to-cyan-600',
+            'text' => 'text-teal-700',
+            'icon_bg' => 'bg-gradient-to-br from-teal-500 to-cyan-600 group-hover:from-teal-600 group-hover:to-cyan-700 shadow-lg',
+            'accent' => 'from-teal-500',
         ],
     ],
 ];
