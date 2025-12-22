@@ -298,6 +298,12 @@ CRITICAL INTELLIGENCE RULES:
    - If duration given (e.g., "took 3 hours") → Convert to minutes
    - "all day" ≈ 8-12 hours, "overnight" ≈ 8-10 hours
 
+   CRITICAL: "Total Down Duration" Detection:
+   - If message contains "total down duration", "TDD", or mentions duration will be calculated/updated manually
+   - Set duration_minutes to null (don't auto-calculate)
+   - Set started_at and resolved_at to null if they can't be determined
+   - This signals manual entry is required
+
    CRITICAL CALCULATION LOGIC:
    - "on service since [TIME], Duration: [X]" → resolved_at = TIME, started_at = TIME - X
    - "down since [TIME], Duration: [X]" → started_at = TIME, resolved_at = TIME + X
@@ -318,8 +324,12 @@ CRITICAL INTELLIGENCE RULES:
    - Single FBB → ["Single FBB"]
    - Multiple FBB → ["Multiple FBB"]
    - Single site/tower → ["Single Site"]
-   - Multiple cells → ["Cell"]
-   - All services down → ["Multiple Site"] or specific services
+   - Multiple cells → ["Cell"] (default for multiple cells)
+   - ONLY use ["Multiple Site"] if message explicitly mentions the word "sites" or "site" in plural context
+   - Examples:
+     * "K_Cell1, K_Cell2, K_Cell3 are down" → ["Cell"] (no "sites" mentioned)
+     * "Multiple sites in Kandima are down" → ["Multiple Site"] ("sites" explicitly mentioned)
+     * "3 sites affected" → ["Multiple Site"] ("sites" explicitly mentioned)
 
 8. **Date/Time Parsing**:
    - Convert ALL relative dates to absolute YYYY-MM-DD HH:MM format

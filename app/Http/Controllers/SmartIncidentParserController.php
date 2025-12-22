@@ -286,9 +286,14 @@ class SmartIncidentParserController extends Controller
             }
         }
 
+        // Check for "total down duration" which indicates manual entry required
+        $hasTotalDownDuration = preg_match('/\btotal\s+down\s+duration\b/i', $message) ||
+                                preg_match('/\bTDD\b/', $message);
+
         // Extract duration
         // Pattern: "Duration: 30mins" or "Duration: 2hrs 12mins" or "Duration: 1hr 43mins"
-        if (preg_match('/Duration:\s*(\d+\s*hrs?\s*)?(\d+)?\s*mins?/i', $message, $matches)) {
+        // SKIP auto-calculation if "total down duration" is mentioned
+        if (!$hasTotalDownDuration && preg_match('/Duration:\s*(\d+\s*hrs?\s*)?(\d+)?\s*mins?/i', $message, $matches)) {
             $data['duration'] = trim($matches[0]);
 
             $hours = 0;
@@ -387,7 +392,17 @@ class SmartIncidentParserController extends Controller
         } elseif ($cellCount > 0) {
             // RAN outage with cells (AAU, cell tower, mobile tower, etc.)
             $data['outage_category'] = 'RAN'; // Infrastructure type
-            $data['affected_services'] = ['Cell'];
+
+            // IMPORTANT: Only use "Multiple Site" if message explicitly mentions "sites" (plural)
+            // Otherwise, multiple cells should be categorized as "Cell"
+            $hasSitesKeyword = preg_match('/\bsites\b/i', $message);
+
+            if ($hasSitesKeyword) {
+                $data['affected_services'] = ['Multiple Site'];
+            } else {
+                $data['affected_services'] = ['Cell'];
+            }
+
             $data['category'] = 'RAN'; // Service affected
 
             // Extract all cell names and format them nicely
