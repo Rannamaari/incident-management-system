@@ -279,6 +279,15 @@ Output: {
   "duration_minutes": 517             ← 8*60 + 37 = 517 minutes
 }
 
+Example 3 - Multiple cells with full date:
+Input: "Below mentioned cells are on service since 1909hrs 20/12/2025 Duration: 7hrs 10mins"
+Output: {
+  "started_at": "2025-12-20 11:59",  ← Restoration time MINUS duration (19:09 - 7:10 = 11:59)
+  "resolved_at": "2025-12-20 19:09", ← "on service since 1909hrs" = 19:09 (split 1909 as 19:09)
+  "duration_minutes": 430,            ← 7*60 + 10 = 430 minutes
+  "status": "Closed"                  ← "cells are on service" = Closed (plural form)
+}
+
 CRITICAL INTELLIGENCE RULES:
 
 1. **Natural English Understanding**:
@@ -295,11 +304,22 @@ CRITICAL INTELLIGENCE RULES:
    - Handle informal naming: "the Hithadhoo fiber" → "L_Hithadhoo FBB"
 
 3. **Status Detection**:
-   - Keywords for Open: down, offline, not working, outage, issue, problem
-   - Keywords for Closed: restored, back online, on service, fixed, resolved, working again
+   CRITICAL: Check the PRIMARY action verb to determine status
 
-   CRITICAL: "on service since 1220hrs" means RESTORED at 1220, NOT started!
-   - If you see "on service since [TIME]" → that's the resolved_at time
+   Status = Closed (service RESTORED) if message contains:
+   - "on service" (both singular and plural: "cell is on service" OR "cells are on service")
+   - "restored", "back online", "fixed", "resolved", "working again", "came back"
+
+   Status = Open (service DOWN) if message contains:
+   - "down", "offline", "not working", "outage", "issue", "problem", "failure"
+
+   CRITICAL EXAMPLES:
+   - "Below mentioned cell is on service since..." → Status = Closed ✓
+   - "Below mentioned cells are on service since..." → Status = Closed ✓
+   - "Below mentioned cells are down since..." → Status = Open ✓
+
+   CRITICAL: "on service since [TIME]" means RESTORED at that time, NOT started!
+   - If you see "on service since [TIME]" → status = Closed, resolved_at = TIME
    - Then SUBTRACT duration to get started_at
    - Example: "on service since 1220hrs, Duration: 30mins" → resolved: 12:20, started: 11:50
 
