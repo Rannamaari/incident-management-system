@@ -115,12 +115,8 @@ Route::get('/test-ai', function () {
     }
 });
 
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('incidents.index');
-    }
-    return redirect()->route('login');
-});
+// Public home/network dashboard - no auth required
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 // Editor routes (editor and admin only) - Must come before viewer routes to avoid conflicts
 Route::middleware(['auth', 'role:editor'])->group(function () {
@@ -131,6 +127,7 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     Route::put('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+')->name('incidents.update');
     Route::patch('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+');
     Route::put('incidents/{incident}/close', [IncidentController::class, 'close'])->where('incident', '[0-9]+')->name('incidents.close');
+    Route::post('incidents/{incident}/timeline', [IncidentController::class, 'addTimelineUpdate'])->where('incident', '[0-9]+')->name('incidents.timeline.add');
 
     // Import routes
     Route::get('incidents/import', [IncidentController::class, 'showImport'])->name('incidents.import');
@@ -160,9 +157,9 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
 
 // Public routes that require only authentication (viewer and above)
 Route::middleware(['auth', 'role:viewer'])->group(function () {
-    // Redirect root to incidents
+    // Redirect dashboard to home
     Route::get('/dashboard', function () {
-        return redirect()->route('incidents.index');
+        return redirect()->route('home');
     })->name('dashboard');
 
     // View-only incident routes (viewer and above) - Wildcard routes last
@@ -250,5 +247,4 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+require __DIR__.'/test-dashboard.php';

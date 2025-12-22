@@ -2,20 +2,20 @@
 
 @section('header')
     <!-- Hero -->
-    <div class="-mx-4 sm:-mx-6 lg:-mx-8 bg-gradient-to-br from-slate-50 via-white to-red-50/50 px-4 sm:px-6 lg:px-8 py-8 border-b border-gray-200/30">
+    <div class="-mx-4 sm:-mx-6 lg:-mx-8 bg-gradient-to-br from-slate-50 via-white to-red-50/50 px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8 border-b border-gray-200/30">
         <div class="mx-auto max-w-7xl">
-            <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex flex-col gap-3 sm:gap-4 lg:gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div class="min-w-0 flex-1">
-                    <div class="flex items-center gap-3">
-                        <div class="h-12 w-12 rounded-2xl bg-gradient-to-br from-red-500 to-red-600 shadow-lg grid place-items-center transform hover:scale-105 transition-all duration-300">
-                            <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-red-500 to-red-600 shadow-lg grid place-items-center transform hover:scale-105 transition-all duration-300">
+                            <svg class="h-6 w-6 sm:h-7 sm:w-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
                         </div>
                         <div>
-                            <h1 class="font-heading text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">Incident Dashboard</h1>
-                            <p class="mt-2 text-lg text-gray-600 font-medium">Monitor, track, and resolve system incidents efficiently</p>
+                            <h1 class="font-heading text-xl sm:text-2xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">Incident Dashboard</h1>
+                            <p class="mt-1 sm:mt-2 text-xs sm:text-sm lg:text-lg text-gray-600 font-medium">Monitor, track, and resolve system incidents efficiently</p>
                         </div>
                     </div>
                 </div>
@@ -63,11 +63,11 @@
 @endsection
 
 @section('content')
-    <div class="py-6 lg:py-8">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="py-4 sm:py-6 lg:py-8">
+        <div class="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8">
 
             <!-- KPI Cards -->
-            <div class="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            <div class="mb-6 grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4 lg:gap-8">
                 <!-- Card component -->
                 @php
                     $monthName = \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->format('F Y');
@@ -113,16 +113,16 @@
 
                 @foreach($kpis as $kpi)
                     <div
-                        class="group relative rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm p-6 lg:p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-gray-200/70 hover:shadow-2xl hover:bg-white/90">
-                        <div class="flex items-center justify-between">
-                            <div class="flex-1">
-                                <p class="mb-2 text-sm lg:text-base font-heading font-medium text-gray-600">{{ $kpi['label'] }}</p>
-                                <p class="text-3xl lg:text-4xl xl:text-5xl font-bold tracking-tight {{ $kpi['valueColor'] }}">
+                        class="group relative rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm p-3 sm:p-6 lg:p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-gray-200/70 hover:shadow-2xl hover:bg-white/90">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="flex-1 min-w-0">
+                                <p class="mb-2 text-xs sm:text-sm lg:text-base font-heading font-medium text-gray-600">{{ $kpi['label'] }}</p>
+                                <p class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight {{ $kpi['valueColor'] }}">
                                     {{ $kpi['value'] }}</p>
-                                <p class="mt-2 text-xs lg:text-sm text-gray-500">{{ $kpi['hint'] }}</p>
+                                <p class="mt-1 sm:mt-2 text-xs lg:text-sm text-gray-500">{{ $kpi['hint'] }}</p>
                             </div>
-                            <div class="rounded-2xl p-4 lg:p-5 {{ $kpi['iconBg'] }} transition-colors">
-                                <svg class="h-8 w-8 lg:h-10 lg:w-10 text-current" viewBox="0 0 24 24" fill="none"
+                            <div class="flex-shrink-0 self-end sm:self-auto rounded-xl sm:rounded-2xl p-2 sm:p-4 lg:p-5 {{ $kpi['iconBg'] }} transition-colors">
+                                <svg class="h-8 w-8 sm:h-8 sm:w-8 lg:h-10 lg:w-10 text-current" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="{{ $kpi['icon'] }}" />
@@ -274,7 +274,7 @@
                                                                         </a>
                                                                         <!-- Close Button (Only for Open/In Progress/Monitoring incidents) -->
                                                                         @if($incident->status !== 'Closed')
-                                                                            <button type="button" onclick="openCloseModal({{ $incident->id }}, '{{ $incident->incident_code }}')"
+                                                                            <button type="button" onclick="openCloseModal({{ $incident->id }}, '{{ $incident->incident_code }}', '{{ $incident->started_at->toISOString() }}', '{{ $incident->severity }}')"
                                                                                 class="inline-flex items-center rounded-lg bg-gradient-to-r from-green-100 to-green-200 px-2.5 py-1.5 text-green-700 transition-all duration-300 hover:from-green-200 hover:to-green-300 transform hover:scale-105 text-xs">
                                                                                 <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -410,7 +410,7 @@
                                                             Edit
                                                         </a>
                                                         @if($incident->status !== 'Closed')
-                                                            <button type="button" onclick="openCloseModal({{ $incident->id }}, '{{ $incident->incident_code }}')"
+                                                            <button type="button" onclick="openCloseModal({{ $incident->id }}, '{{ $incident->incident_code }}', '{{ $incident->started_at->toISOString() }}', '{{ $incident->severity }}')"
                                                                 class="inline-flex items-center rounded-lg bg-gradient-to-r from-green-100 to-green-200 px-3 py-1.5 text-xs font-heading font-medium text-green-700 transition-all duration-300 hover:from-green-200 hover:to-green-300 transform hover:scale-105">
                                                                 <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -497,7 +497,7 @@
                             class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300">
                     </div>
 
-                    <div class="mb-6">
+                    <div class="mb-4">
                         <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700 mb-2">
                             Root Cause <span class="text-red-500">*</span>
                         </label>
@@ -505,6 +505,54 @@
                             class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
                             placeholder="Enter the root cause of this incident..."></textarea>
                         <p class="mt-1 text-xs text-gray-500">Root cause is required when closing an incident</p>
+                    </div>
+
+                    <!-- Conditional Fields Container -->
+                    <div id="conditionalFieldsContainer" class="space-y-4 mb-6">
+                        <!-- Travel Time (for Medium/High/Critical) -->
+                        <div id="travelTimeField" class="hidden">
+                            <label for="travel_time" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                Travel Time (minutes) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="travel_time" name="travel_time" min="0"
+                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
+                                placeholder="Enter travel time in minutes">
+                        </div>
+
+                        <!-- Work Time (for Medium/High/Critical) -->
+                        <div id="workTimeField" class="hidden">
+                            <label for="work_time" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                Work Time (minutes) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="number" id="work_time" name="work_time" min="0"
+                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
+                                placeholder="Enter work time in minutes">
+                        </div>
+
+                        <!-- Delay Reason (for duration > 5 hours) -->
+                        <div id="delayReasonField" class="hidden">
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-2 rounded-r-lg">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.964-1.333-2.732 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-yellow-700">
+                                            This incident has been open for more than 5 hours. Please explain the reason for the delay.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                Reason for Delay <span class="text-red-500">*</span>
+                            </label>
+                            <textarea id="delay_reason" name="delay_reason" rows="4"
+                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
+                                placeholder="Please provide a detailed explanation for why this incident took more than 5 hours to resolve..."></textarea>
+                            <p class="mt-1 text-xs text-gray-500">This field is required for incidents with duration exceeding 5 hours.</p>
+                        </div>
                     </div>
 
                     <div class="flex justify-end gap-3">
@@ -523,11 +571,19 @@
     </div>
 
     <script>
-        function openCloseModal(incidentId, incidentCode) {
+        // Store incident data for dynamic updates
+        let currentIncidentStartedAt = null;
+        let currentIncidentSeverity = null;
+
+        function openCloseModal(incidentId, incidentCode, startedAt, severity) {
             const modal = document.getElementById('closeModal');
             const form = document.getElementById('closeIncidentForm');
             const codeSpan = document.getElementById('modalIncidentCode');
             const resolvedAtInput = document.getElementById('resolved_at');
+
+            // Store incident data
+            currentIncidentStartedAt = startedAt;
+            currentIncidentSeverity = severity;
 
             // Set form action
             form.action = `/incidents/${incidentId}/close`;
@@ -540,14 +596,65 @@
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             resolvedAtInput.value = now.toISOString().slice(0, 16);
 
+            // Update conditional fields
+            updateConditionalFieldsIndex();
+
             // Show modal
             modal.classList.remove('hidden');
+        }
+
+        function updateConditionalFieldsIndex() {
+            const resolvedAtInput = document.getElementById('resolved_at');
+
+            // Calculate duration in hours
+            const startDate = new Date(currentIncidentStartedAt);
+            const resolvedDate = new Date(resolvedAtInput.value);
+            const durationHours = (resolvedDate - startDate) / (1000 * 60 * 60);
+
+            // Show/hide conditional fields based on duration and severity
+            const delayReasonField = document.getElementById('delayReasonField');
+            const delayReasonInput = document.getElementById('delay_reason');
+            const travelTimeField = document.getElementById('travelTimeField');
+            const travelTimeInput = document.getElementById('travel_time');
+            const workTimeField = document.getElementById('workTimeField');
+            const workTimeInput = document.getElementById('work_time');
+
+            // Show delay reason if duration > 5 hours
+            if (durationHours > 5) {
+                delayReasonField.classList.remove('hidden');
+                delayReasonInput.required = true;
+            } else {
+                delayReasonField.classList.add('hidden');
+                delayReasonInput.required = false;
+            }
+
+            // Show travel/work time for Medium/High/Critical
+            const requiresTravelWork = ['Medium', 'High', 'Critical'].includes(currentIncidentSeverity);
+            if (requiresTravelWork) {
+                travelTimeField.classList.remove('hidden');
+                workTimeField.classList.remove('hidden');
+                travelTimeInput.required = true;
+                workTimeInput.required = true;
+            } else {
+                travelTimeField.classList.add('hidden');
+                workTimeField.classList.add('hidden');
+                travelTimeInput.required = false;
+                workTimeInput.required = false;
+            }
         }
 
         function closeCloseModal() {
             const modal = document.getElementById('closeModal');
             modal.classList.add('hidden');
         }
+
+        // Update conditional fields when resolved_at changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const resolvedAtInput = document.getElementById('resolved_at');
+            if (resolvedAtInput) {
+                resolvedAtInput.addEventListener('change', updateConditionalFieldsIndex);
+            }
+        });
 
         // Close modal when clicking outside
         document.getElementById('closeModal')?.addEventListener('click', function(event) {

@@ -20,6 +20,11 @@ class Incident extends Model
         'fault_type_id',
         'resolution_team_id',
         'affected_services',
+        'sites_2g_impacted',
+        'sites_3g_impacted',
+        'sites_4g_impacted',
+        'sites_5g_impacted',
+        'fbb_impacted',
         'started_at',
         'resolved_at',
         'duration_minutes',
@@ -48,6 +53,7 @@ class Incident extends Model
         'recommendation',
         'created_by',
         'updated_by',
+        'timeline',
     ];
 
     protected $casts = [
@@ -64,6 +70,12 @@ class Incident extends Model
         'sla_minutes' => 'integer',
         'travel_time' => 'integer',
         'work_time' => 'integer',
+        'sites_2g_impacted' => 'integer',
+        'sites_3g_impacted' => 'integer',
+        'sites_4g_impacted' => 'integer',
+        'sites_5g_impacted' => 'integer',
+        'fbb_impacted' => 'integer',
+        'timeline' => 'array',
     ];
 
     // Constants for dropdowns and validation

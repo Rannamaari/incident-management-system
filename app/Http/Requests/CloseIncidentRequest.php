@@ -176,4 +176,18 @@ class CloseIncidentRequest extends FormRequest
             }
         });
     }
+
+    /**
+     * Manually trigger validation for this request
+     */
+    public function validateResolved()
+    {
+        $validator = $this->getValidatorInstance();
+
+        if ($validator->fails()) {
+            $this->failedValidation($validator);
+        }
+
+        return $validator->validated();
+    }
 }

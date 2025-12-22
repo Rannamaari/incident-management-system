@@ -99,6 +99,32 @@ class IncidentController extends Controller
 
         $validated = $this->validateIncident($request);
 
+        // Custom validation: site counts required when site services selected
+        $affectedServices = $request->input('affected_services', []);
+        if (in_array('Single Site', $affectedServices) || in_array('Multiple Site', $affectedServices)) {
+            $totalSites = ($validated['sites_2g_impacted'] ?? 0)
+                        + ($validated['sites_3g_impacted'] ?? 0)
+                        + ($validated['sites_4g_impacted'] ?? 0)
+                        + ($validated['sites_5g_impacted'] ?? 0);
+
+            if ($totalSites === 0) {
+                return back()->withErrors([
+                    'sites_2g_impacted' => 'Please specify the number of impacted sites when Single Site or Multiple Site is selected.'
+                ])->withInput();
+            }
+        }
+
+        // Custom validation: FBB count required when FBB service selected
+        if (in_array('Single FBB', $affectedServices)) {
+            $fbbCount = $validated['fbb_impacted'] ?? 0;
+
+            if ($fbbCount === 0) {
+                return back()->withErrors([
+                    'fbb_impacted' => 'Please specify the number of impacted FBB when Single FBB is selected.'
+                ])->withInput();
+            }
+        }
+
         // Handle new category creation
         $validated = $this->handleNewValues($request, $validated);
 
@@ -106,7 +132,16 @@ class IncidentController extends Controller
         $this->fillIncidentData($incident, $validated, $request);
         $incident->created_by = auth()->id();
         $incident->updated_by = auth()->id();
-        $incident->save();
+
+        // Try to save and catch model-level validation errors
+        try {
+            $incident->save();
+        } catch (\InvalidArgumentException $e) {
+            // Convert model validation exception to user-friendly error
+            return back()->withErrors([
+                'delay_reason' => $e->getMessage()
+            ])->withInput();
+        }
 
         // Handle RCA file upload
         $this->handleRcaFileUpload($incident, $request);
@@ -158,6 +193,32 @@ class IncidentController extends Controller
 
         $validated = $this->validateIncident($request, $incident);
 
+        // Custom validation: site counts required when site services selected
+        $affectedServices = $request->input('affected_services', []);
+        if (in_array('Single Site', $affectedServices) || in_array('Multiple Site', $affectedServices)) {
+            $totalSites = ($validated['sites_2g_impacted'] ?? 0)
+                        + ($validated['sites_3g_impacted'] ?? 0)
+                        + ($validated['sites_4g_impacted'] ?? 0)
+                        + ($validated['sites_5g_impacted'] ?? 0);
+
+            if ($totalSites === 0) {
+                return back()->withErrors([
+                    'sites_2g_impacted' => 'Please specify the number of impacted sites when Single Site or Multiple Site is selected.'
+                ])->withInput();
+            }
+        }
+
+        // Custom validation: FBB count required when FBB service selected
+        if (in_array('Single FBB', $affectedServices)) {
+            $fbbCount = $validated['fbb_impacted'] ?? 0;
+
+            if ($fbbCount === 0) {
+                return back()->withErrors([
+                    'fbb_impacted' => 'Please specify the number of impacted FBB when Single FBB is selected.'
+                ])->withInput();
+            }
+        }
+
         // Handle new category creation
         $validated = $this->handleNewValues($request, $validated);
 
@@ -171,7 +232,16 @@ class IncidentController extends Controller
 
         $this->fillIncidentData($incident, $validated, $request);
         $incident->updated_by = auth()->id();
-        $incident->save();
+
+        // Try to save and catch model-level validation errors
+        try {
+            $incident->save();
+        } catch (\InvalidArgumentException $e) {
+            // Convert model validation exception to user-friendly error
+            return back()->withErrors([
+                'delay_reason' => $e->getMessage()
+            ])->withInput();
+        }
 
         // Auto-create RCA for Critical or High severity incidents when closed
         if ($validated['status'] === 'Closed' && in_array($incident->severity, ['Critical', 'High'])) {
@@ -213,14 +283,29 @@ class IncidentController extends Controller
         $validated = $request->validate([
             'resolved_at' => ['required', 'date'],
             'root_cause' => ['required', 'string', 'min:10'],
+            'delay_reason' => ['nullable', 'string', 'min:10'],
+            'travel_time' => ['nullable', 'integer', 'min:0'],
+            'work_time' => ['nullable', 'integer', 'min:0'],
         ]);
 
         // Update incident
         $incident->status = 'Closed';
         $incident->resolved_at = $validated['resolved_at'];
         $incident->root_cause = $validated['root_cause'];
+        $incident->delay_reason = $validated['delay_reason'] ?? null;
+        $incident->travel_time = $validated['travel_time'] ?? null;
+        $incident->work_time = $validated['work_time'] ?? null;
         $incident->updated_by = auth()->id();
-        $incident->save();
+
+        // Try to save and catch model-level validation errors
+        try {
+            $incident->save();
+        } catch (\InvalidArgumentException $e) {
+            // Convert model validation exception to user-friendly error
+            return back()->withErrors([
+                'delay_reason' => $e->getMessage()
+            ])->withInput();
+        }
 
         return redirect()->route('incidents.index')
             ->with('success', 'Incident closed successfully.');
@@ -448,6 +533,11 @@ class IncidentController extends Controller
             'new_resolution_team_name' => ['nullable', 'string', 'max:255'],
             'affected_services' => ['required', 'array', 'min:1'],
             'affected_services.*' => ['required', 'string', 'in:Cell,Single FBB,Single Site,Multiple Site,P2P,ILL,SIP,IPTV,Peering,Mobile Data'],
+            'sites_2g_impacted' => ['nullable', 'integer', 'min:0'],
+            'sites_3g_impacted' => ['nullable', 'integer', 'min:0'],
+            'sites_4g_impacted' => ['nullable', 'integer', 'min:0'],
+            'sites_5g_impacted' => ['nullable', 'integer', 'min:0'],
+            'fbb_impacted' => ['nullable', 'integer', 'min:0'],
             'started_at' => ['required', 'date'],
             'resolved_at' => ['nullable', 'date', 'after_or_equal:started_at'],
             'duration_minutes' => ['nullable', 'integer', 'min:0'],
@@ -962,6 +1052,39 @@ class IncidentController extends Controller
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * Add a timeline update to an incident
+     */
+    public function addTimelineUpdate(Request $request, Incident $incident)
+    {
+        // Prevent adding updates to closed incidents
+        if ($incident->status === 'Closed') {
+            return back()->with('error', 'Cannot add updates to closed incidents.');
+        }
+
+        $validated = $request->validate([
+            'timeline_note' => 'required|string|min:5',
+        ]);
+
+        // Get existing timeline or initialize empty array
+        $timeline = $incident->timeline ?? [];
+
+        // Add new timeline entry
+        $timeline[] = [
+            'timestamp' => now()->toISOString(),
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name,
+            'note' => $validated['timeline_note'],
+        ];
+
+        // Update incident
+        $incident->timeline = $timeline;
+        $incident->updated_by = auth()->id();
+        $incident->save();
+
+        return back()->with('success', 'Timeline update added successfully.');
     }
 
 }

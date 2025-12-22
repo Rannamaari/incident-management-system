@@ -7,7 +7,7 @@
                 <div class="flex items-center flex-1 min-w-0">
                     <!-- Logo -->
                     <div class="flex-shrink-0">
-                        <a href="{{ route('incidents.index') }}" class="flex items-center space-x-2 lg:space-x-3">
+                        <a href="{{ route('home') }}" class="flex items-center space-x-2 lg:space-x-3">
                             <div
                                 class="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-200">
                                 <svg class="w-4 h-4 lg:w-6 lg:h-6 text-white" fill="none" stroke="currentColor"
@@ -35,7 +35,16 @@
                     </div>
 
                     <!-- Navigation Links -->
-                    <div class="hidden md:flex md:ml-6 lg:ml-8 space-x-2">
+                    <div class="hidden lg:flex lg:ml-8 space-x-2">
+                        <a href="{{ route('incidents.index') }}"
+                            class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('incidents.*') ? 'bg-gradient-to-r from-red-50 to-red-100 text-red-700 shadow-sm border border-red-200/50' : 'text-gray-600 hover:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100' }}">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.964-1.333-2.732 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <span>{{ __('Incidents') }}</span>
+                        </a>
+
                         <a href="{{ route('logs.index') }}"
                             class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('logs.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-sm border border-blue-200/50' : 'text-gray-600 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100' }}">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,8 +70,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
-                            <span class="hidden lg:inline">{{ __('RCA Management') }}</span>
-                            <span class="lg:hidden">{{ __('RCA') }}</span>
+                            <span>{{ __('RCA') }}</span>
                         </a>
 
                         <!-- Extra Dropdown -->
@@ -264,7 +272,7 @@
                     </div>
 
                     <!-- Mobile menu button -->
-                    <div class="md:hidden">
+                    <div class="lg:hidden">
                         <button @click="open = ! open"
                             class="inline-flex items-center justify-center p-2 rounded-xl text-gray-400 hover:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:ring-offset-2 transition-all duration-300 transform hover:scale-110">
                             <svg class="h-5 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -283,7 +291,7 @@
 
         <!-- Mobile Navigation Menu -->
         <div :class="{'block': open, 'hidden': ! open}"
-            class="hidden md:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50">
+            class="hidden lg:hidden bg-white/95 backdrop-blur-md border-t border-gray-200/50">
             <!-- User Info Mobile -->
             <div class="px-4 py-4 border-b border-gray-200/50 bg-gradient-to-r from-gray-50/80 to-red-50/60">
                 <div class="flex items-center space-x-3">
@@ -310,6 +318,15 @@
 
             <!-- Navigation Links Mobile -->
             <div class="px-4 py-4 space-y-2">
+                <a href="{{ route('incidents.index') }}"
+                    class="flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('incidents.*') ? 'bg-gradient-to-r from-red-50 to-red-100 text-red-700 shadow-md border border-red-200/50' : 'text-gray-700 hover:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.964-1.333-2.732 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span>Incidents</span>
+                </a>
+
                 <a href="{{ route('logs.index') }}"
                     class="flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('logs.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-md border border-blue-200/50' : 'text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -334,7 +351,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
-                    <span>RCA Management</span>
+                    <span>RCA</span>
                 </a>
 
                 @if(Auth::user()->canEditIncidents())
@@ -420,8 +437,7 @@
                class="flex flex-col items-center justify-center space-y-1 {{ request()->routeIs('incidents.*') ? 'text-red-600 bg-red-50/50' : 'text-gray-600' }} transition-all duration-200 hover:bg-gray-50">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                    </path>
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.964-1.333-2.732 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
                 <span class="text-xs font-heading font-medium">Incidents</span>
             </a>
@@ -436,14 +452,14 @@
                 <span class="text-xs font-heading font-medium">Logs</span>
             </a>
 
-            <!-- Reports -->
-            <a href="{{ route('reports.index') }}"
-               class="flex flex-col items-center justify-center space-y-1 {{ request()->routeIs('reports.*') ? 'text-purple-600 bg-purple-50/50' : 'text-gray-600' }} transition-all duration-200 hover:bg-gray-50">
+            <!-- Home -->
+            <a href="{{ route('home') }}"
+               class="flex flex-col items-center justify-center space-y-1 {{ request()->routeIs('home') ? 'text-red-600 bg-red-50/50' : 'text-gray-600' }} transition-all duration-200 hover:bg-gray-50">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-                <span class="text-xs font-heading font-medium">Reports</span>
+                <span class="text-xs font-heading font-medium">Home</span>
             </a>
 
             <!-- RCA -->

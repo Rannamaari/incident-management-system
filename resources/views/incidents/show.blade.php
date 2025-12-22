@@ -269,6 +269,108 @@
                 </div>
             </div>
 
+            <!-- Timeline Updates -->
+            <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
+                <div class="border-b border-gray-200/50 bg-gradient-to-r from-indigo-50/80 to-white/60 px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-md">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Timeline Updates</h3>
+                            <p class="text-sm text-gray-600">Add updates and notes about this incident</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- Add Timeline Update Form (only for non-closed incidents) -->
+                    @if($incident->status !== 'Closed')
+                        <form action="{{ route('incidents.timeline.add', $incident) }}" method="POST" class="mb-6">
+                            @csrf
+                            <div class="rounded-xl bg-gradient-to-br from-indigo-50/50 to-blue-50/30 border border-indigo-100 p-4">
+                                <label for="timeline_note" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                    Add Update
+                                </label>
+                                <textarea name="timeline_note" id="timeline_note" rows="3" required
+                                          placeholder="Enter your update about this incident..."
+                                          class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('timeline_note') border-red-500 @enderror"></textarea>
+                                @error('timeline_note')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                                <div class="mt-3 flex justify-end">
+                                    <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-700 px-4 py-2 text-white font-heading font-medium shadow-sm hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        Add Update
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    @else
+                        <div class="mb-6 rounded-xl bg-gray-50 border border-gray-200 p-4">
+                            <p class="text-sm text-gray-600 flex items-center gap-2">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                                This incident is closed. No further updates can be added.
+                            </p>
+                        </div>
+                    @endif
+
+                    <!-- Display Timeline Updates -->
+                    @if($incident->timeline && count($incident->timeline) > 0)
+                        <div class="flow-root">
+                            <ul role="list" class="-mb-8">
+                                @foreach(array_reverse($incident->timeline) as $index => $entry)
+                                    <li>
+                                        <div class="relative pb-8">
+                                            @if($index < count($incident->timeline) - 1)
+                                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gradient-to-b from-indigo-200 to-transparent" aria-hidden="true"></span>
+                                            @endif
+                                            <div class="relative flex space-x-3">
+                                                <div>
+                                                    <span class="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center ring-8 ring-white shadow-md">
+                                                        <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                        </svg>
+                                                    </span>
+                                                </div>
+                                                <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                                    <div class="flex-1">
+                                                        <p class="text-sm font-heading font-medium text-indigo-600 mb-1">{{ $entry['user_name'] }}</p>
+                                                        <p class="text-sm text-gray-900 bg-white/50 rounded-lg p-3 border border-gray-100">{{ $entry['note'] }}</p>
+                                                    </div>
+                                                    <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                                        <time datetime="{{ $entry['timestamp'] }}">
+                                                            {{ \Carbon\Carbon::parse($entry['timestamp'])->format('M j, Y') }}<br>
+                                                            {{ \Carbon\Carbon::parse($entry['timestamp'])->format('g:i A') }}
+                                                        </time>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @else
+                        <div class="text-center py-8">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p class="mt-2 text-sm text-gray-500">No timeline updates yet</p>
+                            @if($incident->status !== 'Closed')
+                                <p class="text-xs text-gray-400">Add your first update above</p>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            </div>
+
             <!-- Incident Timeline/Logs -->
             @if($incident->logs->count() > 0)
             <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
@@ -465,39 +567,88 @@
                                 Resolved At <span class="text-red-500">*</span>
                             </label>
                             <input type="datetime-local" name="resolved_at" id="modal_resolved_at" required
-                                   value="{{ $incident->resolved_at ? $incident->resolved_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i') }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                   value="{{ old('resolved_at', $incident->resolved_at ? $incident->resolved_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i')) }}"
+                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('resolved_at') border-red-500 @enderror">
+                            @error('resolved_at')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Root Cause -->
+                        <div>
+                            <label for="modal_root_cause" class="block text-sm font-heading font-medium text-gray-700">
+                                Root Cause <span class="text-red-500">*</span>
+                            </label>
+                            <textarea name="root_cause" id="modal_root_cause" rows="4" required
+                                      placeholder="Enter the root cause of this incident..."
+                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('root_cause') border-red-500 @enderror">{{ old('root_cause', $incident->root_cause) }}</textarea>
+                            @error('root_cause')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-xs text-gray-500">Root cause is required when closing an incident</p>
                         </div>
 
                         <!-- Conditional Fields based on duration and severity -->
+                        @php
+                            $showTravelWork = in_array($incident->severity, ['Medium', 'High', 'Critical']);
+                        @endphp
                         <div id="conditional-fields" class="space-y-4">
                             <!-- Travel Time (for Medium/High/Critical) -->
-                            <div id="travel-time-field" class="hidden">
+                            <div id="travel-time-field" class="{{ $showTravelWork ? '' : 'hidden' }}">
                                 <label for="modal_travel_time" class="block text-sm font-heading font-medium text-gray-700">
                                     Travel Time (minutes) <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" name="travel_time" id="modal_travel_time" min="0"
-                                       value="{{ $incident->travel_time }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                       value="{{ old('travel_time', $incident->travel_time) }}"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('travel_time') border-red-500 @enderror">
+                                @error('travel_time')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Work Time (for Medium/High/Critical) -->
-                            <div id="work-time-field" class="hidden">
+                            <div id="work-time-field" class="{{ $showTravelWork ? '' : 'hidden' }}">
                                 <label for="modal_work_time" class="block text-sm font-heading font-medium text-gray-700">
                                     Work Time (minutes) <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" name="work_time" id="modal_work_time" min="0"
-                                       value="{{ $incident->work_time }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                       value="{{ old('work_time', $incident->work_time) }}"
+                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('work_time') border-red-500 @enderror">
+                                @error('work_time')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Delay Reason (for duration > 5 hours) -->
-                            <div id="delay-reason-field" class="hidden">
+                            @php
+                                $currentDurationHours = $incident->started_at->diffInHours(now());
+                                $showDelayReason = $currentDurationHours > 5;
+                            @endphp
+                            <div id="delay-reason-field" class="{{ $showDelayReason ? '' : 'hidden' }}">
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-2">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.964-1.333-2.732 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
+                                            </svg>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm text-yellow-700">
+                                                This incident has been open for more than 5 hours. Please explain the reason for the delay.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                                 <label for="modal_delay_reason" class="block text-sm font-heading font-medium text-gray-700">
                                     Reason for Delay <span class="text-red-500">*</span>
                                 </label>
-                                <textarea name="delay_reason" id="modal_delay_reason" rows="3"
-                                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">{{ $incident->delay_reason }}</textarea>
+                                <textarea name="delay_reason" id="modal_delay_reason" rows="4"
+                                          placeholder="Please provide a detailed explanation for why this incident took more than 5 hours to resolve..."
+                                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('delay_reason') border-red-500 @enderror">{{ old('delay_reason', $incident->delay_reason) }}</textarea>
+                                @error('delay_reason')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                                <p class="mt-1 text-xs text-gray-500">This field is required for incidents with duration exceeding 5 hours.</p>
                             </div>
                         </div>
                     </div>
@@ -525,8 +676,24 @@
             const cancelBtn = document.getElementById('cancel-close');
             const resolvedAtInput = document.getElementById('modal_resolved_at');
 
+            // Auto-open modal if there are validation errors
+            @if($errors->has('delay_reason') || $errors->has('resolved_at') || $errors->has('travel_time') || $errors->has('work_time'))
+                modal.classList.remove('hidden');
+                updateConditionalFields();
+            @endif
+
             if (closeBtn) {
                 closeBtn.addEventListener('click', function() {
+                    // Ensure resolved_at has a default value when modal opens
+                    if (!resolvedAtInput.value) {
+                        const now = new Date();
+                        const year = now.getFullYear();
+                        const month = String(now.getMonth() + 1).padStart(2, '0');
+                        const day = String(now.getDate()).padStart(2, '0');
+                        const hours = String(now.getHours()).padStart(2, '0');
+                        const minutes = String(now.getMinutes()).padStart(2, '0');
+                        resolvedAtInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+                    }
                     modal.classList.remove('hidden');
                     updateConditionalFields();
                 });
@@ -554,11 +721,19 @@
                 const startedAt = new Date('{{ $incident->started_at->toISOString() }}');
 
                 // Handle datetime-local input format properly
-                const resolvedAtValue = resolvedAtInput.value;
+                let resolvedAtValue = resolvedAtInput.value;
                 let resolvedAt;
 
+                // If no value, set default to current time
                 if (!resolvedAtValue) {
-                    return;
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    resolvedAtValue = `${year}-${month}-${day}T${hours}:${minutes}`;
+                    resolvedAtInput.value = resolvedAtValue;
                 }
 
                 // Convert datetime-local format to proper Date
@@ -570,12 +745,18 @@
                 // Show/hide delay reason field
                 const delayField = document.getElementById('delay-reason-field');
                 const delayInput = document.getElementById('modal_delay_reason');
+
+                console.log('Duration Hours:', durationHours);
+                console.log('Delay reason required:', durationHours > 5);
+
                 if (durationHours > 5) {
                     delayField.classList.remove('hidden');
                     delayInput.required = true;
+                    console.log('Showing delay reason field');
                 } else {
                     delayField.classList.add('hidden');
                     delayInput.required = false;
+                    console.log('Hiding delay reason field');
                 }
 
                 // Show/hide travel/work time fields
