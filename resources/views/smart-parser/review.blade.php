@@ -207,6 +207,155 @@
                                     @enderror
                                 </div>
 
+                                <!-- Site Impact Fields (Conditional) -->
+                                <div x-data="siteImpactForm" x-init="initCheckboxListeners">
+                                    <script>
+                                        document.addEventListener('alpine:init', () => {
+                                            Alpine.data('siteImpactForm', () => ({
+                                                showSiteFields: {{ old('affected_services') ? (in_array('Single Site', old('affected_services', [])) || in_array('Multiple Site', old('affected_services', [])) ? 'true' : 'false') : (isset($parsedData['affected_services']) && (in_array('Single Site', $parsedData['affected_services']) || in_array('Multiple Site', $parsedData['affected_services'])) ? 'true' : 'false') }},
+                                                showFbbField: {{ old('affected_services') ? (in_array('Single FBB', old('affected_services', [])) ? 'true' : 'false') : (isset($parsedData['affected_services']) && in_array('Single FBB', $parsedData['affected_services']) ? 'true' : 'false') }},
+
+                                                checkServices() {
+                                                    const checkboxes = document.querySelectorAll('input[name="affected_services[]"]:checked');
+                                                    const values = Array.from(checkboxes).map(cb => cb.value);
+                                                    console.log('Checked services:', values);
+                                                    this.showSiteFields = values.includes('Single Site') || values.includes('Multiple Site');
+                                                    this.showFbbField = values.includes('Single FBB');
+                                                    console.log('Show Site Fields:', this.showSiteFields);
+                                                    console.log('Show FBB Field:', this.showFbbField);
+                                                },
+
+                                                initCheckboxListeners() {
+                                                    this.$nextTick(() => {
+                                                        document.querySelectorAll('input[name="affected_services[]"]').forEach(checkbox => {
+                                                            checkbox.addEventListener('change', () => this.checkServices());
+                                                        });
+                                                    });
+                                                }
+                                            }));
+                                        });
+                                    </script>
+
+                                    <!-- Site Impact Section -->
+                                    <div x-show="showSiteFields"
+                                         x-transition:enter="transition ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                                         x-transition:leave="transition ease-in duration-200"
+                                         x-transition:leave-start="opacity-100"
+                                         x-transition:leave-end="opacity-0"
+                                         class="bg-blue-50/50 border border-blue-200 rounded-xl p-6 mt-4">
+
+                                        <h5 class="font-heading text-sm font-semibold text-blue-900 mb-4 flex items-center gap-2">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                                            </svg>
+                                            Site Impact Details
+                                        </h5>
+                                        <p class="text-sm text-blue-700 mb-4">Please specify how many sites of each type are impacted</p>
+
+                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                            <!-- 2G Sites -->
+                                            <div>
+                                                <label for="sites_2g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                                    2G Sites
+                                                </label>
+                                                <input type="number"
+                                                       name="sites_2g_impacted"
+                                                       id="sites_2g_impacted"
+                                                       min="0"
+                                                       value="{{ old('sites_2g_impacted', $parsedData['sites_2g_impacted'] ?? 0) }}"
+                                                       class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_2g_impacted') border-red-300 @enderror">
+                                                @error('sites_2g_impacted')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+
+                                            <!-- 3G Sites -->
+                                            <div>
+                                                <label for="sites_3g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                                    3G Sites
+                                                </label>
+                                                <input type="number"
+                                                       name="sites_3g_impacted"
+                                                       id="sites_3g_impacted"
+                                                       min="0"
+                                                       value="{{ old('sites_3g_impacted', $parsedData['sites_3g_impacted'] ?? 0) }}"
+                                                       class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_3g_impacted') border-red-300 @enderror">
+                                                @error('sites_3g_impacted')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+
+                                            <!-- 4G Sites -->
+                                            <div>
+                                                <label for="sites_4g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                                    4G Sites
+                                                </label>
+                                                <input type="number"
+                                                       name="sites_4g_impacted"
+                                                       id="sites_4g_impacted"
+                                                       min="0"
+                                                       value="{{ old('sites_4g_impacted', $parsedData['sites_4g_impacted'] ?? 0) }}"
+                                                       class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_4g_impacted') border-red-300 @enderror">
+                                                @error('sites_4g_impacted')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+
+                                            <!-- 5G Sites -->
+                                            <div>
+                                                <label for="sites_5g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                                    5G Sites
+                                                </label>
+                                                <input type="number"
+                                                       name="sites_5g_impacted"
+                                                       id="sites_5g_impacted"
+                                                       min="0"
+                                                       value="{{ old('sites_5g_impacted', $parsedData['sites_5g_impacted'] ?? 0) }}"
+                                                       class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_5g_impacted') border-red-300 @enderror">
+                                                @error('sites_5g_impacted')
+                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- FBB Impact Section -->
+                                    <div x-show="showFbbField"
+                                         x-transition:enter="transition ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                                         x-transition:leave="transition ease-in duration-200"
+                                         x-transition:leave-start="opacity-100"
+                                         x-transition:leave-end="opacity-0"
+                                         class="bg-orange-50/50 border border-orange-200 rounded-xl p-6 mt-4">
+
+                                        <h5 class="font-heading text-sm font-semibold text-orange-900 mb-4 flex items-center gap-2">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                            </svg>
+                                            FBB Impact Details
+                                        </h5>
+
+                                        <div class="max-w-xs">
+                                            <label for="fbb_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                                Number of FBB Impacted
+                                            </label>
+                                            <input type="number"
+                                                   name="fbb_impacted"
+                                                   id="fbb_impacted"
+                                                   min="0"
+                                                   value="{{ old('fbb_impacted', $parsedData['fbb_impacted'] ?? 0) }}"
+                                                   class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('fbb_impacted') border-red-300 @enderror">
+                                            @error('fbb_impacted')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                </div>
+
                                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <!-- Status -->
                                     <div>

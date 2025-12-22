@@ -199,6 +199,11 @@ class SmartIncidentParserController extends Controller
                 'fault_type_id' => 'nullable|exists:fault_types,id',
                 'resolution_team_id' => 'nullable|exists:resolution_teams,id',
                 'delay_reason' => 'nullable|string', // Required if duration > 5 hours (validated by model)
+                'sites_2g_impacted' => 'nullable|integer|min:0',
+                'sites_3g_impacted' => 'nullable|integer|min:0',
+                'sites_4g_impacted' => 'nullable|integer|min:0',
+                'sites_5g_impacted' => 'nullable|integer|min:0',
+                'fbb_impacted' => 'nullable|integer|min:0',
             ]);
 
             // Convert affected_services array to comma-separated string

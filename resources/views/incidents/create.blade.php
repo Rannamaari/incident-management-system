@@ -258,8 +258,11 @@
                                                 checkServices() {
                                                     const checkboxes = document.querySelectorAll('input[name="affected_services[]"]:checked');
                                                     const values = Array.from(checkboxes).map(cb => cb.value);
+                                                    console.log('Checked services:', values);
                                                     this.showSiteFields = values.includes('Single Site') || values.includes('Multiple Site');
                                                     this.showFbbField = values.includes('Single FBB');
+                                                    console.log('Show Site Fields:', this.showSiteFields);
+                                                    console.log('Show FBB Field:', this.showFbbField);
                                                 },
 
                                                 initCheckboxListeners() {
