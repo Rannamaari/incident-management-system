@@ -81,6 +81,7 @@
                                 class="w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('role') border-red-300 @enderror">
                                 <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin - Full system access</option>
                                 <option value="editor" {{ old('role', $user->role) === 'editor' ? 'selected' : '' }}>Editor - Create and edit incidents</option>
+                                <option value="noc" {{ old('role', $user->role) === 'noc' ? 'selected' : '' }}>NOC - Network Operations Center</option>
                                 <option value="viewer" {{ old('role', $user->role) === 'viewer' ? 'selected' : '' }}>Viewer - Read-only access</option>
                             </select>
                             @error('role')

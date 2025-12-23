@@ -75,6 +75,7 @@
                                     <option value="">All Roles</option>
                                     <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                                     <option value="editor" {{ request('role') === 'editor' ? 'selected' : '' }}>Editor</option>
+                                    <option value="noc" {{ request('role') === 'noc' ? 'selected' : '' }}>NOC</option>
                                     <option value="viewer" {{ request('role') === 'viewer' ? 'selected' : '' }}>Viewer</option>
                                 </select>
                             </div>
@@ -145,6 +146,7 @@
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
                                             @if($user->isAdmin()) bg-red-100 text-red-800
                                             @elseif($user->isEditor()) bg-blue-100 text-blue-800
+                                            @elseif($user->isNoc()) bg-orange-100 text-orange-800
                                             @else bg-green-100 text-green-800
                                             @endif">
                                             {{ $user->getRoleDisplayName() }}

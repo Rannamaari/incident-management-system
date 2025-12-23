@@ -57,6 +57,8 @@
                                     bg-red-100 text-red-800
                                 @elseif($user->isEditor())
                                     bg-blue-100 text-blue-800
+                                @elseif($user->isNoc())
+                                    bg-orange-100 text-orange-800
                                 @else
                                     bg-green-100 text-green-800
                                 @endif">

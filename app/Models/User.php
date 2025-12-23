@@ -27,11 +27,13 @@ class User extends Authenticatable
     // Define role constants
     public const ROLE_ADMIN = 'admin';
     public const ROLE_EDITOR = 'editor';
+    public const ROLE_NOC = 'noc';
     public const ROLE_VIEWER = 'viewer';
 
     public const ROLES = [
         self::ROLE_ADMIN => 'Admin',
         self::ROLE_EDITOR => 'Editor',
+        self::ROLE_NOC => 'NOC',
         self::ROLE_VIEWER => 'Viewer',
     ];
 
@@ -75,11 +77,19 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user has NOC role.
+     */
+    public function isNoc(): bool
+    {
+        return $this->role === self::ROLE_NOC;
+    }
+
+    /**
      * Check if user has viewer role or higher.
      */
     public function isViewer(): bool
     {
-        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_EDITOR, self::ROLE_VIEWER]);
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_EDITOR, self::ROLE_NOC, self::ROLE_VIEWER]);
     }
 
     /**
@@ -87,7 +97,7 @@ class User extends Authenticatable
      */
     public function canEditIncidents(): bool
     {
-        return $this->isEditor();
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_EDITOR, self::ROLE_NOC]);
     }
 
     /**
@@ -103,7 +113,7 @@ class User extends Authenticatable
      */
     public function canExportData(): bool
     {
-        return $this->isEditor();
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_EDITOR, self::ROLE_NOC]);
     }
 
     /**
@@ -115,19 +125,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user can manage contacts.
+     * Check if user can manage contacts (phone book).
      */
     public function canManageContacts(): bool
     {
-        return $this->isAdmin();
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_NOC]);
     }
 
     /**
-     * Check if user can manage temporary sites.
+     * Check if user can manage temporary sites (view and toggle status).
      */
     public function canManageTemporarySites(): bool
     {
-        return $this->isAdmin();
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_NOC]);
     }
 
     /**
@@ -135,7 +145,7 @@ class User extends Authenticatable
      */
     public function canManageSites(): bool
     {
-        return $this->isAdmin();
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_NOC]);
     }
 
     /**

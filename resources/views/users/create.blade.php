@@ -81,6 +81,7 @@
                                 <option value="">Select Role</option>
                                 <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin - Full system access</option>
                                 <option value="editor" {{ old('role') === 'editor' ? 'selected' : '' }}>Editor - Create and edit incidents</option>
+                                <option value="noc" {{ old('role') === 'noc' ? 'selected' : '' }}>NOC - Network Operations Center</option>
                                 <option value="viewer" {{ old('role') === 'viewer' ? 'selected' : '' }}>Viewer - Read-only access</option>
                             </select>
                             @error('role')
@@ -89,6 +90,7 @@
                             <p class="mt-2 text-xs text-gray-500">
                                 <strong>Admin:</strong> Full system access including user management<br>
                                 <strong>Editor:</strong> Can create, edit, and export incidents<br>
+                                <strong>NOC:</strong> Can manage incidents, sites, temp sites, and phone book<br>
                                 <strong>Viewer:</strong> Read-only access to view incidents
                             </p>
                         </div>
