@@ -183,18 +183,23 @@
                                         class="cursor-pointer transition-all duration-200 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-red-50/30' }}">
                                                             <td class="px-3 xl:px-4 py-4 whitespace-nowrap">
                                                                 <div class="flex items-center">
-                                                                    <div class="grid h-10 w-10 place-items-center rounded-lg
+                                                                    <div class="relative">
+                                                                        @if($incident->hasUnreadTimelineUpdates())
+                                                                            <div class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse shadow-lg" title="New timeline updates"></div>
+                                                                        @endif
+                                                                        <div class="grid h-10 w-10 place-items-center rounded-lg
                                                   {{ $incident->severity === 'Critical' ? 'bg-red-100' :
                                     ($incident->severity === 'High' ? 'bg-orange-100' :
                                         ($incident->severity === 'Medium' ? 'bg-yellow-100' : 'bg-green-100')) }}">
-                                                                        <svg class="h-5 w-5
+                                                                            <svg class="h-5 w-5
                                                     {{ $incident->severity === 'Critical' ? 'text-red-600' :
                                     ($incident->severity === 'High' ? 'text-orange-600' :
                                         ($incident->severity === 'Medium' ? 'text-yellow-600' : 'text-green-600')) }}"
-                                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                                                        </svg>
+                                                                                viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                                                            </svg>
+                                                                        </div>
                                                                     </div>
                                                                     <div class="ml-3">
                                                                         <div class="font-heading font-medium text-gray-900">{{ $incident->incident_code }}</div>

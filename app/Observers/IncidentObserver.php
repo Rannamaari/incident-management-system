@@ -105,6 +105,11 @@ class IncidentObserver
             return $value ? 'Yes' : 'No';
         }
 
+        // Handle arrays (JSON fields like timeline, sites_impacted, etc.)
+        if (is_array($value)) {
+            return json_encode($value);
+        }
+
         // Return as string
         return (string) $value;
     }

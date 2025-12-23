@@ -177,6 +177,9 @@ class IncidentController extends Controller
     {
         $incident->load(['logs', 'actionPoints', 'creator', 'updater', 'activityLogs', 'activityLogs.user']); // Eager load logs, action points, user tracking, and audit trail
 
+        // Mark incident as viewed by current user
+        $incident->markAsViewed();
+
         return view('incidents.show', compact('incident'));
     }
 

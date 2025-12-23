@@ -509,4 +509,99 @@ class Incident extends Model
     {
         return $this->morphMany(ActivityLog::class, 'loggable')->orderBy('created_at', 'desc');
     }
+
+    /**
+     * Get all views for this incident.
+     */
+    public function views()
+    {
+        return $this->hasMany(IncidentView::class);
+    }
+
+    /**
+     * Check if there are unread timeline updates for a specific user.
+     */
+    public function hasUnreadTimelineUpdates($userId = null)
+    {
+        $userId = $userId ?? auth()->id();
+
+        if (!$userId || !$this->timeline || count($this->timeline) === 0) {
+            return false;
+        }
+
+        // Get the user's last view time for this incident
+        $lastView = IncidentView::where('incident_id', $this->id)
+            ->where('user_id', $userId)
+            ->first();
+
+        // If never viewed, there are unread updates
+        if (!$lastView) {
+            return true;
+        }
+
+        // Check if there are any timeline entries newer than last view
+        foreach ($this->timeline as $entry) {
+            $entryTimestamp = \Carbon\Carbon::parse($entry['timestamp']);
+            if ($entryTimestamp->greaterThan($lastView->last_viewed_at)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Mark this incident as viewed by a user.
+     */
+    public function markAsViewed($userId = null)
+    {
+        $userId = $userId ?? auth()->id();
+
+        if (!$userId) {
+            return;
+        }
+
+        IncidentView::updateOrCreate(
+            [
+                'incident_id' => $this->id,
+                'user_id' => $userId,
+            ],
+            [
+                'last_viewed_at' => now(),
+            ]
+        );
+    }
+
+    /**
+     * Get the count of unread timeline updates for a user.
+     */
+    public function getUnreadTimelineCount($userId = null)
+    {
+        $userId = $userId ?? auth()->id();
+
+        if (!$userId || !$this->timeline || count($this->timeline) === 0) {
+            return 0;
+        }
+
+        // Get the user's last view time for this incident
+        $lastView = IncidentView::where('incident_id', $this->id)
+            ->where('user_id', $userId)
+            ->first();
+
+        // If never viewed, count all timeline entries
+        if (!$lastView) {
+            return count($this->timeline);
+        }
+
+        // Count timeline entries newer than last view
+        $count = 0;
+        foreach ($this->timeline as $entry) {
+            $entryTimestamp = \Carbon\Carbon::parse($entry['timestamp']);
+            if ($entryTimestamp->greaterThan($lastView->last_viewed_at)) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
 }

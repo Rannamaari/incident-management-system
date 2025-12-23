@@ -240,48 +240,76 @@
                     <table class="min-w-full text-sm">
                             <thead class="sticky top-0 z-10 bg-gradient-to-r from-gray-50 to-gray-100/80 backdrop-blur-sm text-xs uppercase tracking-wide text-gray-700 font-semibold">
                                 <tr>
-                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Incident</th>
-                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Summary</th>
-                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Priority</th>
-                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Duration</th>
-                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Status</th>
-                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Actions</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Summary & Details</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-left">Root Cause</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-center">Severity</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-center">Duration</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-center">Status</th>
+                                    <th class="font-heading px-2 xl:px-4 py-3 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @forelse($incidents as $incident)
                                     <tr onclick="window.location='{{ route('incidents.show', $incident) }}'"
                                         class="cursor-pointer transition-all duration-200 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-blue-50/30' }}">
-                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="grid h-8 xl:h-10 w-8 xl:w-10 place-items-center rounded-lg
-                                                    {{ $incident->severity === 'Critical' ? 'bg-red-100' :
-                                                        ($incident->severity === 'High' ? 'bg-orange-100' :
-                                                            ($incident->severity === 'Medium' ? 'bg-yellow-100' : 'bg-green-100')) }}">
-                                                    <svg class="h-4 xl:h-5 w-4 xl:w-5
-                                                        {{ $incident->severity === 'Critical' ? 'text-red-600' :
-                                                            ($incident->severity === 'High' ? 'text-orange-600' :
-                                                                ($incident->severity === 'Medium' ? 'text-yellow-600' : 'text-green-600')) }}"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                                    </svg>
+                                        <td class="px-2 xl:px-4 py-4">
+                                            <div class="flex items-start gap-3">
+                                                <!-- Timeline Notification Indicator -->
+                                                <div class="relative flex-shrink-0">
+                                                    @if($incident->hasUnreadTimelineUpdates())
+                                                        <div class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse shadow-lg" title="New timeline updates"></div>
+                                                    @endif
+                                                    <div class="grid h-10 w-10 place-items-center rounded-lg
+                                                        {{ $incident->severity === 'Critical' ? 'bg-red-100' :
+                                                            ($incident->severity === 'High' ? 'bg-orange-100' :
+                                                                ($incident->severity === 'Medium' ? 'bg-yellow-100' : 'bg-green-100')) }}">
+                                                        <svg class="h-5 w-5
+                                                            {{ $incident->severity === 'Critical' ? 'text-red-600' :
+                                                                ($incident->severity === 'High' ? 'text-orange-600' :
+                                                                    ($incident->severity === 'Medium' ? 'text-yellow-600' : 'text-green-600')) }}"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                        </svg>
+                                                    </div>
                                                 </div>
-                                                <div class="ml-2 xl:ml-3">
-                                                    <div class="font-heading font-medium text-gray-900 text-xs xl:text-sm">{{ $incident->incident_code }}</div>
-                                                    <div class="text-xs text-gray-500 hidden xl:block">{{ $incident->category }}</div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="font-heading font-medium text-gray-900 break-words leading-relaxed text-sm">{{ $incident->summary }}</div>
+                                                    <div class="flex flex-wrap items-center gap-2 mt-2">
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                                                            <svg class="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                                            </svg>
+                                                            {{ $incident->category ?? 'N/A' }}
+                                                        </span>
+                                                        @if($incident->affected_services)
+                                                            <span class="text-xs text-gray-500">{{ Str::limit($incident->affected_services, 40) }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="mt-1 text-xs text-gray-400">
+                                                        <svg class="h-3 w-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        {{ $incident->started_at->format('M d, Y H:i') }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="px-2 xl:px-4 py-4">
-                                            <div class="max-w-xs xl:max-w-sm">
-                                                <div class="font-heading font-medium text-gray-900 break-words leading-relaxed text-xs xl:text-sm">{{ $incident->summary }}</div>
-                                                <div class="text-xs text-gray-500 mt-1 break-words hidden xl:block">{{ $incident->affected_services }}</div>
-                                                <div class="mt-1 xl:mt-2 text-xs text-gray-400">
-                                                    {{ $incident->started_at->format('M d, H:i') }}</div>
+                                            <div class="text-xs text-gray-700 max-w-xs">
+                                                @if($incident->root_cause)
+                                                    <div class="flex items-start gap-1">
+                                                        <svg class="h-3 w-3 text-gray-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                        <span>{{ Str::limit($incident->root_cause, 100) }}</span>
+                                                    </div>
+                                                @else
+                                                    <span class="text-gray-400 italic">Not specified</span>
+                                                @endif
                                             </div>
                                         </td>
-                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap">
+                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap text-center">
                                             <span
                                                 class="inline-flex items-center rounded-full px-1.5 xl:px-2 py-1 text-xs font-heading font-medium
                                                     {{ $incident->severity === 'Critical' ? 'bg-red-100 text-red-800' :
@@ -290,8 +318,8 @@
                                                 {{ $incident->severity }}
                                             </span>
                                         </td>
-                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap">
-                                            <div class="text-gray-900 text-xs xl:text-sm">
+                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap text-center">
+                                            <div class="text-gray-900 text-xs xl:text-sm font-medium">
                                                 @if($incident->duration_hms)
                                                     {{ $incident->duration_hms }}
                                                 @elseif($incident->status === 'Closed')
@@ -301,11 +329,11 @@
                                                 @endif
                                             </div>
                                             @if($incident->resolved_at)
-                                                <div class="text-xs text-gray-500 hidden xl:block">{{ $incident->resolved_at->format('M d, H:i') }}</div>
+                                                <div class="text-xs text-gray-500 mt-1">{{ $incident->resolved_at->format('M d, H:i') }}</div>
                                             @endif
                                         </td>
-                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap">
-                                            <div class="flex flex-col gap-1">
+                                        <td class="px-2 xl:px-4 py-4 whitespace-nowrap text-center">
+                                            <div class="flex flex-col items-center gap-1">
                                                 <span class="inline-flex w-fit items-center rounded-full px-1.5 xl:px-2 py-1 text-xs font-heading font-medium
                                                     @if($incident->status === 'Open') bg-red-100 text-red-800
                                                     @elseif($incident->status === 'In Progress') bg-yellow-100 text-yellow-800
@@ -324,31 +352,28 @@
                                         <td class="px-2 xl:px-4 py-4 whitespace-nowrap text-sm font-medium" onclick="event.stopPropagation()">
                                             <div class="flex items-center gap-1 xl:gap-2">
                                                 <a href="{{ route('incidents.show', $incident) }}"
-                                                    class="inline-flex items-center rounded-lg bg-gradient-to-r from-blue-100 to-blue-200 px-2.5 py-1.5 text-blue-700 transition-all duration-300 hover:from-blue-200 hover:to-blue-300 transform hover:scale-105 text-xs">
-                                                    <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-100 to-blue-200 p-2 text-blue-700 transition-all duration-300 hover:from-blue-200 hover:to-blue-300 transform hover:scale-105" title="View Details">
+                                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                     </svg>
-                                                    <span class="hidden xl:inline">View</span>
                                                 </a>
                                                 <a href="{{ route('incidents.edit', $incident) }}"
-                                                    class="inline-flex items-center rounded-lg bg-gradient-to-r from-red-100 to-red-200 px-2.5 py-1.5 text-red-700 transition-all duration-300 hover:from-red-200 hover:to-red-300 transform hover:scale-105 text-xs">
-                                                    <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-orange-100 to-orange-200 p-2 text-orange-700 transition-all duration-300 hover:from-orange-200 hover:to-orange-300 transform hover:scale-105" title="Edit Incident">
+                                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                     </svg>
-                                                    <span class="hidden xl:inline">Edit</span>
                                                 </a>
                                                 @if(auth()->user()->canDeleteIncidents())
                                                     <form action="{{ route('incidents.destroy', $incident) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete incident {{ $incident->incident_code }}? This action cannot be undone.');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
-                                                            class="inline-flex items-center rounded-lg bg-gradient-to-r from-gray-100 to-gray-200 px-2.5 py-1.5 text-gray-700 transition-all duration-300 hover:from-red-200 hover:to-red-300 hover:text-red-800 transform hover:scale-105 text-xs">
-                                                            <svg class="mr-1 h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                            class="inline-flex items-center justify-center rounded-lg bg-gradient-to-r from-gray-100 to-gray-200 p-2 text-gray-700 transition-all duration-300 hover:from-red-200 hover:to-red-300 hover:text-red-800 transform hover:scale-105" title="Delete Incident">
+                                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                             </svg>
-                                                            <span class="hidden xl:inline">Delete</span>
                                                         </button>
                                                     </form>
                                                 @endif

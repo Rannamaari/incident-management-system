@@ -22,11 +22,11 @@
                                     <div
                                         class="text-lg lg:text-xl font-heading font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent truncate">
                                         Incident Management</div>
-                                    <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">v3.1</span>
+                                    <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">v3.5</span>
                                 </div>
                                 <div
                                     class="text-xs lg:text-sm font-heading font-medium bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
-                                    Professional System</div>
+                                    Professional System Beta</div>
                             </div>
                             <div
                                 class="sm:hidden text-base font-heading font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
@@ -47,10 +47,23 @@
 
                         <a href="{{ route('logs.index') }}"
                             class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('logs.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-sm border border-blue-200/50' : 'text-gray-600 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100' }}">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
+                            <div class="relative">
+                                @php
+                                    $unreadCount = \App\Models\Incident::whereNotNull('timeline')
+                                        ->get()
+                                        ->filter(function($incident) {
+                                            return $incident->hasUnreadTimelineUpdates();
+                                        })
+                                        ->count();
+                                @endphp
+                                @if($unreadCount > 0)
+                                    <div class="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full border border-white animate-pulse shadow-lg" title="{{ $unreadCount }} unread updates"></div>
+                                @endif
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
                             <span>{{ __('Logs') }}</span>
                         </a>
 
@@ -329,10 +342,23 @@
 
                 <a href="{{ route('logs.index') }}"
                     class="flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('logs.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-md border border-blue-200/50' : 'text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100' }}">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+                    <div class="relative">
+                        @php
+                            $unreadCount = \App\Models\Incident::whereNotNull('timeline')
+                                ->get()
+                                ->filter(function($incident) {
+                                    return $incident->hasUnreadTimelineUpdates();
+                                })
+                                ->count();
+                        @endphp
+                        @if($unreadCount > 0)
+                            <div class="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full border border-white animate-pulse shadow-lg" title="{{ $unreadCount }} unread updates"></div>
+                        @endif
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </div>
                     <span>Logs</span>
                 </a>
 
@@ -445,10 +471,23 @@
             <!-- Logs -->
             <a href="{{ route('logs.index') }}"
                class="flex flex-col items-center justify-center space-y-1 {{ request()->routeIs('logs.*') ? 'text-blue-600 bg-blue-50/50' : 'text-gray-600' }} transition-all duration-200 hover:bg-gray-50">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+                <div class="relative">
+                    @php
+                        $unreadCount = \App\Models\Incident::whereNotNull('timeline')
+                            ->get()
+                            ->filter(function($incident) {
+                                return $incident->hasUnreadTimelineUpdates();
+                            })
+                            ->count();
+                    @endphp
+                    @if($unreadCount > 0)
+                        <div class="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full border border-white animate-pulse shadow-lg" title="{{ $unreadCount }} unread updates"></div>
+                    @endif
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
                 <span class="text-xs font-heading font-medium">Logs</span>
             </a>
 
