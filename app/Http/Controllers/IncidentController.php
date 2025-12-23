@@ -128,6 +128,22 @@ class IncidentController extends Controller
         // Handle new category creation
         $validated = $this->handleNewValues($request, $validated);
 
+        // Check for duplicate incident (same summary at any time)
+        // Allow user to bypass this check by setting 'confirm_duplicate' field
+        if (!$request->input('confirm_duplicate')) {
+            $duplicate = Incident::where('summary', $validated['summary'])
+                ->with('creator')
+                ->first();
+
+            if ($duplicate) {
+                return back()->withErrors([
+                    'duplicate' => 'A similar incident already exists: "' . $duplicate->summary . '" created by ' .
+                        ($duplicate->creator ? $duplicate->creator->name : 'Unknown') . ' on ' .
+                        $duplicate->created_at->format('M d, Y H:i') . ' (started at: ' . $duplicate->started_at->format('M d, Y H:i') . '). If you are sure you want to create this duplicate incident, please click "Create Anyway" below.'
+                ])->withInput();
+            }
+        }
+
         $incident = new Incident();
         $this->fillIncidentData($incident, $validated, $request);
         $incident->created_by = auth()->id();

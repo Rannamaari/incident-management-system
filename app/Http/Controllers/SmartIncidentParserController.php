@@ -225,6 +225,41 @@ class SmartIncidentParserController extends Controller
                 $validated['category'] = $category ? $category->name : null;
             }
 
+            // Check for duplicate incident (same summary at any time)
+            // Allow user to bypass this check by setting 'confirm_duplicate' field
+            if (!$request->input('confirm_duplicate')) {
+                $duplicate = Incident::where('summary', $validated['summary'])
+                    ->with('creator')
+                    ->first();
+
+                if ($duplicate) {
+                    // Get all form data to pass back to review view
+                    $categories = Category::orderBy('name')->get();
+                    $outageCategories = OutageCategory::orderBy('name')->get();
+                    $faultTypes = FaultType::orderBy('name')->get();
+                    $resolutionTeams = ResolutionTeam::orderBy('name')->get();
+
+                    // Prepare parsed data from validated request data
+                    $parsedData = $validated;
+
+                    // Restore affected_services array format for the view
+                    if (isset($parsedData['affected_services']) && is_string($parsedData['affected_services'])) {
+                        $parsedData['affected_services'] = array_filter(array_map('trim', explode(',', $parsedData['affected_services'])));
+                    }
+
+                    // Get original message from request if available
+                    $message = $request->input('original_message', 'Message not available');
+
+                    // Return to review view with error
+                    return view('smart-parser.review', compact('parsedData', 'categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'message'))
+                        ->withErrors([
+                            'duplicate' => 'A similar incident already exists: "' . $duplicate->summary . '" created by ' .
+                                ($duplicate->creator ? $duplicate->creator->name : 'Unknown') . ' on ' .
+                                $duplicate->created_at->format('M d, Y H:i') . ' (started at: ' . $duplicate->started_at->format('M d, Y H:i') . '). If you are sure you want to create this duplicate incident, please click "Create Anyway" below.'
+                        ]);
+                }
+            }
+
             // Create the incident
             $incident = new Incident();
             $incident->fill($validated);

@@ -119,8 +119,38 @@
 
                 <div class="p-8">
                     <form method="POST" action="{{ route('incidents.store') }}" enctype="multipart/form-data"
-                        class="space-y-10">
+                        class="space-y-10" id="incident-form">
                         @csrf
+
+                        <!-- Duplicate Warning (if applicable) -->
+                        @if($errors->has('duplicate'))
+                            <div class="rounded-xl border-2 border-orange-300 bg-orange-50 p-5 shadow-sm">
+                                <div class="flex items-start gap-3">
+                                    <svg class="h-6 w-6 flex-shrink-0 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                    <div class="flex-1">
+                                        <h4 class="font-heading text-sm font-semibold text-orange-900 mb-2">Possible Duplicate Incident Detected</h4>
+                                        <p class="text-sm text-orange-800">{{ $errors->first('duplicate') }}</p>
+
+                                        <div class="mt-4 flex gap-3">
+                                            <button type="button" onclick="confirmDuplicate()"
+                                                class="rounded-xl bg-orange-600 px-5 py-2.5 font-medium text-white shadow-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500/30 transition-all duration-300">
+                                                Create Anyway
+                                            </button>
+                                            <a href="{{ route('incidents.index') }}"
+                                                class="rounded-xl bg-gray-200 px-5 py-2.5 font-medium text-gray-800 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400/30 transition-all duration-300">
+                                                Cancel
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Hidden field for duplicate confirmation -->
+                        <input type="hidden" name="confirm_duplicate" id="confirm_duplicate" value="0">
 
                         <!-- Group 1: Basics -->
                         <div>
@@ -996,5 +1026,11 @@
                 document.getElementById('affected_services_others_input').style.display = 'block';
             }
         })();
+
+        // Handle duplicate confirmation
+        function confirmDuplicate() {
+            document.getElementById('confirm_duplicate').value = '1';
+            document.getElementById('incident-form').submit();
+        }
     </script>
 @endsection
