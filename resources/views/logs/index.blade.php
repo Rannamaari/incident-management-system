@@ -26,6 +26,14 @@
                     </div>
 
                     <div class="flex items-center gap-3">
+                        <a href="{{ route('logs.recurring-incidents') }}"
+                            class="inline-flex items-center gap-2 rounded-lg bg-orange-600 hover:bg-orange-700 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            Recurring Incidents
+                        </a>
+
                         <a href="{{ route('logs.export', request()->query()) }}"
                             class="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-2.5 text-sm font-medium text-black shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -39,7 +47,7 @@
                                 Export All Logs
                             @endif
                         </a>
-                        
+
                         <a href="{{ route('incidents.create') }}"
                             class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-3 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:from-red-700 hover:to-red-800 transform">
                             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">

@@ -137,7 +137,11 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     Route::get('incidents-export-preview', [IncidentController::class, 'exportPreview'])->name('incidents.export.preview');
     Route::get('incidents-export', [IncidentController::class, 'export'])->name('incidents.export');
     Route::get('logs-export', [LogsController::class, 'export'])->name('logs.export');
-    
+
+    // Recurring incidents analysis
+    Route::get('logs/recurring-incidents', [LogsController::class, 'recurringIncidents'])->name('logs.recurring-incidents');
+    Route::get('logs/incidents-by-summary', [LogsController::class, 'incidentsBySummary'])->name('logs.incidents-by-summary');
+
     // RCA generation
     Route::post('incidents/{incident}/generate-rca', [IncidentRCAController::class, 'generate'])->where('incident', '[0-9]+')->name('incidents.generate-rca');
 

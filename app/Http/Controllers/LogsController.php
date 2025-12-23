@@ -183,4 +183,77 @@ class LogsController extends Controller
             fclose($handle);
         }, 200, $headers);
     }
+
+    /**
+     * Display recurring incidents analysis - incidents grouped by summary.
+     */
+    public function recurringIncidents(Request $request)
+    {
+        // Get selected month for filtering (default to current month)
+        $selectedMonth = $request->input('month', now()->format('Y-m'));
+        $monthStart = \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->startOfMonth();
+        $monthEnd = \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->endOfMonth();
+
+        // Get minimum occurrence count filter (default to 2 - incidents that occurred at least twice)
+        $minOccurrences = $request->input('min_occurrences', 2);
+
+        // Query to get recurring incidents grouped by summary
+        // Use string_agg for PostgreSQL (compatible with PostgreSQL)
+        $recurringIncidents = Incident::query()
+            ->selectRaw("
+                summary,
+                COUNT(*) as occurrence_count,
+                MAX(started_at) as last_occurrence,
+                MIN(started_at) as first_occurrence,
+                string_agg(DISTINCT COALESCE(severity, 'N/A'), ', ') as severities,
+                string_agg(DISTINCT COALESCE(category, 'N/A'), ', ') as categories,
+                string_agg(DISTINCT COALESCE(outage_category, 'N/A'), ', ') as outage_categories
+            ")
+            ->whereBetween('started_at', [$monthStart, $monthEnd])
+            ->groupBy('summary')
+            ->havingRaw('COUNT(*) >= ?', [$minOccurrences])
+            ->orderByDesc('occurrence_count')
+            ->get();
+
+        // Get monthly trend data (last 6 months) for recurring incidents
+        $monthlyTrends = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $trendMonth = now()->subMonths($i)->format('Y-m');
+            $trendMonthStart = \Carbon\Carbon::createFromFormat('Y-m', $trendMonth)->startOfMonth();
+            $trendMonthEnd = \Carbon\Carbon::createFromFormat('Y-m', $trendMonth)->endOfMonth();
+
+            $monthlyTrends[$trendMonth] = Incident::query()
+                ->selectRaw('summary, COUNT(*) as count')
+                ->whereBetween('started_at', [$trendMonthStart, $trendMonthEnd])
+                ->groupBy('summary')
+                ->havingRaw('COUNT(*) >= 2')
+                ->get()
+                ->pluck('count', 'summary')
+                ->toArray();
+        }
+
+        return view('logs.recurring-incidents', compact('recurringIncidents', 'selectedMonth', 'minOccurrences', 'monthlyTrends'));
+    }
+
+    /**
+     * Display all incidents with the same summary (drill-down from recurring incidents).
+     */
+    public function incidentsBySummary(Request $request)
+    {
+        $summary = $request->input('summary');
+        $perPage = $request->input('per_page', 15);
+
+        if (empty($summary)) {
+            return redirect()->route('logs.recurring-incidents')
+                ->with('error', 'Summary parameter is required.');
+        }
+
+        $incidents = Incident::query()
+            ->where('summary', $summary)
+            ->orderByDesc('started_at')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('logs.incidents-by-summary', compact('incidents', 'summary'));
+    }
 }
