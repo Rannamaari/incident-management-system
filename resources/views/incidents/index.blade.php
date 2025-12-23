@@ -212,7 +212,7 @@
                                                                     <div class="font-heading font-medium text-gray-900 break-words leading-relaxed">{{ $incident->summary }}</div>
                                                                     <div class="text-xs text-gray-500 mt-1 break-words">{{ $incident->affected_services }}</div>
                                                                     <div class="mt-2 text-xs text-gray-400">
-                                                                        {{ $incident->started_at->format('M d, H:i') }}</div>
+                                                                        {{ $incident->started_at->timezone('Indian/Maldives')->format('M d, H:i') }}</div>
                                                                 </div>
                                                             </td>
                                                             <td class="px-3 xl:px-4 py-4 whitespace-nowrap">
@@ -235,7 +235,7 @@
                                                                     @endif
                                                                 </div>
                                                                 @if($incident->resolved_at)
-                                                                    <div class="text-xs text-gray-500 hidden xl:block">{{ $incident->resolved_at->format('M d, H:i') }}
+                                                                    <div class="text-xs text-gray-500 hidden xl:block">{{ $incident->resolved_at->timezone('Indian/Maldives')->format('M d, H:i') }}
                                                                     </div>
                                                                 @endif
                                                             </td>
@@ -365,7 +365,7 @@
                                             </div>
                                             <p class="mb-2 text-sm text-gray-900 break-words leading-relaxed">{{ $incident->summary }}</p>
                                             <div class="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 text-xs text-gray-500">
-                                                <span>{{ $incident->started_at->format('M d, Y H:i') }}</span>
+                                                <span>{{ $incident->started_at->timezone('Indian/Maldives')->format('M d, Y H:i') }}</span>
                                                 <span>{{ $incident->category }}</span>
                                             </div>
                                             <div class="mb-3 flex items-center justify-between text-xs text-gray-600">

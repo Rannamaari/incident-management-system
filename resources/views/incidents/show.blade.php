@@ -147,7 +147,7 @@
                             <dd class="text-sm font-heading font-medium text-gray-900">
                                 @if($incident->creator)
                                     {{ $incident->creator->name }}
-                                    <span class="text-xs text-gray-500">({{ $incident->created_at->format('M j, Y g:i A') }})</span>
+                                    <span class="text-xs text-gray-500">({{ $incident->created_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }})</span>
                                 @else
                                     <span class="text-gray-400">-</span>
                                 @endif
@@ -219,13 +219,13 @@
 
                         <div>
                             <dt class="text-sm font-heading font-medium text-gray-500">Started At</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->started_at->format('M j, Y g:i A') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->started_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }}</dd>
                         </div>
 
                         @if($incident->resolved_at)
                         <div>
                             <dt class="text-sm font-heading font-medium text-gray-500">Resolved At</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->resolved_at->format('M j, Y g:i A') }}</dd>
+                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->resolved_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }}</dd>
                         </div>
                         @endif
 
@@ -346,8 +346,8 @@
                                                     </div>
                                                     <div class="text-right text-sm whitespace-nowrap text-gray-500">
                                                         <time datetime="{{ $entry['timestamp'] }}">
-                                                            {{ \Carbon\Carbon::parse($entry['timestamp'])->format('M j, Y') }}<br>
-                                                            {{ \Carbon\Carbon::parse($entry['timestamp'])->format('g:i A') }}
+                                                            {{ \Carbon\Carbon::parse($entry['timestamp'])->timezone('Indian/Maldives')->format('M j, Y') }}<br>
+                                                            {{ \Carbon\Carbon::parse($entry['timestamp'])->timezone('Indian/Maldives')->format('g:i A') }}
                                                         </time>
                                                     </div>
                                                 </div>
@@ -411,7 +411,7 @@
                                                 </div>
                                                 <div class="text-right text-sm whitespace-nowrap text-gray-500">
                                                     <time datetime="{{ $log->occurred_at->toISOString() }}">
-                                                        {{ $log->occurred_at->format('M j, Y g:i A') }}
+                                                        {{ $log->occurred_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }}
                                                     </time>
                                                 </div>
                                             </div>
@@ -502,8 +502,8 @@
 
                                                 <time datetime="{{ $log->created_at->toISOString() }}"
                                                     class="flex-none text-xs text-gray-500 whitespace-nowrap">
-                                                    {{ $log->created_at->format('M j, Y') }}<br>
-                                                    {{ $log->created_at->format('g:i A') }}
+                                                    {{ $log->created_at->timezone('Indian/Maldives')->format('M j, Y') }}<br>
+                                                    {{ $log->created_at->timezone('Indian/Maldives')->format('g:i A') }}
                                                 </time>
                                             </div>
 
