@@ -68,7 +68,7 @@
 
             <!-- Filters (details/summary: no JS needed) -->
             <div class="mb-8 overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg">
-                <details class="group" @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached'])) open @endif>
+                <details class="group" @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached', 'has_timeline'])) open @endif>
                     <summary class="cursor-pointer list-none px-6 py-5 border-b border-gray-200/50 hover:bg-gray-50/50 transition-colors duration-200">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -171,6 +171,12 @@
                                     <span class="ml-2 text-sm font-heading font-medium text-gray-700">SLA Breached</span>
                                 </label>
 
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="has_timeline" value="1" {{ request('has_timeline') ? 'checked' : '' }}
+                                           class="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+                                    <span class="ml-2 text-sm font-heading font-medium text-gray-700">Has Unread Updates</span>
+                                </label>
+
                                 <div class="flex items-center gap-3 ml-auto">
                                     <button type="submit"
                                         class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3.5 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:-translate-y-0.5">
@@ -180,7 +186,7 @@
                                         </svg>
                                         Filter & Search
                                     </button>
-                                    @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached']))
+                                    @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached', 'has_timeline']))
                                         <a href="{{ route('logs.index') }}"
                                             class="rounded-2xl bg-gradient-to-r from-gray-100 to-gray-200 px-5 py-3.5 font-heading font-medium text-gray-700 transition-all duration-300 hover:from-gray-200 hover:to-gray-300 transform hover:-translate-y-0.5">Clear All</a>
                                     @endif
@@ -257,7 +263,7 @@
                                                 <!-- Timeline Notification Indicator -->
                                                 <div class="relative flex-shrink-0">
                                                     @if($incident->hasUnreadTimelineUpdates())
-                                                        <div class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse shadow-lg" title="New timeline updates"></div>
+                                                        <div class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse shadow-lg z-10" title="New timeline updates"></div>
                                                     @endif
                                                     <div class="grid h-10 w-10 place-items-center rounded-lg
                                                         {{ $incident->severity === 'Critical' ? 'bg-red-100' :
@@ -417,18 +423,24 @@
                         <div onclick="window.location='{{ route('incidents.show', $incident) }}'"
                              class="cursor-pointer p-4 sm:p-5 transition-all duration-300 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/30 hover:to-blue-50/20' }}">
                             <div class="flex items-start gap-3">
-                                <div class="grid h-10 w-10 place-items-center rounded-lg
-                                    {{ $incident->severity === 'Critical' ? 'bg-red-100' :
-                                        ($incident->severity === 'High' ? 'bg-orange-100' :
-                                            ($incident->severity === 'Medium' ? 'bg-yellow-100' : 'bg-green-100')) }}">
-                                    <svg class="h-5 w-5
-                                        {{ $incident->severity === 'Critical' ? 'text-red-600' :
-                                            ($incident->severity === 'High' ? 'text-orange-600' :
-                                                ($incident->severity === 'Medium' ? 'text-yellow-600' : 'text-green-600')) }}" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                    </svg>
+                                <!-- Timeline Notification Indicator for Mobile -->
+                                <div class="relative flex-shrink-0">
+                                    @if($incident->hasUnreadTimelineUpdates())
+                                        <div class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white animate-pulse shadow-lg z-10" title="New timeline updates"></div>
+                                    @endif
+                                    <div class="grid h-10 w-10 place-items-center rounded-lg
+                                        {{ $incident->severity === 'Critical' ? 'bg-red-100' :
+                                            ($incident->severity === 'High' ? 'bg-orange-100' :
+                                                ($incident->severity === 'Medium' ? 'bg-yellow-100' : 'bg-green-100')) }}">
+                                        <svg class="h-5 w-5
+                                            {{ $incident->severity === 'Critical' ? 'text-red-600' :
+                                                ($incident->severity === 'High' ? 'text-orange-600' :
+                                                    ($incident->severity === 'Medium' ? 'text-yellow-600' : 'text-green-600')) }}" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                        </svg>
+                                    </div>
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <div class="mb-2 flex items-center justify-between">

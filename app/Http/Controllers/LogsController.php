@@ -34,6 +34,18 @@ class LogsController extends Controller
         if ($request->has('sla_breached') && $request->sla_breached === '1') {
             $query->where('exceeded_sla', true);
         }
+        // Handle unread timeline filter separately
+        if ($request->has('has_timeline') && $request->has_timeline === '1') {
+            // Get all incidents matching current filters
+            $allIncidents = $query->get();
+            // Filter for unread timeline updates using model method
+            $filteredIncidentIds = $allIncidents->filter(function($incident) {
+                return $incident->hasUnreadTimelineUpdates();
+            })->pluck('id');
+
+            // Rebuild query with filtered IDs
+            $query = Incident::query()->whereIn('id', $filteredIncidentIds);
+        }
 
         $incidents = $query
             ->orderByDesc('started_at')
@@ -74,6 +86,18 @@ class LogsController extends Controller
         }
         if ($request->has('sla_breached') && $request->sla_breached === '1') {
             $query->where('exceeded_sla', true);
+        }
+        // Handle unread timeline filter separately
+        if ($request->has('has_timeline') && $request->has_timeline === '1') {
+            // Get all incidents matching current filters
+            $allIncidents = $query->get();
+            // Filter for unread timeline updates using model method
+            $filteredIncidentIds = $allIncidents->filter(function($incident) {
+                return $incident->hasUnreadTimelineUpdates();
+            })->pluck('id');
+
+            // Rebuild query with filtered IDs
+            $query = Incident::query()->whereIn('id', $filteredIncidentIds);
         }
 
         $query->orderBy('started_at', 'desc');
