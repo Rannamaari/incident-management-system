@@ -18,6 +18,8 @@ class Site extends Model
         'is_active',
         'has_fbb',
         'is_temp_site',
+        'transmission_backhaul',
+        'remarks',
     ];
 
     protected $casts = [
@@ -58,6 +60,14 @@ class Site extends Model
         return $this->belongsToMany(Incident::class, 'incident_sites')
             ->withPivot('affected_technologies')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the maintenance logs for this site.
+     */
+    public function maintenanceLogs()
+    {
+        return $this->hasMany(SiteMaintenanceLog::class);
     }
 
     /**

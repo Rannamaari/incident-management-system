@@ -85,6 +85,33 @@
                                 <span class="text-xs text-gray-500">This site has Fixed Broadband service</span>
                             </label>
                         </div>
+
+                        <!-- Transmission / Backhaul -->
+                        <div class="p-4 rounded-xl bg-gray-50">
+                            <label for="transmission_backhaul" class="block text-sm font-medium text-gray-900 mb-2">
+                                Transmission / Backhaul
+                            </label>
+                            <input type="text"
+                                   name="transmission_backhaul"
+                                   id="transmission_backhaul"
+                                   value="{{ old('transmission_backhaul', $site->transmission_backhaul) }}"
+                                   class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                   placeholder="e.g., Fiber, Microwave, Satellite">
+                            <p class="mt-1 text-xs text-gray-500">Specify the backhaul technology for this site</p>
+                        </div>
+
+                        <!-- Remarks -->
+                        <div class="p-4 rounded-xl bg-gray-50">
+                            <label for="remarks" class="block text-sm font-medium text-gray-900 mb-2">
+                                Remarks
+                            </label>
+                            <textarea name="remarks"
+                                      id="remarks"
+                                      rows="3"
+                                      class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                      placeholder="Additional notes or remarks about this site">{{ old('remarks', $site->remarks) }}</textarea>
+                            <p class="mt-1 text-xs text-gray-500">Any additional information or special notes about this site</p>
+                        </div>
                     </div>
                 </div>
 

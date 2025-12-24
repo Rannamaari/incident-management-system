@@ -116,6 +116,8 @@ class SiteController extends Controller
         $validated = $request->validate([
             'is_active' => ['nullable', 'boolean'],
             'has_fbb' => ['nullable', 'boolean'],
+            'transmission_backhaul' => ['nullable', 'string', 'max:255'],
+            'remarks' => ['nullable', 'string'],
         ]);
 
         // Handle checkboxes (they're not submitted if unchecked)
