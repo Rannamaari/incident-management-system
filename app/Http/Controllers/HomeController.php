@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Incident;
 use App\Models\TemporarySite;
+use App\Models\Site;
+use App\Models\SiteTechnology;
 
 class HomeController extends Controller
 {
@@ -16,8 +18,36 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Get total site counts from config
-        $siteTotals = config('sites.total_counts');
+        // Get total site counts from database (active sites only)
+        $siteTotals = [
+            '2g' => SiteTechnology::where('technology', '2G')
+                ->where('is_active', true)
+                ->whereHas('site', function($query) {
+                    $query->where('is_active', true);
+                })
+                ->count(),
+            '3g' => SiteTechnology::where('technology', '3G')
+                ->where('is_active', true)
+                ->whereHas('site', function($query) {
+                    $query->where('is_active', true);
+                })
+                ->count(),
+            '4g' => SiteTechnology::where('technology', '4G')
+                ->where('is_active', true)
+                ->whereHas('site', function($query) {
+                    $query->where('is_active', true);
+                })
+                ->count(),
+            '5g' => SiteTechnology::where('technology', '5G')
+                ->where('is_active', true)
+                ->whereHas('site', function($query) {
+                    $query->where('is_active', true);
+                })
+                ->count(),
+            'fbb' => Site::where('is_active', true)
+                ->where('has_fbb', true)
+                ->count(),
+        ];
 
         // Get OPEN incidents only (Open, In Progress, Monitoring)
         $openIncidents = Incident::whereIn('status', ['Open', 'In Progress', 'Monitoring'])
@@ -47,63 +77,40 @@ class HomeController extends Controller
             ];
         }
 
-        // Calculate Temporary Sites statistics
-        if (config('sites.temp_sites_enabled', false)) {
-            $tempSites = TemporarySite::where('status', 'Temporary')->get();
+        // Calculate Temporary Sites statistics (inactive sites)
+        $tempSites = Site::where('is_active', false)->with('technologies')->get();
 
-            $tempStats = [
-                '2g' => ['total' => 0, 'online' => 0, 'offline' => 0],
-                '3g' => ['total' => 0, 'online' => 0, 'offline' => 0],
-                '4g' => ['total' => 0, 'online' => 0, 'offline' => 0],
-            ];
+        $tempStats = [
+            '2g' => ['total' => 0, 'online' => 0, 'offline' => 0],
+            '3g' => ['total' => 0, 'online' => 0, 'offline' => 0],
+            '4g' => ['total' => 0, 'online' => 0, 'offline' => 0],
+            '5g' => ['total' => 0, 'online' => 0, 'offline' => 0],
+        ];
 
-            foreach ($tempSites as $site) {
-                $coverage = strtolower($site->coverage);
+        foreach ($tempSites as $site) {
+            foreach ($site->technologies->where('is_active', true) as $tech) {
+                $technology = strtolower($tech->technology);
 
-                // Count 2G
-                if (str_contains($coverage, '2g')) {
-                    $tempStats['2g']['total']++;
-                    if ($site->is_2g_online) {
-                        $tempStats['2g']['online']++;
-                    } else {
-                        $tempStats['2g']['offline']++;
-                    }
-                }
-
-                // Count 3G
-                if (str_contains($coverage, '3g')) {
-                    $tempStats['3g']['total']++;
-                    if ($site->is_3g_online) {
-                        $tempStats['3g']['online']++;
-                    } else {
-                        $tempStats['3g']['offline']++;
-                    }
-                }
-
-                // Count 4G
-                if (str_contains($coverage, '4g')) {
-                    $tempStats['4g']['total']++;
-                    if ($site->is_4g_online) {
-                        $tempStats['4g']['online']++;
-                    } else {
-                        $tempStats['4g']['offline']++;
-                    }
+                if (isset($tempStats[$technology])) {
+                    $tempStats[$technology]['total']++;
+                    // For temp sites, we assume all are online since they're temporary/inactive sites
+                    $tempStats[$technology]['online']++;
                 }
             }
-
-            // Calculate total and percentage for temp sites
-            $tempTotal = $tempStats['2g']['total'] + $tempStats['3g']['total'] + $tempStats['4g']['total'];
-            $tempOnline = $tempStats['2g']['online'] + $tempStats['3g']['online'] + $tempStats['4g']['online'];
-            $tempOffline = $tempStats['2g']['offline'] + $tempStats['3g']['offline'] + $tempStats['4g']['offline'];
-
-            $siteStats['temp_sites'] = [
-                'total' => $tempTotal,
-                'online' => $tempOnline,
-                'offline' => $tempOffline,
-                'online_percentage' => $tempTotal > 0 ? round($tempOnline / $tempTotal * 100, 1) : 100,
-                'breakdown' => $tempStats,
-            ];
         }
+
+        // Calculate total and percentage for temp sites (include 5G)
+        $tempTotal = $tempStats['2g']['total'] + $tempStats['3g']['total'] + $tempStats['4g']['total'] + $tempStats['5g']['total'];
+        $tempOnline = $tempStats['2g']['online'] + $tempStats['3g']['online'] + $tempStats['4g']['online'] + $tempStats['5g']['online'];
+        $tempOffline = $tempStats['2g']['offline'] + $tempStats['3g']['offline'] + $tempStats['4g']['offline'] + $tempStats['5g']['offline'];
+
+        $siteStats['temp_sites'] = [
+            'total' => $tempTotal,
+            'online' => $tempOnline,
+            'offline' => $tempOffline,
+            'online_percentage' => $tempTotal > 0 ? round($tempOnline / $tempTotal * 100, 1) : 100,
+            'breakdown' => $tempStats,
+        ];
 
         // Separate incidents into site outages and FBB outages
         $siteOutages = $openIncidents->filter(function ($incident) {
@@ -122,10 +129,8 @@ class HomeController extends Controller
             return in_array('Single FBB', $services);
         });
 
-        // Get temp sites for offline list display
-        $tempSites = config('sites.temp_sites_enabled', false)
-            ? TemporarySite::where('status', 'Temporary')->get()
-            : collect();
+        // Get temp sites for offline list display (inactive sites)
+        $tempSites = Site::where('is_active', false)->with(['region', 'location', 'technologies'])->get();
 
         return view('home', compact('siteStats', 'siteOutages', 'fbbOutages', 'openIncidents', 'tempSites'));
     }

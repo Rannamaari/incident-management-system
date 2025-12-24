@@ -1,0 +1,408 @@
+AA
+  - Bathalaa Resort: AA_3713_Bathalaa_Resort
+  - Bodufolhudhoo: AA_3715_Bodufolhudhoo
+  - Feridhoo: AA_3709_Feridhoo
+  - Fesdhoo Resort: AA_3708_Fesdhoo_Resort
+  - Halaveli Resort: AA_3721_Halaveli_Resort
+  - Himandhoo: AA_3702_Himandhoo
+  - Kandholhudhoo Resort: AA_3751_Kandholhudhoo_Resort
+  - Kuramathi Resort: AA_3712_Kuramathi_Resort
+  - Maalhos: AA_3703_Maalhos
+  - Mathiveri: AA_3704_Mathiveri
+  - Nika Resort: AA_3717_Nika_Resort
+  - Rasdhoo: AA_3706_Rasdhoo
+  - Safari Island Resort: AA_3748_Safari_Island_Resort
+  - Thoddoo: AA_3707_Thoddoo
+  - Ukulhas: AA_3710_Ukulhas
+  - Veligandu Resort: AA_3720_Veligandu_Resort
+
+ADh
+  - Angaagaa Resort: ADh_3809_Angaagaa_Resort
+  - Dhangethi: ADh_3801_Dhangethi
+  - Dhigurah: ADh_3802_Dhigurah
+  - Fenfushi: ADh_3810_Fenfushi
+  - Haggnaameedhoo: ADh_3803_Haggnaameedhoo
+  - Holiday Island Resort: ADh_3824_Holiday_Island_Resort
+  - Lux Maldives Resort: ADh_3807_Lux_Maldives_Resort
+  - Maamigili: ADh_3804_Maamigili
+  - Machchafushi Resort: ADh_3815_Machchafushi_Resort
+  - Mahibadhoo: ADh_3805_Mahibadhoo
+  - Mandhoo: ADh_3806_Mandhoo
+  - Moofushi Resort: ADh_3722_Moofushi_Resort
+  - Omadhoo: ADh_3811_Omadhoo
+  - Rangali Resort: ADh_3813_Rangali_Resort
+  - Sun Island Resort: ADh_3826_Sun_Island_Resort
+  - Vakarufalhi Resort: ADh_3820_Vakarufalhi_Resort
+  - Vilamendhoo Resort: ADh_3814_Vilamendhoo_Resort
+
+B
+  - Amilla Fushi Resort: B_1151_Amilla_Fushi_Resort
+  - Anantara Kihaavah Resort: B_1154_Anantara_Kihaavah_Resort
+  - AvaniFares Resort: B_1184_AvaniFares_Resort
+  - CocoPalm Dhunikolhu Resort: B_1113_CocoPalm_Dhunikolhu_Resort
+  - Dharavandhoo: B_1101_Dharavandhoo
+  - Dhonfanu: B_1163_Dhonfanu
+  - Eydhafushi: B_1102_Eydhafushi
+  - Goidhoo: B_1103_Goidhoo
+  - Hithaadhoo: B_1104_Hithaadhoo
+  - Kamadhoo: B_1107_Kamadhoo
+  - Kanufushi Resort: B_1165_Kanufushi_Resort
+  - Kendhoo: B_1105_Kendhoo
+  - Kihaadhoo: B_1164_Kihaadhoo
+  - Kihaadhuffaru Resort: B_1115_Kihaadhuffaru_Resort
+  - Kudarikilu: B_1114_Kudarikilu
+  - Landagiravaru Resort: B_1109_Landagiravaru_Resort
+  - Maalhos: B_1119_Maalhos
+  - Mudhdhoo Resort: B_1125_Mudhdhoo_Resort
+  - Reethi Beach Resort: B_1120_Reethi_Beach_Resort
+  - Royal Island Resort: B_1117_Royal_Island_Resort
+  - Soneva Fushi Resort: B_1128_Soneva_Fushi_Resort
+  - Thulhaadhoo: B_1106_Thulhaadhoo
+  - Voavah Resort: B_1168_Voavah_Resort
+
+Dh
+  - Bandidhoo: Dh_3109_Bandidhoo
+  - Emboodhoofushi Resort: Dh_3113_Emboodhoofushi_Resort
+  - Hulhudheli: Dh_3102_Hulhudheli
+  - Kudahuvadhoo: Dh_3103_Kudahuvadhoo
+  - Maaeboodhoo: Dh_3105_Maaeboodhoo
+  - Meedhoo: Dh_3104_Meedhoo
+  - Rinbidhoo: Dh_3107_Rinbidhoo
+  - Vaanee: Dh_3106_Vaanee
+  - Velavaru Resort: Dh_3108_Velavaru_Resort
+  - Vilu Reef Resort: Dh_3111_Vilu_Reef_Resort
+  - Vommuli Resort: Dh_3115_Vommuli_Resort
+
+F
+  - Bileddhoo: F_3201_Bileddhoo
+  - Feeali: F_3202_Feeali
+  - Filitheyo Resort: F_3205_Filitheyo_Resort
+  - Magoodhoo: F_3204_Magoodhoo
+  - Nilandhoo: F_3203_Nilandhoo
+
+GA
+  - Dhaandhoo: GA_4109_Dhaandhoo
+  - Dhevvadhoo: GA_4101_Dhevvadhoo
+  - Dhigurah Resort: GA_4137_Dhigurah_Resort
+  - Gemanafushi: GA_4107_Gemanafushi
+  - Hadahaa Resort: GA_4113_Hadahaa_Resort
+  - Kanduhulhudhoo: GA_4102_Kanduhulhudhoo
+  - Kolamaafushi: GA_4104_Kolamaafushi
+  - Kondey: GA_4103_Kondey
+  - Maamendhoo: GA_4108_Maamendhoo
+  - Meradhoo Resort: GA_4112_Meradhoo_Resort
+  - Nilandhoo: GA_4105_Nilandhoo
+  - Robinson Club Resort: GA_4114_Robinson_Club_Resort
+  - Viligili: GA_4106_Viligili
+
+GDh
+  - Faresmaathoda: GDh_4207_Faresmaathoda
+  - Fiyoaree: GDh_4201_Fiyoaree
+  - Gadhdhoo: GDh_4204_Gadhdhoo
+  - Hoandedhdhoo: GDh_4211_Hoandedhdhoo
+  - Kaadeddhoo Airport: GDh_4213_Kaadeddhoo_Airport
+  - Konotta Resort: GDh_4216_Konotta_Resort
+  - Madaveli: GDh_4202_Madaveli
+  - Magudhdhuva Resort: GDh_4210_Magudhdhuva_Resort
+  - Nadella: GDh_4203_Nadella
+  - Rathafandhoo: GDh_4208_Rathafandhoo
+  - Thinadhoo: GDh_4205_Thinadhoo
+  - Thinadhoo Aahatha: GDh_4214_Thinadhoo_Aahatha
+  - Vaadhoo: GDh_4206_Vaadhoo
+
+Gn
+  - Fuvahmulah: Gn_4301_Fuvahmulah
+  - Fuvahmulah 2: Gn_4302_Fuvahmulah_2
+  - Fuvahmulah 3: Gn_4305_Fuvahmulah_3
+  - Fuvahmulah Badhahi: Gn_4309_Fuvahmulah_Badhahi
+  - Fuvahmulah Vaanaa: Gn_4306_Fuvahmulah_Vaanaa
+
+HA
+  - Baarah: HA_1201_Baarah
+  - Dhidhdhoo: HA_1202_Dhidhdhoo
+  - Dhidhdhoo Heyzleen: HA_1217_Dhidhdhoo_Heyzleen
+  - Filladhoo: HA_1212_Filladhoo
+  - Hoarafushi: HA_1203_Hoarafushi
+  - Ihavandhoo: HA_1204_Ihavandhoo
+  - Island Hideway Resort: HA_1225_Island_Hideway_Resort
+  - Kelaa: HA_1205_Kelaa
+  - Maarandhoo: HA_1214_Maarandhoo
+  - Manafaru Resort: HA_1215_Manafaru_Resort
+  - Muraidhoo: HA_1211_Muraidhoo
+  - Thakandhoo: HA_1206_Thakandhoo
+  - Uligamu: HA_1207_Uligamu
+  - Utheemu: HA_1209_Utheemu
+  - Vashafaru: HA_1210_Vashafaru
+
+HDh
+  - Dhipparufushi Resort: HDh_1362_Dhipparufushi_Resort
+  - Finey: HDh_1301_Finey
+  - Hanimaadhoo: HDh_1302_Hanimaadhoo
+  - Hirimaradhoo: HDh_1320_Hirimaradhoo
+  - Kulhudhuffushi: HDh_1303_Kulhudhuffushi
+  - Kulhudhuffushi 2: HDh_1304_Kulhudhuffushi_2
+  - Kulhudhuffushi Gadhage: HDh_1321_Kulhudhuffushi_Gadhage
+  - Kumundhoo: HDh_1311_Kumundhoo
+  - Kurinbi: HDh_1305_Kurinbi
+  - Makunudhoo: HDh_1306_Makunudhoo
+  - Naivaadhoo: HDh_1307_Naivaadhoo
+  - Nellaidhoo: HDh_1309_Nellaidhoo
+  - Neykurendhoo: HDh_1308_Neykurendhoo
+  - Nolhivaram: HDh_1313_Nolhivaram
+  - Nolhivaranfaru: HDh_1312_Nolhivaranfaru
+  - Vaikaradhoo: HDh_1310_Vaikaradhoo
+
+K
+  - Aarah: K_2328_Aarah
+  - Akirifushi Resort: K_2719_Akirifushi_Resort
+  - Anakandhoo Resort: K_2824_Anakandhoo_Resort
+  - Anantara Bushi Resort: K_2629_Anantara_Bushi_Resort
+  - Anantara Dhigu Resort: K_2632_Anantara_Dhigu_Resort
+  - Anantara Veli Resort: K_2326_Anantara_Veli_Resort
+  - Bandos Resort: K_2315_Bandos_Resort
+  - Baros Resort: K_2614_Baros_Resort
+  - Biyaadhoo Resort: K_2360_Biyaadhoo_Resort
+  - Bolifushi Resort: K_2356_Bolifushi_Resort
+  - CocoPalm Boduhithi Resort: K_2362_CocoPalm_Boduhithi_Resort
+  - Cocoa Island Resort: K_2396_Cocoa_Island_Resort
+  - Dhiffushi: K_2301_Dhiffushi
+  - Enboodhoo Resort: K_2345_Enboodhoo_Resort
+  - Eriyadhoo Resort: K_2348_Eriyadhoo_Resort
+  - Fihalhohi Island Resort: K_2616_Fihalhohi_Island_Resort
+  - Full Moon Resort: K_2337_Full_Moon_Resort
+  - Fun Island Resort: K_2609_Fun_Island_Resort
+  - Gaafaru: K_2303_Gaafaru
+  - Gasfinolhu Resort: K_2355_Gasfinolhu_Resort
+  - Gili Lankanfushi Resort: K_2378_Gili_Lankanfushi_Resort
+  - Gulhi: K_2321_Gulhi
+  - GulhiFalhu: K_2602_GulhiFalhu
+  - Guraidhoo: K_2304_Guraidhoo
+  - Helengeli Resort: K_2697_Helengeli_Resort
+  - Himmafushi: K_2306_Himmafushi
+  - Hudhuranfushi Resort: K_2371_Hudhuranfushi_Resort
+  - Hulhumale: K_2307_Hulhumale
+  - Hulhumale Autism Center: K_2606_Hulhumale_Autism_Center
+  - Hulhumale DRG: K_2672_Hulhumale_DRG
+  - Hulhumale HDC: K_2380_Hulhumale_HDC
+  - Hulhumale Javaahiru Eleven: K_2564_Hulhumale_Javaahiru_Eleven
+  - Hulhumale LOT10084: K_2487_Hulhumale_LOT10084
+  - Hulhumale LOT10977: K_2692_Hulhumale_LOT10977
+  - Hulhumale LOT11185: K_2560_Hulhumale_LOT11185
+  - Hulhumale MSC Test: K_565_Hulhumale_MSC_Test
+  - Hulhumale Marina View: K_2495_Hulhumale_Marina_View
+  - Hulhumale PH2 Farukolhu: K_2562_Hulhumale_PH2_Farukolhu
+  - Hulhumale PH2 H1: K_2496_Hulhumale_PH2_H1
+  - Hulhumale PH2 H12: K_2492_Hulhumale_PH2_H12
+  - Hulhumale PH2 H13: K_2463_Hulhumale_PH2_H13
+  - Hulhumale PH2 TreeTower: K_2497_Hulhumale_PH2_TreeTower
+  - Hulhumale Warehouse: K_2332_Hulhumale_Warehouse
+  - Huraa: K_2341_Huraa
+  - Huvafenfushi Resort: K_2613_Huvafenfushi_Resort
+  - Ihuru Resort: K_2363_Ihuru_Resort
+  - Ithaafushi Resort: K_2712_Ithaafushi_Resort
+  - Kaashidhoo: K_2308_Kaashidhoo
+  - Kandoomaa Resort: K_2343_Kandoomaa_Resort
+  - KudaBandos Resort: K_2722_KudaBandos_Resort
+  - Kudahuraa Resort: K_2323_Kudahuraa_Resort
+  - Kudavilingili Resort: K_2872_Kudavilingili_Resort
+  - Kurumbaa Resort: K_2329_Kurumbaa_Resort
+  - Maadhoofinolhu Resort: K_2700_Maadhoofinolhu_Resort
+  - Maafushi: K_2311_Maafushi
+  - Maafushi Leisure Boutique: K_2703_Maafushi_Leisure_Boutique
+  - Madivaru Resort: K_2566_Madivaru_Resort
+  - Male Airport: K_2312_Male_Airport
+  - Male Airport ATC: K_2873_Male_Airport_ATC
+  - Male Airport IBS: K_2392_Male_Airport_IBS
+  - Male Airport MNDF: K_2874_Male_Airport_MNDF
+  - Male Airport WS: K_2875_Male_Airport_WS
+  - Meeru Island Resort: K_2335_Meeru_Island_Resort
+  - Olhuveli Resort: K_2353_Olhuveli_Resort
+  - Paradise Resort: K_2331_Paradise_Resort
+  - RadhunDhonfushi Resort: K_2568_RadhunDhonfushi_Resort
+  - RadhunMaaranfushi Resort: K_2569_RadhunMaaranfushi_Resort
+  - Rannalhi Resort: K_2383_Rannalhi_Resort
+  - Rasfushi Resort: K_2620_Rasfushi_Resort
+  - Reethi Rah Resort: K_2322_Reethi_Rah_Resort
+  - Rihiveli Resort: K_2377_Rihiveli_Resort
+  - Summer Island Resort: K_2346_Summer_Island_Resort
+  - Taj Coral Resort: K_2352_Taj_Coral_Resort
+  - Taj Exotica Resort: K_2342_Taj_Exotica_Resort
+  - Thilafushi: K_2320_Thilafushi
+  - Thilafushi MTCC: K_2390_Thilafushi_MTCC
+  - Thulhaagiri Resort: K_2330_Thulhaagiri_Resort
+  - Thulusdhoo: K_2313_Thulusdhoo
+  - Thumbafushi: K_2693_Thumbafushi
+  - Vaadhoo Resort: K_2382_Vaadhoo_Resort
+  - Vabbinfaru Resort: K_2325_Vabbinfaru_Resort
+  - Velassaru Resort: K_2615_Velassaru_Resort
+  - Viligili: K_2314_Viligili
+  - Viligili Shima: K_2336_Viligili_Shima
+
+L
+  - Dhanbidhoo: L_3308_Dhanbidhoo
+  - Fonadhoo: L_3301_Fonadhoo
+  - Fonadhoo 2: L_3323_Fonadhoo_2
+  - Gamu: L_3302_Gamu
+  - Gamu Mathimaradhoo: L_3347_Gamu_Mathimaradhoo
+  - Gamu Mukurimagu: L_3310_Gamu_Mukurimagu
+  - Gamu Thundi: L_3313_Gamu_Thundi
+  - Hithadhoo: L_3306_Hithadhoo
+  - Isdhoo: L_3303_Isdhoo
+  - Kadhdhoo Airport: L_3304_Kadhdhoo_Airport
+  - Kalaidhoo: L_3312_Kalaidhoo
+  - Kunahandhoo: L_3314_Kunahandhoo
+  - Latitude Resort: L_3315_Latitude_Resort
+  - Maabaidhoo: L_3307_Maabaidhoo
+  - Maamendhoo: L_3309_Maamendhoo
+  - Maandhoo: L_3317_Maandhoo
+  - Maavah: L_3305_Maavah
+
+Lh
+  - Felivaru: Lh_1413_Felivaru
+  - Hinnavaru: Lh_1401_Hinnavaru
+  - Kanifushi Beach Resort: Lh_1420_Kanifushi_Beach_Resort
+  - Kanuhuraa Resort: Lh_1405_Kanuhuraa_Resort
+  - Komandoo Resort: Lh_1409_Komandoo_Resort
+  - Kuredhdhoo Resort: Lh_1402_Kuredhdhoo_Resort
+  - Kurendhoo: Lh_1403_Kurendhoo
+  - Maafilaafushi: Lh_1414_Maafilaafushi
+  - Naifaru: Lh_1404_Naifaru
+  - Olhuvelifushi: Lh_1406_Olhuvelifushi
+  - Ookolhufinolhu Resort: Lh_1435_Ookolhufinolhu_Resort
+  - Palm Beach Resort: Lh_1411_Palm_Beach_Resort
+
+M
+  - Dhiggaru: M_3401_Dhiggaru
+  - Hakuraahuraa Resort: M_3409_Hakuraahuraa_Resort
+  - Kolhufushi: M_3402_Kolhufushi
+  - Medhufushi Resort: M_3408_Medhufushi_Resort
+  - Mulah: M_3404_Mulah
+  - Naalaafushi: M_3405_Naalaafushi
+
+Male
+  - Aakakaage: Male_2405_Aakakaage
+  - Ageedhuge: Male_2491_Ageedhuge
+  - Bolissafaru: Male_2414_Bolissafaru
+  - Crimson Rose: Male_2481_Crimson_Rose
+  - Dhonannaruge: Male_2403_Dhonannaruge
+  - East Light: Male_2409_East_Light
+  - Fashan: Male_2407_Fashan
+  - Fin: Male_2451_Fin
+  - Four Lights: Male_2413_Four_Lights
+  - Frenzy: Male_2402_Frenzy
+  - GreenFehi: Male_2456_GreenFehi
+  - Hazaarumaage: Male_2408_Hazaarumaage
+  - Kashmeeru Vaadhee: Male_2421_Kashmeeru_Vaadhee
+  - Leela Manzil: Male_2416_Leela_Manzil
+  - Loajehi Palace: Male_2428_Loajehi_Palace
+  - Lunchmead: Male_2460_Lunchmead
+  - MPA: Male_2482_MPA
+  - MWSC: Male_2410_MWSC
+  - Maalhuveli: Male_2423_Maalhuveli
+  - Malehiya: Male_2404_Malehiya
+  - Mirihimaage: Male_2458_Mirihimaage
+  - Noohiri: Male_2411_Noohiri
+  - PA Complex: Male_2406_PA_Complex
+  - Perisge: Male_2444_Perisge
+  - Radio Building: Male_2417_Radio_Building
+  - Saimaa: Male_2418_Saimaa
+  - Samandharu: Male_2449_Samandharu
+  - Send Rose: Male_2488_Send_Rose
+  - Shafaq: Male_2490_Shafaq
+  - Sony: Male_2486_Sony
+  - Sunleet: Male_2420_Sunleet
+  - Velaanaage IBS: Male_2442_Velaanaage_IBS
+
+N
+  - Fodhdhoo: N_1555_Fodhdhoo
+  - Fushivelavaru Resort: N_1516_Fushivelavaru_Resort
+  - Henbadhoo: N_1511_Henbadhoo
+  - Holhudhoo: N_1501_Holhudhoo
+  - Irufushi Resort: N_1514_Irufushi_Resort
+  - Kendhikolhudhoo: N_1502_Kendhikolhudhoo
+  - Kudafari: N_1508_Kudafari
+  - Kudafunafaru Resort: N_1512_Kudafunafaru_Resort
+  - Kulhudhoo: N_1517_Kulhudhoo
+  - Landhoo: N_1509_Landhoo
+  - Lhohi: N_1510_Lhohi
+  - Maafaru: N_1506_Maafaru
+  - Maalhendhoo: N_1503_Maalhendhoo
+  - Manadhoo: N_1504_Manadhoo
+  - Miladhoo: N_1507_Miladhoo
+  - Randheli Resort: N_1513_Randheli_Resort
+  - Velidhoo: N_1505_Velidhoo
+
+R
+  - Alifushi: R_1601_Alifushi
+  - Angolhitheemu: R_1616_Angolhitheemu
+  - Dhuvaafaru: R_1612_Dhuvaafaru
+  - Fainu: R_1618_Fainu
+  - Hulhudhuffaaru: R_1602_Hulhudhuffaaru
+  - Huruvalhi Resort: R_1647_Huruvalhi_Resort
+  - Inguraidhoo: R_1603_Inguraidhoo
+  - Innamaadhoo: R_1617_Innamaadhoo
+  - Kinolhas: R_1619_Kinolhas
+  - Maakurathu: R_1610_Maakurathu
+  - Maamigili Resort: R_1624_Maamigili_Resort
+  - Maduvvaree: R_1609_Maduvvaree
+  - Meedhoo: R_1605_Meedhoo
+  - Meedhupparu Resort: R_1614_Meedhupparu_Resort
+  - Rasgetheem: R_1611_Rasgetheem
+  - Rasmaadhoo: R_1606_Rasmaadhoo
+  - Reethifaru Resort: R_1654_Reethifaru_Resort
+  - Ungoofaaru: R_1607_Ungoofaaru
+  - Vaadhoo: R_1608_Vaadhoo
+
+S
+  - Feydhoo: S_4401_Feydhoo
+  - Feydhoo Dhekunuge: S_4418_Feydhoo_Dhekunuge
+  - GAN MNDF: S_4432_GAN_MNDF
+  - Gan Airport: S_4405_Gan_Airport
+  - Herathera 2 Resort: S_4422_Herathera_2_Resort
+  - Herathera Resort: S_4420_Herathera_Resort
+  - Hithadhoo: S_4402_Hithadhoo
+  - Hithadhoo 2: S_4403_Hithadhoo_2
+  - Hithadhoo Hulhanguge: S_4416_Hithadhoo_Hulhanguge
+  - Hithadhoo Thousand Flower: S_4441_Hithadhoo_Thousand_Flower
+  - Hulhudhoo: S_4404_Hulhudhoo
+  - Maradhoo: S_4406_Maradhoo
+  - MaradhooFeydhoo Rosemead: S_4417_MaradhooFeydhoo_Rosemead
+  - Meedhoo: S_4409_Meedhoo
+  - Viligili Resort: S_4407_Viligili_Resort
+
+Sh
+  - Bilehfahi: Sh_1711_Bilehfahi
+  - Feevah: Sh_1701_Feevah
+  - Feydhoo: Sh_1702_Feydhoo
+  - Foakaidhoo: Sh_1713_Foakaidhoo
+  - Funadhoo: Sh_1703_Funadhoo
+  - Goidhoo: Sh_1704_Goidhoo
+  - Kanditheemu: Sh_1723_Kanditheemu
+  - Komandoo: Sh_1705_Komandoo
+  - Lhaimagu: Sh_1712_Lhaimagu
+  - Maaungoodhoo: Sh_1707_Maaungoodhoo
+  - Maroshi: Sh_1708_Maroshi
+  - Milandhoo: Sh_1709_Milandhoo
+  - Noomaraa: Sh_1710_Noomaraa
+  - Vagaru Resort: Sh_1717_Vagaru_Resort
+
+Th
+  - Buruni: Th_3501_Buruni
+  - Dhiyamigili: Th_3517_Dhiyamigili
+  - Gaadhiffushi: Th_3507_Gaadhiffushi
+  - Guraidhoo: Th_3502_Guraidhoo
+  - Hirilandhoo: Th_3503_Hirilandhoo
+  - Kandoodhoo: Th_3511_Kandoodhoo
+  - Kinbidhoo: Th_3504_Kinbidhoo
+  - Maalefushi Resort: Th_3518_Maalefushi_Resort
+  - Madifushi: Th_3508_Madifushi
+  - Omadhoo: Th_3510_Omadhoo
+  - Thimarafushi: Th_3505_Thimarafushi
+  - Veymandoo: Th_3509_Veymandoo
+  - Vilufushi: Th_3506_Vilufushi
+
+V
+  - Felidhoo: V_2501_Felidhoo
+  - Fulidhoo: V_2502_Fulidhoo
+  - Keyodhoo: V_2511_Keyodhoo
+  - Rakeedhoo: V_2503_Rakeedhoo

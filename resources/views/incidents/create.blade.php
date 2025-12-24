@@ -154,81 +154,10 @@
 
                         <!-- Group 1: Basics -->
                         <div>
-                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Basic Info</h4>
-                            <div class="space-y-4">
+                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Step 1: Select Affected Systems</h4>
+                            <div class="space-y-6">
 
-                                <!-- Summary -->
-                                <div>
-                                    <label for="summary" class="block text-sm font-heading font-medium text-gray-700 mb-2">Outage
-                                        Details (Incident Summary) <span class="text-red-500">*</span></label>
-                                    <textarea name="summary" id="summary" rows="4" maxlength="1000"
-                                        placeholder="Provide detailed description of the incident..."
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 resize-y @error('summary') border-red-300 @enderror"
-                                        oninput="updateCharCount('summary', 1000)">{{ old('summary') }}</textarea>
-                                    <div class="mt-1 flex justify-between">
-                                        <div>@error('summary') <span class="text-sm text-red-600">{{ $message }}</span> @enderror</div>
-                                        <div class="text-xs text-gray-500">
-                                            <span id="summary-count">{{ strlen(old('summary', '')) }}</span>/1000 characters
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                    <!-- Outage Category -->
-                                    <div>
-                                        <label for="outage_category_id"
-                                            class="block text-sm font-heading font-medium text-gray-700 mb-2">Outage Category <span
-                                                class="text-red-500">*</span></label>
-                                        <select name="outage_category_id" id="outage_category_id"
-                                            onchange="toggleNewInput('outage_category')"
-                                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('outage_category_id') border-red-300 @enderror">
-                                            <option value="">Select Outage Category</option>
-                                            @foreach($outageCategories as $outageCategory)
-                                                <option value="{{ $outageCategory->id }}" {{ old('outage_category_id') == $outageCategory->id ? 'selected' : '' }}>
-                                                    {{ $outageCategory->name }}
-                                                </option>
-                                            @endforeach
-                                            <option value="new">Add new...</option>
-                                        </select>
-                                        @error('outage_category_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-
-                                        <!-- New Outage Category Input -->
-                                        <div id="new_outage_category_input" class="mt-2" style="display: none;">
-                                            <input type="text" name="new_outage_category_name" id="new_outage_category_name"
-                                                placeholder="Enter new outage category name"
-                                                value="{{ old('new_outage_category_name') }}"
-                                                class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
-                                        </div>
-                                    </div>
-
-                                    <!-- Category -->
-                                    <div>
-                                        <label for="category_id" class="block text-sm font-heading font-medium text-gray-700 mb-2">Category
-                                            <span class="text-red-500">*</span></label>
-                                        <select name="category_id" id="category_id"
-                                            onchange="toggleNewInput('category')"
-                                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('category_id') border-red-300 @enderror">
-                                            <option value="">Select Category</option>
-                                            @foreach($categories as $category)
-                                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                                    {{ $category->name }}
-                                                </option>
-                                            @endforeach
-                                            <option value="new">Add new...</option>
-                                        </select>
-                                        @error('category_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-
-                                        <!-- New Category Input -->
-                                        <div id="new_category_input" class="mt-2" style="display: none;">
-                                            <input type="text" name="new_category_name" id="new_category_name"
-                                                placeholder="Enter new category name"
-                                                value="{{ old('new_category_name') }}"
-                                                class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Affected Services -->
+                                <!-- Affected Services - MOVED TO TOP -->
                                 <div>
                                     <label class="block text-sm font-heading font-medium text-gray-700 mb-3">Affected Systems/Services
                                         <span class="text-red-500">*</span></label>
@@ -285,14 +214,75 @@
                                                 showSiteFields: {{ old('affected_services') ? (in_array('Single Site', old('affected_services', [])) || in_array('Multiple Site', old('affected_services', [])) ? 'true' : 'false') : 'false' }},
                                                 showFbbField: {{ old('affected_services') ? (in_array('Single FBB', old('affected_services', [])) ? 'true' : 'false') : 'false' }},
 
+                                                // Site selection data
+                                                selectedSites: {},
+                                                searchSite: '',
+                                                selectedRegion: '',
+                                                sites: {{ Js::from($sites ?? []) }},
+                                                selectedServices: [], // Track which services are selected
+
+                                                init() {
+                                                    console.log('Sites data:', this.sites);
+                                                    // Log a sample site to check if has_fbb is present
+                                                    if (this.sites.length > 0) {
+                                                        console.log('Sample site (first):', this.sites[0]);
+                                                        const fbbSites = this.sites.filter(s => s.has_fbb);
+                                                        console.log('Sites with FBB enabled:', fbbSites);
+                                                    }
+                                                },
+
                                                 checkServices() {
                                                     const checkboxes = document.querySelectorAll('input[name="affected_services[]"]:checked');
                                                     const values = Array.from(checkboxes).map(cb => cb.value);
+
+                                                    // Check if we're switching modes or disabling site selection
+                                                    const wasFbbMode = this.selectedServices.includes('FBB') || this.selectedServices.includes('Single FBB');
+                                                    const isFbbMode = values.includes('FBB') || values.includes('Single FBB');
+                                                    const hadSiteFields = this.selectedServices.includes('Single Site') || this.selectedServices.includes('Multiple Site') || this.selectedServices.includes('FBB') || this.selectedServices.includes('Single FBB');
+                                                    const hasSiteFields = values.includes('Single Site') || values.includes('Multiple Site') || values.includes('FBB') || values.includes('Single FBB');
+
+                                                    this.selectedServices = values; // Store selected services
                                                     console.log('Checked services:', values);
-                                                    this.showSiteFields = values.includes('Single Site') || values.includes('Multiple Site');
+                                                    this.showSiteFields = hasSiteFields;
                                                     this.showFbbField = values.includes('Single FBB');
                                                     console.log('Show Site Fields:', this.showSiteFields);
                                                     console.log('Show FBB Field:', this.showFbbField);
+
+                                                    // If all site-related services are unchecked, clear selected sites
+                                                    if (hadSiteFields && !hasSiteFields && Object.keys(this.selectedSites).length > 0) {
+                                                        console.log('Clearing all selected sites - no site-related services selected');
+                                                        this.selectedSites = {};
+                                                        this.updateCountInputs();
+                                                        return;
+                                                    }
+
+                                                    // If switching modes, update selected sites
+                                                    if (wasFbbMode !== isFbbMode && Object.keys(this.selectedSites).length > 0) {
+                                                        // Clear sites that don't have FBB when entering FBB mode
+                                                        if (isFbbMode) {
+                                                            for (const siteId in this.selectedSites) {
+                                                                const site = this.sites.find(s => s.id == siteId);
+                                                                if (!site || !site.has_fbb) {
+                                                                    delete this.selectedSites[siteId];
+                                                                } else {
+                                                                    // Update to FBB technology
+                                                                    this.selectedSites[siteId] = ['FBB'];
+                                                                }
+                                                            }
+                                                        } else {
+                                                            // Update to cellular technologies when leaving FBB mode
+                                                            for (const siteId in this.selectedSites) {
+                                                                const site = this.sites.find(s => s.id == siteId);
+                                                                if (site && site.technologies) {
+                                                                    const activeCellular = site.technologies
+                                                                        .filter(t => ['2G', '3G', '4G', '5G'].includes(t.technology) && t.is_active)
+                                                                        .map(t => t.technology);
+                                                                    this.selectedSites[siteId] = activeCellular.length > 0 ? activeCellular : ['2G', '3G', '4G', '5G'];
+                                                                }
+                                                            }
+                                                        }
+                                                        this.updateCountInputs();
+                                                    }
                                                 },
 
                                                 initCheckboxListeners() {
@@ -301,12 +291,197 @@
                                                             checkbox.addEventListener('change', () => this.checkServices());
                                                         });
                                                     });
+                                                },
+
+                                                get filteredSites() {
+                                                    if (!this.sites || !Array.isArray(this.sites)) return [];
+
+                                                    // Check if FBB service is selected (using stored selectedServices for reactivity)
+                                                    const isFbbSelected = this.selectedServices.includes('FBB') || this.selectedServices.includes('Single FBB');
+
+                                                    console.log('Filtering sites - FBB selected:', isFbbSelected);
+
+                                                    const filtered = this.sites.filter(site => {
+                                                        if (!site) return false;
+
+                                                        // If FBB is selected, only show sites with FBB enabled
+                                                        if (isFbbSelected && !site.has_fbb) {
+                                                            return false;
+                                                        }
+
+                                                        const matchesSearch = !this.searchSite ||
+                                                            (site.site_code && site.site_code.toLowerCase().includes(this.searchSite.toLowerCase())) ||
+                                                            (site.display_name && site.display_name.toLowerCase().includes(this.searchSite.toLowerCase()));
+                                                        const matchesRegion = !this.selectedRegion || site.region_id == this.selectedRegion;
+                                                        return matchesSearch && matchesRegion;
+                                                    });
+
+                                                    console.log('Filtered sites count:', filtered.length);
+                                                    return filtered;
+                                                },
+
+                                                get isFbbOnlyMode() {
+                                                    return this.selectedServices.includes('FBB') || this.selectedServices.includes('Single FBB');
+                                                },
+
+                                                get techCounts() {
+                                                    const counts = { '2G': 0, '3G': 0, '4G': 0, '5G': 0, 'FBB': 0, 'ILL': 0, 'SIP': 0, 'IPTV': 0 };
+                                                    Object.values(this.selectedSites).forEach(techs => {
+                                                        if (Array.isArray(techs)) {
+                                                            techs.forEach(tech => {
+                                                                if (counts[tech] !== undefined) counts[tech]++;
+                                                            });
+                                                        }
+                                                    });
+                                                    return counts;
+                                                },
+
+                                                updateCountInputs() {
+                                                    const counts = this.techCounts;
+                                                    document.getElementById('sites_2g_impacted').value = counts['2G'];
+                                                    document.getElementById('sites_3g_impacted').value = counts['3G'];
+                                                    document.getElementById('sites_4g_impacted').value = counts['4G'];
+                                                    document.getElementById('sites_5g_impacted').value = counts['5G'];
+                                                    document.getElementById('fbb_impacted').value = counts['FBB'];
+                                                    this.updateSummary();
+                                                    this.updateAffectedServices();
+                                                },
+
+                                                updateAffectedServices() {
+                                                    const selectedCount = Object.keys(this.selectedSites).length;
+                                                    const affectedServices = [];
+
+                                                    // Auto-select Single Site or Multiple Site based on selection count
+                                                    if (selectedCount === 1) {
+                                                        affectedServices.push('Single Site');
+                                                    } else if (selectedCount > 1) {
+                                                        affectedServices.push('Multiple Site');
+                                                    }
+
+                                                    // Check if any selected site has FBB enabled
+                                                    let hasFBB = false;
+                                                    for (const siteId of Object.keys(this.selectedSites)) {
+                                                        const site = this.sites.find(s => s.id == siteId);
+                                                        if (site && site.has_fbb) {
+                                                            hasFBB = true;
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    if (hasFBB) {
+                                                        affectedServices.push('FBB');
+                                                    }
+
+                                                    // Update affected services checkboxes
+                                                    const checkboxes = document.querySelectorAll('input[name="affected_services[]"]');
+                                                    checkboxes.forEach(checkbox => {
+                                                        const isAutoService = checkbox.value === 'Single Site' || checkbox.value === 'Multiple Site' || checkbox.value === 'FBB';
+
+                                                        if (affectedServices.includes(checkbox.value)) {
+                                                            checkbox.checked = true;
+                                                        } else if (selectedCount > 0 && isAutoService) {
+                                                            checkbox.checked = false;
+                                                        }
+                                                    });
+                                                },
+
+                                                updateSummary() {
+                                                    const summaryField = document.getElementById('summary');
+                                                    const selectedCount = Object.keys(this.selectedSites).length;
+
+                                                    if (selectedCount === 0) {
+                                                        summaryField.readOnly = false;
+                                                        summaryField.classList.remove('bg-gray-50', 'cursor-not-allowed');
+                                                        summaryField.classList.add('bg-white');
+                                                        return;
+                                                    }
+
+                                                    // Make field readonly
+                                                    summaryField.readOnly = true;
+                                                    summaryField.classList.add('bg-gray-50', 'cursor-not-allowed');
+                                                    summaryField.classList.remove('bg-white');
+
+                                                    // Generate summary - just site code and technologies, separated by commas
+                                                    let summaryLines = [];
+                                                    for (const [siteId, techs] of Object.entries(this.selectedSites)) {
+                                                        const site = this.sites.find(s => s.id == siteId);
+                                                        if (site && Array.isArray(techs) && techs.length > 0) {
+                                                            const techStr = techs.sort().join('/');
+                                                            summaryLines.push(`${site.site_code} ${techStr}`);
+                                                        }
+                                                    }
+
+                                                    summaryField.value = summaryLines.join(', ');
+                                                },
+
+                                                toggleSite(siteId) {
+                                                    if (this.selectedSites[siteId]) {
+                                                        delete this.selectedSites[siteId];
+                                                    } else {
+                                                        // Auto-select appropriate technologies based on mode
+                                                        if (this.isFbbOnlyMode) {
+                                                            this.selectedSites[siteId] = ['FBB'];
+                                                        } else {
+                                                            // Auto-select all active cellular technologies
+                                                            const site = this.sites.find(s => s.id == siteId);
+                                                            if (site && site.technologies) {
+                                                                const activeCellular = site.technologies
+                                                                    .filter(t => ['2G', '3G', '4G', '5G'].includes(t.technology) && t.is_active)
+                                                                    .map(t => t.technology);
+                                                                this.selectedSites[siteId] = activeCellular.length > 0 ? activeCellular : ['2G', '3G', '4G', '5G'];
+                                                            } else {
+                                                                this.selectedSites[siteId] = ['2G', '3G', '4G', '5G'];
+                                                            }
+                                                        }
+                                                    }
+                                                    this.updateCountInputs();
+                                                },
+
+                                                toggleTechnology(siteId, tech) {
+                                                    if (!this.selectedSites[siteId]) {
+                                                        // Site not selected, add it with this technology
+                                                        this.selectedSites = { ...this.selectedSites, [siteId]: [tech] };
+                                                    } else {
+                                                        const currentTechs = this.selectedSites[siteId];
+                                                        const index = currentTechs.indexOf(tech);
+
+                                                        if (index > -1) {
+                                                            // Technology is selected, remove it
+                                                            const newTechs = currentTechs.filter(t => t !== tech);
+                                                            if (newTechs.length === 0) {
+                                                                // No technologies left, remove site entirely
+                                                                const { [siteId]: removed, ...rest } = this.selectedSites;
+                                                                this.selectedSites = rest;
+                                                            } else {
+                                                                // Update with remaining technologies
+                                                                this.selectedSites = { ...this.selectedSites, [siteId]: newTechs };
+                                                            }
+                                                        } else {
+                                                            // Technology not selected, add it
+                                                            this.selectedSites = { ...this.selectedSites, [siteId]: [...currentTechs, tech] };
+                                                        }
+                                                    }
+                                                    this.updateCountInputs();
+                                                },
+
+                                                removeSite(siteId) {
+                                                    delete this.selectedSites[siteId];
+                                                    this.updateCountInputs();
                                                 }
                                             }));
                                         });
                                     </script>
 
-                                    <!-- Site Impact Section -->
+                                    <!-- Hidden Site Impact Fields (Auto-calculated in background) -->
+                                    <div x-show="false">
+                                        <input type="hidden" name="sites_2g_impacted" id="sites_2g_impacted" value="{{ old('sites_2g_impacted', 0) }}">
+                                        <input type="hidden" name="sites_3g_impacted" id="sites_3g_impacted" value="{{ old('sites_3g_impacted', 0) }}">
+                                        <input type="hidden" name="sites_4g_impacted" id="sites_4g_impacted" value="{{ old('sites_4g_impacted', 0) }}">
+                                        <input type="hidden" name="sites_5g_impacted" id="sites_5g_impacted" value="{{ old('sites_5g_impacted', 0) }}">
+                                        <input type="hidden" name="fbb_impacted" id="fbb_impacted" value="{{ old('fbb_impacted', 0) }}">
+                                    </div>
+
+                                    <!-- Site Selection Section (for Site Outages)-->
                                     <div x-show="showSiteFields"
                                          x-transition:enter="transition ease-out duration-300"
                                          x-transition:enter-start="opacity-0 transform -translate-y-2"
@@ -314,113 +489,162 @@
                                          x-transition:leave="transition ease-in duration-200"
                                          x-transition:leave-start="opacity-100"
                                          x-transition:leave-end="opacity-0"
-                                         class="bg-blue-50/50 border border-blue-200 rounded-xl p-6">
+                                         class="bg-green-50/50 border border-green-200 rounded-xl p-6 mt-4">
 
-                                        <h5 class="font-heading text-sm font-semibold text-blue-900 mb-4 flex items-center gap-2">
+                                        <h5 class="font-heading text-sm font-semibold text-green-900 mb-4 flex items-center gap-2">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                             </svg>
-                                            Site Impact Details
+                                            Select Affected Sites
                                         </h5>
-                                        <p class="text-sm text-blue-700 mb-4">Please specify how many sites of each type are impacted</p>
+                                        <p class="text-sm text-green-700 mb-4">Search and select specific sites affected by this outage</p>
 
-                                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                                            <!-- 2G Sites -->
-                                            <div>
-                                                <label for="sites_2g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
-                                                    2G Sites
-                                                </label>
-                                                <input type="number"
-                                                       name="sites_2g_impacted"
-                                                       id="sites_2g_impacted"
-                                                       min="0"
-                                                       value="{{ old('sites_2g_impacted', 0) }}"
-                                                       class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_2g_impacted') border-red-300 @enderror">
-                                                @error('sites_2g_impacted')
-                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                                @enderror
+                                        <!-- Selected Sites Summary (Above List) -->
+                                        <div x-show="Object.keys(selectedSites).length > 0"
+                                             x-transition
+                                             class="mb-4 p-4 bg-green-50 border border-green-300 rounded-xl">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <p class="text-sm font-semibold text-green-900">
+                                                    <span x-text="Object.keys(selectedSites).length"></span> site(s) selected
+                                                </p>
+                                                <button type="button"
+                                                        @click="selectedSites = {}; updateCountInputs();"
+                                                        class="text-xs text-red-600 hover:text-red-800 font-medium transition-colors">
+                                                    Clear All
+                                                </button>
                                             </div>
-
-                                            <!-- 3G Sites -->
-                                            <div>
-                                                <label for="sites_3g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
-                                                    3G Sites
-                                                </label>
-                                                <input type="number"
-                                                       name="sites_3g_impacted"
-                                                       id="sites_3g_impacted"
-                                                       min="0"
-                                                       value="{{ old('sites_3g_impacted', 0) }}"
-                                                       class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_3g_impacted') border-red-300 @enderror">
-                                                @error('sites_3g_impacted')
-                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                                @enderror
-                                            </div>
-
-                                            <!-- 4G Sites -->
-                                            <div>
-                                                <label for="sites_4g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
-                                                    4G Sites
-                                                </label>
-                                                <input type="number"
-                                                       name="sites_4g_impacted"
-                                                       id="sites_4g_impacted"
-                                                       min="0"
-                                                       value="{{ old('sites_4g_impacted', 0) }}"
-                                                       class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_4g_impacted') border-red-300 @enderror">
-                                                @error('sites_4g_impacted')
-                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                                @enderror
-                                            </div>
-
-                                            <!-- 5G Sites -->
-                                            <div>
-                                                <label for="sites_5g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
-                                                    5G Sites
-                                                </label>
-                                                <input type="number"
-                                                       name="sites_5g_impacted"
-                                                       id="sites_5g_impacted"
-                                                       min="0"
-                                                       value="{{ old('sites_5g_impacted', 0) }}"
-                                                       class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_5g_impacted') border-red-300 @enderror">
-                                                @error('sites_5g_impacted')
-                                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                                @enderror
+                                            <div class="flex flex-wrap gap-2">
+                                                <template x-for="(techs, siteId) in selectedSites" :key="siteId">
+                                                    <div class="inline-flex items-center gap-2 bg-white border border-green-300 rounded-lg px-3 py-1.5 shadow-sm">
+                                                        <div class="text-xs">
+                                                            <span class="font-semibold text-gray-900" x-text="sites.find(s => s.id == siteId)?.site_code || 'Unknown'"></span>
+                                                            <span class="text-gray-500 mx-1">•</span>
+                                                            <span class="text-green-700 font-medium" x-text="Array.isArray(techs) ? techs.join('/') : ''"></span>
+                                                        </div>
+                                                        <button type="button"
+                                                                @click="removeSite(siteId)"
+                                                                class="text-gray-400 hover:text-red-600 transition-colors flex-shrink-0"
+                                                                title="Remove this site">
+                                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </template>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <!-- FBB Impact Section -->
-                                    <div x-show="showFbbField"
-                                         x-transition:enter="transition ease-out duration-300"
-                                         x-transition:enter-start="opacity-0 transform -translate-y-2"
-                                         x-transition:enter-end="opacity-100 transform translate-y-0"
-                                         x-transition:leave="transition ease-in duration-200"
-                                         x-transition:leave-start="opacity-100"
-                                         x-transition:leave-end="opacity-0"
-                                         class="bg-orange-50/50 border border-orange-200 rounded-xl p-6 mt-4">
+                                        <!-- Search and Filters -->
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Search Sites</label>
+                                                <input type="text"
+                                                       x-model="searchSite"
+                                                       placeholder="Search by code or name..."
+                                                       class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Region</label>
+                                                <select x-model="selectedRegion"
+                                                        class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300">
+                                                    <option value="">All Regions</option>
+                                                    @foreach($regions as $region)
+                                                        <option value="{{ $region->id }}">{{ $region->name }} ({{ $region->code }})</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
 
-                                        <h5 class="font-heading text-sm font-semibold text-orange-900 mb-4 flex items-center gap-2">
-                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                                            </svg>
-                                            FBB Impact Details
-                                        </h5>
+                                        <!-- Sites List (2 Column Layout) -->
+                                        <div class="max-h-96 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-2 border border-green-200 rounded-lg p-4 bg-white">
+                                            <template x-for="site in filteredSites" :key="site.id">
+                                                <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors h-fit">
+                                                    <div class="flex items-start gap-3">
+                                                        <input type="checkbox"
+                                                               :checked="selectedSites[site.id]"
+                                                               @change="toggleSite(site.id)"
+                                                               class="mt-1 h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                                        <div class="flex-1">
+                                                            <div class="font-medium text-gray-900" x-text="site.display_name"></div>
+                                                            <div class="text-sm text-gray-500">
+                                                                <span x-text="site.region?.code || 'N/A'"></span> -
+                                                                <span x-text="site.location?.location_name || 'N/A'"></span>
+                                                            </div>
 
-                                        <div class="max-w-xs">
-                                            <label for="fbb_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
-                                                Number of FBB Impacted
-                                            </label>
-                                            <input type="number"
-                                                   name="fbb_impacted"
-                                                   id="fbb_impacted"
-                                                   min="0"
-                                                   value="{{ old('fbb_impacted', 0) }}"
-                                                   class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('fbb_impacted') border-red-300 @enderror">
-                                            @error('fbb_impacted')
-                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                            @enderror
+                                                            <!-- Technology Selection -->
+                                                            <div x-show="selectedSites[site.id]"
+                                                                 class="mt-2 space-y-2"
+                                                                 x-transition>
+                                                                <!-- FBB Only Mode -->
+                                                                <template x-if="isFbbOnlyMode">
+                                                                    <div>
+                                                                        <div class="text-xs font-medium text-gray-600 mb-1">FBB Service:</div>
+                                                                        <div class="flex gap-2 flex-wrap">
+                                                                            <button type="button"
+                                                                                    @click="toggleTechnology(site.id, 'FBB')"
+                                                                                    :class="selectedSites[site.id] && selectedSites[site.id].includes('FBB') ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'"
+                                                                                    class="px-3 py-1 rounded-lg text-xs font-medium hover:opacity-80 transition-all">
+                                                                                FBB (Supernet)
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+
+                                                                <!-- Normal Mode (Cellular + Other Services) -->
+                                                                <template x-if="!isFbbOnlyMode">
+                                                                    <div>
+                                                                        <div class="text-xs font-medium text-gray-600 mb-1">Cellular Technologies:</div>
+                                                                        <div class="flex gap-2 flex-wrap">
+                                                                            <template x-for="tech in site.technologies?.filter(t => ['2G', '3G', '4G', '5G'].includes(t.technology) && t.is_active) || []" :key="tech.technology">
+                                                                                <button type="button"
+                                                                                        @click="toggleTechnology(site.id, tech.technology)"
+                                                                                        :class="selectedSites[site.id] && selectedSites[site.id].includes(tech.technology) ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'"
+                                                                                        class="px-3 py-1 rounded-lg text-xs font-medium hover:opacity-80 transition-all"
+                                                                                        x-text="tech.technology">
+                                                                                </button>
+                                                                            </template>
+                                                                        </div>
+
+                                                                        <template x-if="site.technologies?.some(t => ['ILL', 'SIP', 'IPTV'].includes(t.technology) && t.is_active)">
+                                                                            <div>
+                                                                                <div class="text-xs font-medium text-gray-600 mb-1 mt-2">Other Services:</div>
+                                                                                <div class="flex gap-2 flex-wrap">
+                                                                                    <template x-for="tech in site.technologies?.filter(t => ['ILL', 'SIP', 'IPTV'].includes(t.technology) && t.is_active) || []" :key="tech.technology">
+                                                                                        <button type="button"
+                                                                                                @click="toggleTechnology(site.id, tech.technology)"
+                                                                                                :class="selectedSites[site.id] && selectedSites[site.id].includes(tech.technology) ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'"
+                                                                                                class="px-3 py-1 rounded-lg text-xs font-medium hover:opacity-80 transition-all"
+                                                                                                x-text="tech.technology">
+                                                                                        </button>
+                                                                                    </template>
+                                                                                </div>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Hidden input for form submission -->
+                                                    <template x-if="selectedSites[site.id]">
+                                                        <div>
+                                                            <input type="hidden"
+                                                                   :name="'selected_sites[' + site.id + ']'"
+                                                                   :value="selectedSites[site.id] ? JSON.stringify(selectedSites[site.id]) : ''">
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+
+                                            <!-- No results message -->
+                                            <div x-show="filteredSites.length === 0" class="text-center py-8 text-gray-500">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <p class="mt-2">No sites found</p>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -456,6 +680,86 @@
                                         @enderror
                                     </div>
                                 </div>
+
+                                <!-- Step 2: Categorization & Summary (Two Column Layout) -->
+                                <div class="mt-8">
+                                    <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Step 2: Categorize & Describe</h4>
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <!-- Left Column: Categories -->
+                                        <div class="space-y-4">
+                                            <!-- Outage Category -->
+                                            <div>
+                                                <label for="outage_category_id"
+                                                    class="block text-sm font-heading font-medium text-gray-700 mb-2">Outage Category <span
+                                                        class="text-red-500">*</span></label>
+                                                <select name="outage_category_id" id="outage_category_id"
+                                                    onchange="toggleNewInput('outage_category')"
+                                                    class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('outage_category_id') border-red-300 @enderror">
+                                                    <option value="">Select Outage Category</option>
+                                                    @foreach($outageCategories as $outageCategory)
+                                                        <option value="{{ $outageCategory->id }}" {{ old('outage_category_id') == $outageCategory->id ? 'selected' : '' }}>
+                                                            {{ $outageCategory->name }}
+                                                        </option>
+                                                    @endforeach
+                                                    <option value="new">Add new...</option>
+                                                </select>
+                                                @error('outage_category_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+
+                                                <!-- New Outage Category Input -->
+                                                <div id="new_outage_category_input" class="mt-2" style="display: none;">
+                                                    <input type="text" name="new_outage_category_name" id="new_outage_category_name"
+                                                        placeholder="Enter new outage category name"
+                                                        value="{{ old('new_outage_category_name') }}"
+                                                        class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
+                                                </div>
+                                            </div>
+
+                                            <!-- Category -->
+                                            <div>
+                                                <label for="category_id" class="block text-sm font-heading font-medium text-gray-700 mb-2">Category
+                                                    <span class="text-red-500">*</span></label>
+                                                <select name="category_id" id="category_id"
+                                                    onchange="toggleNewInput('category')"
+                                                    class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('category_id') border-red-300 @enderror">
+                                                    <option value="">Select Category</option>
+                                                    @foreach($categories as $category)
+                                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                                            {{ $category->name }}
+                                                        </option>
+                                                    @endforeach
+                                                    <option value="new">Add new...</option>
+                                                </select>
+                                                @error('category_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+
+                                                <!-- New Category Input -->
+                                                <div id="new_category_input" class="mt-2" style="display: none;">
+                                                    <input type="text" name="new_category_name" id="new_category_name"
+                                                        placeholder="Enter new category name"
+                                                        value="{{ old('new_category_name') }}"
+                                                        class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Column: Summary -->
+                                        <div>
+                                            <label for="summary" class="block text-sm font-heading font-medium text-gray-700 mb-2">Outage
+                                                Details (Incident Summary) <span class="text-red-500">*</span></label>
+                                            <p class="text-xs text-gray-500 mb-2">Auto-fills when sites are selected, or enter manually</p>
+                                            <textarea name="summary" id="summary" rows="8" maxlength="1000"
+                                                placeholder="Provide detailed description of the incident..."
+                                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 resize-y @error('summary') border-red-300 @enderror"
+                                                oninput="updateCharCount('summary', 1000)">{{ old('summary') }}</textarea>
+                                            <div class="mt-1 flex justify-between">
+                                                <div>@error('summary') <span class="text-sm text-red-600">{{ $message }}</span> @enderror</div>
+                                                <div class="text-xs text-gray-500">
+                                                    <span id="summary-count">{{ strlen(old('summary', '')) }}</span>/1000 characters
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 

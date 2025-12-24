@@ -3,14 +3,11 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h2 class="font-heading text-2xl lg:text-3xl font-bold">{{ $site->site_id }}</h2>
-            <p class="mt-2 text-lg text-gray-600">{{ $site->site_name }}</p>
+            <h2 class="font-heading text-2xl lg:text-3xl font-bold">{{ $site->site_code }}</h2>
+            <p class="mt-2 text-lg text-gray-600">{{ $site->display_name }}</p>
         </div>
         <div class="flex gap-3">
             <a href="{{ route('sites.index') }}" class="inline-flex items-center gap-2 rounded-2xl bg-gray-700 px-5 py-2.5 text-white">Back</a>
-            @if(Auth::user()->canManageSites())
-                <a href="{{ route('sites.edit', $site) }}" class="inline-flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-2.5 text-white">Edit</a>
-            @endif
         </div>
     </div>
 @endsection
@@ -21,78 +18,88 @@
             <div class="overflow-hidden rounded-3xl border bg-white shadow-xl p-8">
                 <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Site ID</dt>
-                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->site_id }}</dd>
+                        <dt class="text-sm font-medium text-gray-500">Site Code</dt>
+                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->site_code }}</dd>
                     </div>
 
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Atoll Code</dt>
-                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->atoll_code }}</dd>
+                        <dt class="text-sm font-medium text-gray-500">Site Number</dt>
+                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->site_number }}</dd>
                     </div>
 
                     <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-gray-500">Site Name</dt>
-                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->site_name }}</dd>
+                        <dt class="text-sm font-medium text-gray-500">Display Name</dt>
+                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->display_name }}</dd>
                     </div>
 
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Coverage</dt>
-                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->coverage }}</dd>
+                        <dt class="text-sm font-medium text-gray-500">Region</dt>
+                        <dd class="mt-1 text-lg font-semibold text-gray-900">
+                            {{ $site->region->name }} ({{ $site->region->code }})
+                        </dd>
                     </div>
 
                     <div>
-                        <dt class="text-sm font-medium text-gray-500">Operational Date</dt>
-                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->operational_date->format('d M Y') }}</dd>
+                        <dt class="text-sm font-medium text-gray-500">Location</dt>
+                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->location->location_name }}</dd>
                     </div>
 
                     <div class="sm:col-span-2">
-                        <dt class="text-sm font-medium text-gray-500">Transmission / Backhaul</dt>
-                        <dd class="mt-1 text-base text-gray-900">{{ $site->transmission_or_backhaul }}</dd>
+                        <dt class="text-sm font-medium text-gray-500">Available Technologies</dt>
+                        <dd class="mt-2 flex gap-2">
+                            @foreach($site->technologies as $tech)
+                                <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold
+                                    @if($tech->is_active) bg-green-100 text-green-800
+                                    @else bg-gray-100 text-gray-500 line-through
+                                    @endif">
+                                    {{ $tech->technology }}
+                                    @if(!$tech->is_active)
+                                        (Disabled)
+                                    @endif
+                                </span>
+                            @endforeach
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">FBB (Supernet)</dt>
+                        <dd class="mt-1">
+                            @if($site->has_fbb)
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-800">
+                                    <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Enabled
+                                </span>
+                            @else
+                                <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold bg-gray-100 text-gray-600">
+                                    Disabled
+                                </span>
+                            @endif
+                        </dd>
                     </div>
 
                     <div>
                         <dt class="text-sm font-medium text-gray-500">Status</dt>
                         <dd class="mt-1">
                             <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold
-                                @if($site->status === 'Active') bg-green-100 text-green-800
-                                @elseif($site->status === 'Monitoring') bg-blue-100 text-blue-800
-                                @elseif($site->status === 'Maintenance') bg-yellow-100 text-yellow-800
+                                @if($site->is_active) bg-green-100 text-green-800
                                 @else bg-gray-100 text-gray-800
                                 @endif">
-                                {{ $site->status }}
+                                {{ $site->is_active ? 'Active' : 'Inactive' }}
                             </span>
                         </dd>
                     </div>
 
-                    @if($site->review_date)
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Review Date</dt>
-                            <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $site->review_date->format('d M Y') }}</dd>
-                        </div>
-                    @endif
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ $site->created_at->timezone('Indian/Maldives')->format('d M Y, h:i A') }}</dd>
+                    </div>
 
-                    @if($site->remarks)
-                        <div class="sm:col-span-2">
-                            <dt class="text-sm font-medium text-gray-500">Remarks</dt>
-                            <dd class="mt-2 text-sm text-gray-900 bg-gray-50 rounded-xl p-4">{{ $site->remarks }}</dd>
-                        </div>
-                    @endif
-
-                    @if($site->creator)
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Created By</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $site->creator->name }}</dd>
-                            <dd class="text-xs text-gray-500">{{ $site->created_at->format('d M Y, h:i A') }}</dd>
-                        </div>
-                    @endif
-
-                    @if($site->updater)
-                        <div>
-                            <dt class="text-sm font-medium text-gray-500">Last Updated By</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $site->updater->name }}</dd>
-                            <dd class="text-xs text-gray-500">{{ $site->updated_at->format('d M Y, h:i A') }}</dd>
-                        </div>
-                    @endif
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ $site->updated_at->timezone('Indian/Maldives')->format('d M Y, h:i A') }}</dd>
+                    </div>
                 </dl>
 
                 @if(Auth::user()->canManageSites())

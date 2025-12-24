@@ -519,6 +519,16 @@ class Incident extends Model
     }
 
     /**
+     * Get the sites affected by this incident.
+     */
+    public function sites()
+    {
+        return $this->belongsToMany(Site::class, 'incident_sites')
+            ->withPivot('affected_technologies')
+            ->withTimestamps();
+    }
+
+    /**
      * Check if there are unread timeline updates for a specific user.
      */
     public function hasUnreadTimelineUpdates($userId = null)

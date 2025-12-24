@@ -82,7 +82,15 @@ class IncidentController extends Controller
         $faultTypes = FaultType::orderBy('name')->get();
         $resolutionTeams = ResolutionTeam::orderBy('name')->get();
 
-        return view('incidents.create', compact('categories', 'outageCategories', 'faultTypes', 'resolutionTeams'));
+        // Load sites with region and location for site selection (only active sites)
+        $regions = \App\Models\Region::with(['sites.technologies'])->orderBy('name')->get();
+        $sites = \App\Models\Site::with(['region', 'location', 'technologies'])
+            ->select('sites.*') // Explicitly select all site fields including has_fbb
+            ->active()
+            ->orderBy('site_code')
+            ->get();
+
+        return view('incidents.create', compact('categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'regions', 'sites'));
     }
 
     /**
@@ -166,6 +174,9 @@ class IncidentController extends Controller
         $this->handleIncidentLogs($incident, $validated);
         $this->handleIncidentActionPoints($incident, $validated);
 
+        // Handle site attachments
+        $this->handleSiteAttachments($incident, $request);
+
         return redirect()->route('incidents.index')
             ->with('success', 'Incident created successfully.');
     }
@@ -175,7 +186,7 @@ class IncidentController extends Controller
      */
     public function show(Incident $incident)
     {
-        $incident->load(['logs', 'actionPoints', 'creator', 'updater', 'activityLogs', 'activityLogs.user']); // Eager load logs, action points, user tracking, and audit trail
+        $incident->load(['logs', 'actionPoints', 'creator', 'updater', 'activityLogs', 'activityLogs.user', 'sites.region', 'sites.location', 'sites.technologies']); // Eager load logs, action points, user tracking, audit trail, and sites
 
         // Mark incident as viewed by current user
         $incident->markAsViewed();
@@ -754,6 +765,35 @@ class IncidentController extends Controller
                 'completed' => isset($actionPointData['completed']) && $actionPointData['completed'] == '1',
                 'completed_at' => (isset($actionPointData['completed']) && $actionPointData['completed'] == '1') ? now() : null,
             ]);
+        }
+    }
+
+    /**
+     * Handle site attachments for the incident.
+     */
+    private function handleSiteAttachments(Incident $incident, Request $request): void
+    {
+        $selectedSites = $request->input('selected_sites', []);
+
+        if (empty($selectedSites)) {
+            return;
+        }
+
+        // Prepare data for pivot table attachment
+        $siteData = [];
+        foreach ($selectedSites as $siteId => $technologiesJson) {
+            $technologies = json_decode($technologiesJson, true);
+
+            if (!empty($technologies) && is_array($technologies)) {
+                $siteData[$siteId] = [
+                    'affected_technologies' => json_encode($technologies)
+                ];
+            }
+        }
+
+        // Attach sites to incident with affected technologies
+        if (!empty($siteData)) {
+            $incident->sites()->attach($siteData);
         }
     }
 

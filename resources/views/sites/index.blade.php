@@ -32,23 +32,24 @@
                 <form method="GET" action="{{ route('sites.index') }}" class="space-y-3 sm:space-y-4">
                     <div>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Search by Site ID, Name, Atoll"
+                            placeholder="Search by Site Code, Name, or Region"
                             class="w-full rounded-xl sm:rounded-2xl border border-gray-300/50 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20">
                     </div>
 
                     <div class="grid grid-cols-2 sm:flex gap-2 sm:gap-3">
-                        <select name="atoll" class="rounded-xl border border-gray-300/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
-                            <option value="">All Atolls</option>
-                            @foreach($atolls as $atoll)
-                                <option value="{{ $atoll }}" {{ request('atoll') == $atoll ? 'selected' : '' }}>{{ $atoll }}</option>
+                        <select name="region" class="rounded-xl border border-gray-300/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
+                            <option value="">All Regions</option>
+                            @foreach($regions as $region)
+                                <option value="{{ $region->id }}" {{ request('region') == $region->id ? 'selected' : '' }}>
+                                    {{ $region->name }} ({{ $region->code }})
+                                </option>
                             @endforeach
                         </select>
 
                         <select name="status" class="rounded-xl border border-gray-300/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
                             <option value="">All Status</option>
-                            @foreach($statuses as $status)
-                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>{{ $status }}</option>
-                            @endforeach
+                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                            <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>
 
                         <div class="col-span-2 sm:col-span-1 flex gap-2">
@@ -68,10 +69,12 @@
                 <table class="min-w-full divide-y divide-gray-200/50">
                     <thead class="bg-gradient-to-r from-slate-50/80 to-white/60">
                         <tr>
-                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Site ID</th>
-                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Atoll</th>
-                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Site Name</th>
-                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Coverage</th>
+                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Site Code</th>
+                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Region</th>
+                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Location</th>
+                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Display Name</th>
+                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Technologies</th>
+                            <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">FBB</th>
                             <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Status</th>
                             <th class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase">Actions</th>
                         </tr>
@@ -81,20 +84,41 @@
                             <tr class="hover:bg-blue-50/30 transition-colors">
                                 <td class="px-4 py-4">
                                     <a href="{{ route('sites.show', $site) }}" class="text-blue-600 hover:text-blue-800 font-heading font-semibold hover:underline">
-                                        {{ $site->site_id }}
+                                        {{ $site->site_code }}
                                     </a>
                                 </td>
-                                <td class="px-4 py-4 text-sm text-gray-900">{{ $site->atoll_code }}</td>
-                                <td class="px-4 py-4 text-sm text-gray-900">{{ $site->site_name }}</td>
-                                <td class="px-4 py-4 text-sm text-gray-900">{{ $site->coverage }}</td>
+                                <td class="px-4 py-4 text-sm text-gray-900">{{ $site->region->code ?? 'N/A' }}</td>
+                                <td class="px-4 py-4 text-sm text-gray-900">{{ $site->location->location_name ?? 'N/A' }}</td>
+                                <td class="px-4 py-4 text-sm text-gray-900">{{ $site->display_name }}</td>
+                                <td class="px-4 py-4 text-sm text-gray-900">
+                                    <div class="flex gap-1">
+                                        @foreach($site->technologies->where('is_active', true) as $tech)
+                                            <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-800">
+                                                {{ $tech->technology }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </td>
+                                <td class="px-4 py-4">
+                                    @if($site->has_fbb)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Yes
+                                        </span>
+                                    @else
+                                        <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-gray-100 text-gray-600">
+                                            No
+                                        </span>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-4">
                                     <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold
-                                        @if($site->status === 'Active') bg-green-100 text-green-800
-                                        @elseif($site->status === 'Monitoring') bg-blue-100 text-blue-800
-                                        @elseif($site->status === 'Maintenance') bg-yellow-100 text-yellow-800
+                                        @if($site->is_active) bg-green-100 text-green-800
                                         @else bg-gray-100 text-gray-800
                                         @endif">
-                                        {{ $site->status }}
+                                        {{ $site->is_active ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-4 text-sm font-medium">
@@ -112,7 +136,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-12 text-center text-gray-500">No sites found</td>
+                                <td colspan="8" class="px-4 py-12 text-center text-gray-500">No sites found</td>
                             </tr>
                         @endforelse
                     </tbody>

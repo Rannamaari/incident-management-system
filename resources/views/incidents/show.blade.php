@@ -197,6 +197,59 @@
                             <dd class="mt-1 text-sm text-gray-900">{{ $incident->affected_services }}</dd>
                         </div>
 
+                        @if($incident->sites && $incident->sites->count() > 0)
+                        <div class="sm:col-span-2">
+                            <dt class="text-sm font-heading font-medium text-gray-500 mb-3">Affected Sites</dt>
+                            <dd class="mt-1">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    @foreach($incident->sites as $site)
+                                        <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-blue-50/30 to-white p-4 hover:shadow-md transition-shadow">
+                                            <div class="flex items-start justify-between mb-2">
+                                                <div class="flex-1">
+                                                    <h4 class="font-heading font-semibold text-gray-900 text-base">{{ $site->site_code }}</h4>
+                                                    <p class="text-xs text-gray-600 mt-0.5">{{ $site->display_name }}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-2 space-y-2">
+                                                <div>
+                                                    <span class="text-xs font-medium text-gray-500">Region:</span>
+                                                    <span class="text-xs text-gray-900 ml-1">{{ $site->region->name ?? 'N/A' }} ({{ $site->region->code ?? 'N/A' }})</span>
+                                                </div>
+                                                <div>
+                                                    <span class="text-xs font-medium text-gray-500">Location:</span>
+                                                    <span class="text-xs text-gray-900 ml-1">{{ $site->location->location_name ?? 'N/A' }}</span>
+                                                </div>
+
+                                                @php
+                                                    $affectedTechs = json_decode($site->pivot->affected_technologies ?? '[]', true) ?: [];
+                                                @endphp
+
+                                                @if(!empty($affectedTechs))
+                                                <div class="mt-2 pt-2 border-t border-gray-200">
+                                                    <span class="text-xs font-medium text-gray-500 block mb-1.5">Affected Technologies:</span>
+                                                    <div class="flex flex-wrap gap-1.5">
+                                                        @foreach($affectedTechs as $tech)
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold
+                                                                @if($tech === '5G') bg-purple-100 text-purple-800
+                                                                @elseif($tech === '4G') bg-blue-100 text-blue-800
+                                                                @elseif($tech === '3G') bg-green-100 text-green-800
+                                                                @elseif($tech === '2G') bg-gray-100 text-gray-800
+                                                                @endif">
+                                                                {{ $tech }}
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </dd>
+                        </div>
+                        @endif
+
                         <div>
                             <dt class="text-sm font-heading font-medium text-gray-500">Category</dt>
                             <dd class="mt-1 text-sm text-gray-900">{{ $incident->category ?? 'Not specified' }}</dd>

@@ -10,38 +10,62 @@ class Site extends Model
     use HasFactory;
 
     protected $fillable = [
-        'site_id',
-        'atoll_code',
-        'site_name',
-        'coverage',
-        'operational_date',
-        'transmission_or_backhaul',
-        'remarks',
-        'status',
-        'review_date',
-        'created_by',
-        'updated_by',
+        'region_id',
+        'location_id',
+        'site_number',
+        'site_code',
+        'display_name',
+        'is_active',
+        'has_fbb',
+        'is_temp_site',
     ];
 
     protected $casts = [
-        'operational_date' => 'date',
-        'review_date' => 'date',
+        'is_active' => 'boolean',
+        'has_fbb' => 'boolean',
+        'is_temp_site' => 'boolean',
     ];
 
     /**
-     * Get the user who created this site.
+     * Get the region this site belongs to.
      */
-    public function creator()
+    public function region()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(Region::class);
     }
 
     /**
-     * Get the user who last updated this site.
+     * Get the location this site belongs to.
      */
-    public function updater()
+    public function location()
     {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(Location::class);
+    }
+
+    /**
+     * Get the technologies for this site.
+     */
+    public function technologies()
+    {
+        return $this->hasMany(SiteTechnology::class);
+    }
+
+    /**
+     * Get the incidents associated with this site.
+     */
+    public function incidents()
+    {
+        return $this->belongsToMany(Incident::class, 'incident_sites')
+            ->withPivot('affected_technologies')
+            ->withTimestamps();
+    }
+
+    /**
+     * Scope for active sites.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 
     /**
@@ -52,58 +76,16 @@ class Site extends Model
         if ($search) {
             $searchLower = strtolower($search);
             return $query->where(function ($q) use ($searchLower) {
-                $q->whereRaw('LOWER(site_id) LIKE ?', ["%{$searchLower}%"])
-                  ->orWhereRaw('LOWER(site_name) LIKE ?', ["%{$searchLower}%"])
-                  ->orWhereRaw('LOWER(atoll_code) LIKE ?', ["%{$searchLower}%"])
-                  ->orWhereRaw('LOWER(transmission_or_backhaul) LIKE ?', ["%{$searchLower}%"]);
+                $q->whereRaw('LOWER(site_code) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereRaw('LOWER(display_name) LIKE ?', ["%{$searchLower}%"])
+                  ->orWhereHas('region', function($query) use ($searchLower) {
+                      $query->whereRaw('LOWER(code) LIKE ?', ["%{$searchLower}%"])
+                            ->orWhereRaw('LOWER(name) LIKE ?', ["%{$searchLower}%"]);
+                  })
+                  ->orWhereHas('location', function($query) use ($searchLower) {
+                      $query->whereRaw('LOWER(location_name) LIKE ?', ["%{$searchLower}%"]);
+                  });
             });
-        }
-        return $query;
-    }
-
-    /**
-     * Scope for filtering by atoll.
-     */
-    public function scopeFilterAtoll($query, $atoll)
-    {
-        if ($atoll) {
-            return $query->where('atoll_code', $atoll);
-        }
-        return $query;
-    }
-
-    /**
-     * Scope for filtering by coverage.
-     */
-    public function scopeFilterCoverage($query, $coverage)
-    {
-        if ($coverage) {
-            return $query->where('coverage', $coverage);
-        }
-        return $query;
-    }
-
-    /**
-     * Scope for filtering by status.
-     */
-    public function scopeFilterStatus($query, $status)
-    {
-        if ($status) {
-            return $query->where('status', $status);
-        }
-        return $query;
-    }
-
-    /**
-     * Scope for filtering by date range.
-     */
-    public function scopeFilterDateRange($query, $startDate, $endDate)
-    {
-        if ($startDate) {
-            $query->where('operational_date', '>=', $startDate);
-        }
-        if ($endDate) {
-            $query->where('operational_date', '<=', $endDate);
         }
         return $query;
     }

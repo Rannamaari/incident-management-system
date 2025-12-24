@@ -13,7 +13,7 @@ class SiteController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Site::query();
+        $query = Site::with(['region', 'location', 'technologies']);
 
         // Search
         if ($request->filled('search')) {
@@ -21,35 +21,36 @@ class SiteController extends Controller
         }
 
         // Filters
-        if ($request->filled('atoll')) {
-            $query->filterAtoll($request->atoll);
+        if ($request->filled('region')) {
+            $query->where('region_id', $request->region);
         }
 
-        if ($request->filled('coverage')) {
-            $query->filterCoverage($request->coverage);
+        if ($request->filled('location')) {
+            $query->where('location_id', $request->location);
         }
 
         if ($request->filled('status')) {
-            $query->filterStatus($request->status);
-        }
-
-        if ($request->filled('start_date') || $request->filled('end_date')) {
-            $query->filterDateRange($request->start_date, $request->end_date);
+            if ($request->status === 'active') {
+                $query->where('is_active', true);
+            } else {
+                $query->where('is_active', false);
+            }
         }
 
         // Sorting
-        $sortBy = $request->get('sort', 'site_id');
+        $sortBy = $request->get('sort', 'site_code');
         $sortDirection = $request->get('direction', 'asc');
         $query->orderBy($sortBy, $sortDirection);
 
         $sites = $query->paginate(20)->withQueryString();
 
         // Get unique values for filter dropdowns
-        $atolls = Site::select('atoll_code')->distinct()->orderBy('atoll_code')->pluck('atoll_code');
-        $coverages = Site::select('coverage')->distinct()->orderBy('coverage')->pluck('coverage');
-        $statuses = ['Active', 'Monitoring', 'Maintenance', 'Inactive'];
+        $regions = \App\Models\Region::orderBy('name')->get();
+        $atolls = $regions->pluck('code'); // For backwards compatibility with the view
+        $coverages = collect(['2G', '3G', '4G', '5G']); // Available technologies
+        $statuses = ['Active', 'Inactive'];
 
-        return view('sites.index', compact('sites', 'atolls', 'coverages', 'statuses'));
+        return view('sites.index', compact('sites', 'regions', 'atolls', 'coverages', 'statuses'));
     }
 
     /**
@@ -91,7 +92,7 @@ class SiteController extends Controller
      */
     public function show(Site $site)
     {
-        $site->load(['creator', 'updater']);
+        $site->load(['region', 'location', 'technologies']);
 
         return view('sites.show', compact('site'));
     }
@@ -101,7 +102,10 @@ class SiteController extends Controller
      */
     public function edit(Site $site)
     {
-        return view('sites.edit', compact('site'));
+        $site->load(['region', 'location', 'technologies']);
+        $regions = \App\Models\Region::with('locations')->orderBy('name')->get();
+
+        return view('sites.edit', compact('site', 'regions'));
     }
 
     /**
@@ -110,22 +114,30 @@ class SiteController extends Controller
     public function update(Request $request, Site $site)
     {
         $validated = $request->validate([
-            'site_id' => ['required', 'string', 'max:255', 'unique:sites,site_id,' . $site->id],
-            'atoll_code' => ['required', 'string', 'max:255'],
-            'site_name' => ['required', 'string', 'max:255'],
-            'coverage' => ['required', 'string', 'max:255'],
-            'operational_date' => ['required', 'date'],
-            'transmission_or_backhaul' => ['required', 'string', 'max:255'],
-            'remarks' => ['nullable', 'string'],
-            'status' => ['required', 'in:Active,Monitoring,Maintenance,Inactive'],
-            'review_date' => ['nullable', 'date'],
+            'is_active' => ['nullable', 'boolean'],
+            'has_fbb' => ['nullable', 'boolean'],
         ]);
 
-        $validated['updated_by'] = Auth::id();
+        // Handle checkboxes (they're not submitted if unchecked)
+        $validated['is_active'] = $request->has('is_active');
+        $validated['has_fbb'] = $request->has('has_fbb');
 
         $site->update($validated);
 
-        return redirect()->route('sites.index')
+        // Update technologies - handle both checked and unchecked
+        $submittedTechIds = array_keys($request->input('technologies', []));
+
+        // Get all technology IDs for this site
+        $allSiteTechIds = $site->technologies()->pluck('id')->toArray();
+
+        // Update each technology: active if checked, inactive if unchecked
+        foreach ($allSiteTechIds as $techId) {
+            \App\Models\SiteTechnology::where('id', $techId)->update([
+                'is_active' => in_array($techId, $submittedTechIds)
+            ]);
+        }
+
+        return redirect()->route('sites.show', $site)
             ->with('success', 'Site updated successfully.');
     }
 
