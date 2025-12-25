@@ -3,7 +3,20 @@
 @section('header')
     <div class="flex justify-between items-center">
         <div>
-            <h2 class="font-heading text-2xl lg:text-3xl font-bold">{{ $site->site_code }}</h2>
+            <div class="flex items-center gap-3">
+                <h2 class="font-heading text-2xl lg:text-3xl font-bold">{{ $site->site_code }}</h2>
+                <span class="inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-bold
+                    @if($site->site_type === 'Hub Site') bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg
+                    @else bg-gray-200 text-gray-700
+                    @endif">
+                    @if($site->site_type === 'Hub Site')
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    @endif
+                    {{ $site->site_type }}
+                </span>
+            </div>
             <p class="mt-2 text-lg text-gray-600">{{ $site->display_name }}</p>
         </div>
         <div class="flex gap-3">
@@ -26,24 +39,24 @@
 @endsection
 
 @section('content')
-    <div class="py-6 sm:py-8">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-6 lg:py-8">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             <!-- Site Information Card -->
-            <div class="overflow-hidden rounded-3xl border bg-white shadow-xl p-8">
-                <h3 class="text-lg font-heading font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <div class="overflow-hidden rounded-2xl sm:rounded-3xl border bg-white shadow-xl p-4 sm:p-6 lg:p-8">
+                <h3 class="text-base sm:text-lg font-heading font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
                     <svg class="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Site Information
                 </h3>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     <!-- Left Column -->
-                    <div class="space-y-6">
-                        <div class="p-4 rounded-xl bg-gray-50">
+                    <div class="space-y-3 sm:space-y-4 lg:space-y-6">
+                        <div class="p-3 sm:p-4 rounded-xl bg-gray-50">
                             <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Site Code</dt>
-                            <dd class="text-lg font-bold text-gray-900">{{ $site->site_code }}</dd>
+                            <dd class="text-base sm:text-lg font-bold text-gray-900">{{ $site->site_code }}</dd>
                         </div>
 
                         <div class="p-4 rounded-xl bg-gray-50">
@@ -57,14 +70,42 @@
                         </div>
 
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Location</dt>
-                            <dd class="text-base font-semibold text-gray-900">{{ $site->location->location_name }}</dd>
+                            <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Site Name</dt>
+                            <dd class="text-base font-semibold text-gray-900">{{ $site->site_name ?: 'N/A' }}</dd>
                         </div>
 
                         <div class="p-4 rounded-xl bg-gray-50">
                             <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Transmission / Backhaul</dt>
                             <dd class="text-base text-gray-900">
                                 {{ $site->transmission_backhaul ?: 'Not specified' }}
+                            </dd>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-gray-50">
+                            <dt class="text-xs font-medium text-gray-500 uppercase mb-2">Site Type</dt>
+                            <dd>
+                                <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold
+                                    @if($site->site_type === 'Hub Site') bg-blue-100 text-blue-800
+                                    @else bg-gray-100 text-gray-600
+                                    @endif">
+                                    {{ $site->site_type }}
+                                </span>
+                            </dd>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-gray-50">
+                            <dt class="text-xs font-medium text-gray-500 uppercase mb-2">Link Site</dt>
+                            <dd>
+                                @if($site->is_link_site)
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-800">
+                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Yes
+                                    </span>
+                                @else
+                                    <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold bg-gray-100 text-gray-600">No</span>
+                                @endif
                             </dd>
                         </div>
                     </div>
@@ -140,17 +181,75 @@
                 </div>
 
                 @if(Auth::user()->canManageSites())
-                    <div class="mt-8 pt-6 border-t">
+                    <div class="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t">
                         <form method="POST" action="{{ route('sites.destroy', $site) }}" onsubmit="return confirm('Are you sure you want to delete this site?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="rounded-2xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-3 font-semibold text-white hover:from-red-700 hover:to-red-800">
+                            <button type="submit" class="w-full sm:w-auto rounded-xl sm:rounded-2xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-3 sm:py-3.5 text-sm sm:text-base font-semibold text-white hover:from-red-700 hover:to-red-800 transition-all touch-manipulation">
                                 Delete Site
                             </button>
                         </form>
                     </div>
                 @endif
             </div>
+
+            <!-- Hub Site Connections -->
+            @if($site->site_type === 'Hub Site' && $site->connectedSites->count() > 0)
+            <div class="overflow-hidden rounded-3xl border bg-white shadow-xl p-8">
+                <h3 class="text-lg font-heading font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Sites Connected to This Hub
+                    <span class="ml-auto text-xs font-normal text-gray-500">({{ $site->connectedSites->count() }} sites)</span>
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach($site->connectedSites as $connectedSite)
+                        <a href="{{ route('sites.show', $connectedSite) }}"
+                           class="block p-4 rounded-xl border-2 border-blue-200 bg-blue-50 hover:bg-blue-100 hover:border-blue-300 transition-colors">
+                            <p class="font-semibold text-gray-900">{{ $connectedSite->site_code }}</p>
+                            <p class="text-sm text-gray-600 mt-1">{{ $connectedSite->display_name }}</p>
+                            <div class="flex gap-2 mt-2">
+                                @if($connectedSite->is_active)
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        Active
+                                    </span>
+                                @endif
+                                @if($connectedSite->is_link_site)
+                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
+                                        Link Site
+                                    </span>
+                                @endif
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            @if($site->hubSites->count() > 0)
+            <div class="overflow-hidden rounded-3xl border bg-white shadow-xl p-8">
+                <h3 class="text-lg font-heading font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Connected to Hub Sites
+                </h3>
+
+                <div class="flex flex-wrap gap-3">
+                    @foreach($site->hubSites as $hubSite)
+                        <a href="{{ route('sites.show', $hubSite) }}"
+                           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 transition-colors">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            {{ $hubSite->site_code }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+            @endif
 
             <!-- Last Outages -->
             @php

@@ -11,13 +11,15 @@ class Site extends Model
 
     protected $fillable = [
         'region_id',
-        'location_id',
+        'site_name',
         'site_number',
         'site_code',
         'display_name',
         'is_active',
         'has_fbb',
         'is_temp_site',
+        'is_link_site',
+        'site_type',
         'transmission_backhaul',
         'remarks',
     ];
@@ -26,6 +28,7 @@ class Site extends Model
         'is_active' => 'boolean',
         'has_fbb' => 'boolean',
         'is_temp_site' => 'boolean',
+        'is_link_site' => 'boolean',
     ];
 
     /**
@@ -71,11 +74,54 @@ class Site extends Model
     }
 
     /**
+     * Get the sites connected to this hub site.
+     * Only applicable when site_type = 'Hub Site'
+     */
+    public function connectedSites()
+    {
+        return $this->belongsToMany(
+            Site::class,
+            'hub_site_connections',
+            'hub_site_id',
+            'connected_site_id'
+        )->withTimestamps();
+    }
+
+    /**
+     * Get the hub sites this site is connected to.
+     */
+    public function hubSites()
+    {
+        return $this->belongsToMany(
+            Site::class,
+            'hub_site_connections',
+            'connected_site_id',
+            'hub_site_id'
+        )->withTimestamps();
+    }
+
+    /**
      * Scope for active sites.
      */
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope for hub sites only.
+     */
+    public function scopeHubSites($query)
+    {
+        return $query->where('site_type', 'Hub Site');
+    }
+
+    /**
+     * Scope for end sites only.
+     */
+    public function scopeEndSites($query)
+    {
+        return $query->where('site_type', 'End Site');
     }
 
     /**
@@ -98,5 +144,35 @@ class Site extends Model
             });
         }
         return $query;
+    }
+
+    /**
+     * Generate the next site code for a given region.
+     * Pattern: {region_code}-{3-digit-number}
+     * Example: AA-001, AA-002
+     */
+    public static function generateSiteCode($regionId)
+    {
+        $region = Region::findOrFail($regionId);
+
+        // Find the highest site number for this region
+        $lastSite = static::where('region_id', $regionId)
+            ->orderByDesc('site_number')
+            ->first();
+
+        // Increment the number (or start at 1)
+        $nextNumber = $lastSite ? (intval($lastSite->site_number) + 1) : 1;
+
+        // Generate the site code with 3-digit number
+        $siteCode = sprintf(
+            '%s-%03d',
+            $region->code,
+            $nextNumber
+        );
+
+        return [
+            'site_code' => $siteCode,
+            'site_number' => $nextNumber,
+        ];
     }
 }

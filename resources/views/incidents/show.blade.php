@@ -217,8 +217,8 @@
                                                     <span class="text-xs text-gray-900 ml-1">{{ $site->region->name ?? 'N/A' }} ({{ $site->region->code ?? 'N/A' }})</span>
                                                 </div>
                                                 <div>
-                                                    <span class="text-xs font-medium text-gray-500">Location:</span>
-                                                    <span class="text-xs text-gray-900 ml-1">{{ $site->location->location_name ?? 'N/A' }}</span>
+                                                    <span class="text-xs font-medium text-gray-500">Site Name:</span>
+                                                    <span class="text-xs text-gray-900 ml-1">{{ $site->site_name ?? 'N/A' }}</span>
                                                 </div>
 
                                                 @php
