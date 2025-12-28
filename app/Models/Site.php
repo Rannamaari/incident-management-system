@@ -16,7 +16,6 @@ class Site extends Model
         'site_code',
         'display_name',
         'is_active',
-        'has_fbb',
         'is_temp_site',
         'is_link_site',
         'site_type',
@@ -26,7 +25,6 @@ class Site extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
-        'has_fbb' => 'boolean',
         'is_temp_site' => 'boolean',
         'is_link_site' => 'boolean',
     ];

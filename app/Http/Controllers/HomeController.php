@@ -44,13 +44,13 @@ class HomeController extends Controller
                     $query->where('is_active', true);
                 })
                 ->count(),
-            'fbb' => Site::where('is_active', true)
-                ->where('has_fbb', true)
+            'fbb' => \App\Models\FbbIsland::where('is_active', true)
                 ->count(),
         ];
 
         // Get OPEN incidents only (Open, In Progress, Monitoring)
         $openIncidents = Incident::whereIn('status', ['Open', 'In Progress', 'Monitoring'])
+            ->with(['sites.technologies', 'fbbIslands.region'])
             ->orderBy('started_at', 'desc')
             ->get();
 
@@ -112,13 +112,33 @@ class HomeController extends Controller
             'breakdown' => $tempStats,
         ];
 
-        // Separate incidents into site outages and FBB outages
+        // Separate incidents into site outages, cell outages, and FBB outages
         $siteOutages = $openIncidents->filter(function ($incident) {
+            // Check if incident has any site impact (either through services or direct counts)
             $services = is_array($incident->affected_services)
                 ? $incident->affected_services
                 : explode(',', $incident->affected_services ?? '');
 
-            return in_array('Single Site', $services) || in_array('Multiple Site', $services) || in_array('Cell', $services);
+            $hasSiteService = in_array('Single Site', $services)
+                || in_array('Multiple Site', $services);
+
+            // Also include if any site technology counts are greater than 0 (but not if it's ONLY a cell outage)
+            $hasSiteImpact = ($incident->sites_2g_impacted ?? 0) > 0
+                || ($incident->sites_3g_impacted ?? 0) > 0
+                || ($incident->sites_4g_impacted ?? 0) > 0
+                || ($incident->sites_5g_impacted ?? 0) > 0;
+
+            $isCellOnly = in_array('Cell', $services) && !$hasSiteService;
+
+            return ($hasSiteService || $hasSiteImpact) && !$isCellOnly;
+        });
+
+        $cellOutages = $openIncidents->filter(function ($incident) {
+            $services = is_array($incident->affected_services)
+                ? $incident->affected_services
+                : explode(',', $incident->affected_services ?? '');
+
+            return in_array('Cell', $services);
         });
 
         $fbbOutages = $openIncidents->filter(function ($incident) {
@@ -132,6 +152,6 @@ class HomeController extends Controller
         // Get temp sites for offline list display (inactive sites)
         $tempSites = Site::where('is_active', false)->with(['region', 'location', 'technologies'])->get();
 
-        return view('home', compact('siteStats', 'siteOutages', 'fbbOutages', 'openIncidents', 'tempSites'));
+        return view('home', compact('siteStats', 'siteOutages', 'cellOutages', 'fbbOutages', 'openIncidents', 'tempSites'));
     }
 }

@@ -76,20 +76,6 @@
                             </label>
                         </div>
 
-                        <!-- FBB (Supernet) -->
-                        <div class="flex items-center gap-3 p-4 rounded-xl bg-purple-50">
-                            <input type="checkbox"
-                                   name="has_fbb"
-                                   id="has_fbb"
-                                   value="1"
-                                   {{ $site->has_fbb ? 'checked' : '' }}
-                                   class="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <label for="has_fbb" class="flex-1 cursor-pointer">
-                                <span class="block text-sm font-medium text-gray-900">FBB (Supernet)</span>
-                                <span class="text-xs text-gray-500">This site has Fixed Broadband service</span>
-                            </label>
-                        </div>
-
                         <!-- Link Site -->
                         <div class="flex items-center gap-3 p-4 rounded-xl bg-blue-50">
                             <input type="checkbox"

@@ -222,10 +222,22 @@
                                                 </div>
 
                                                 @php
-                                                    $affectedTechs = json_decode($site->pivot->affected_technologies ?? '[]', true) ?: [];
+                                                    // affected_technologies should be cast to array by IncidentSite pivot model
+                                                    // But handle cases where it might still be a JSON string
+                                                    $affectedTechs = $site->pivot->affected_technologies ?? [];
+
+                                                    // Ensure it's an array
+                                                    if (is_string($affectedTechs)) {
+                                                        $affectedTechs = json_decode($affectedTechs, true) ?? [];
+                                                    }
+
+                                                    // Final safety check
+                                                    if (!is_array($affectedTechs)) {
+                                                        $affectedTechs = [];
+                                                    }
                                                 @endphp
 
-                                                @if(!empty($affectedTechs))
+                                                @if(!empty($affectedTechs) && is_array($affectedTechs))
                                                 <div class="mt-2 pt-2 border-t border-gray-200">
                                                     <span class="text-xs font-medium text-gray-500 block mb-1.5">Affected Technologies:</span>
                                                     <div class="flex flex-wrap gap-1.5">

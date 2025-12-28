@@ -21,12 +21,12 @@
                                 <div class="flex items-center space-x-2">
                                     <div
                                         class="text-lg lg:text-xl font-heading font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent truncate">
-                                        Incident Management</div>
-                                    <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">v3.5</span>
+                                        Incident Management System</div>
+                                    <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">v3.6</span>
                                 </div>
                                 <div
                                     class="text-xs lg:text-sm font-heading font-medium bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
-                                    Professional System Beta</div>
+                                    Beta</div>
                             </div>
                             <div
                                 class="sm:hidden text-base font-heading font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
@@ -89,7 +89,7 @@
                         <!-- Extra Dropdown -->
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" @click.away="open = false"
-                                class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('smart-parser.*') || request()->routeIs('contacts.*') || request()->routeIs('temporary-sites.*') || request()->routeIs('sites.*') ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 shadow-sm border border-green-200/50' : 'text-gray-600 hover:text-green-600 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100' }}">
+                                class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('smart-parser.*') || request()->routeIs('contacts.*') || request()->routeIs('temporary-sites.*') || request()->routeIs('sites.*') || request()->routeIs('fbb-islands.*') ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 shadow-sm border border-green-200/50' : 'text-gray-600 hover:text-green-600 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100' }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
@@ -142,6 +142,14 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                         </svg>
                                         <span class="font-medium">Sites</span>
+                                    </a>
+
+                                    <a href="{{ route('fbb-islands.index') }}"
+                                        class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:text-purple-600 transition-all duration-300 rounded-lg mx-2 {{ request()->routeIs('fbb-islands.*') ? 'bg-purple-50 text-purple-600' : '' }}">
+                                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span class="font-medium">FBB Islands</span>
                                     </a>
                                 </div>
                             </div>
@@ -416,6 +424,15 @@
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                     <span>Sites</span>
+                </a>
+
+                <a href="{{ route('fbb-islands.index') }}"
+                    class="flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('fbb-islands.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 shadow-md border border-purple-200/50' : 'text-gray-700 hover:text-purple-600 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>FBB Islands</span>
                 </a>
 
                 @if(Auth::user()->canManageUsers())

@@ -46,11 +46,6 @@ class SiteController extends Controller
             }
         }
 
-        // FBB Filter
-        if ($request->has('has_fbb')) {
-            $query->where('has_fbb', true);
-        }
-
         // Link Site Filter
         if ($request->has('is_link_site')) {
             $query->where('is_link_site', true);
@@ -140,7 +135,6 @@ class SiteController extends Controller
 
         // Handle checkboxes (they're not submitted if unchecked)
         $validated['is_active'] = $request->has('is_active');
-        $validated['has_fbb'] = $request->has('has_fbb');
         $validated['is_link_site'] = $request->has('is_link_site');
 
         // Temp site: if not active, it's a temp site
@@ -243,7 +237,6 @@ class SiteController extends Controller
 
         // Handle checkboxes (they're not submitted if unchecked)
         $validated['is_active'] = $request->has('is_active');
-        $validated['has_fbb'] = $request->has('has_fbb');
         $validated['is_link_site'] = $request->has('is_link_site');
 
         // Temp site: if not active, it's a temp site

@@ -134,8 +134,16 @@
             <!-- Footer -->
             <footer class="bg-white/80 backdrop-blur-sm border-t border-gray-200/50 mt-auto">
                 <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                    <div class="text-center text-sm text-gray-500">
-                        System developed and designed by Incident Management Team
+                    <div class="text-center space-y-1">
+                        <div class="text-sm text-gray-500">
+                            Incident Management System - System developed and designed by Incident Management Team
+                        </div>
+                        <div class="flex items-center justify-center gap-2 text-xs text-gray-400">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-700 font-medium">
+                                Beta
+                            </span>
+                            <span class="font-mono">Version 3.6</span>
+                        </div>
                     </div>
                 </div>
             </footer>

@@ -133,22 +133,6 @@
                         </div>
 
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <dt class="text-xs font-medium text-gray-500 uppercase mb-2">FBB (Supernet)</dt>
-                            <dd>
-                                @if($site->has_fbb)
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-purple-100 text-purple-800">
-                                        <svg class="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                        </svg>
-                                        Enabled
-                                    </span>
-                                @else
-                                    <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold bg-gray-100 text-gray-600">Disabled</span>
-                                @endif
-                            </dd>
-                        </div>
-
-                        <div class="p-4 rounded-xl bg-gray-50">
                             <dt class="text-xs font-medium text-gray-500 uppercase mb-2">Status</dt>
                             <dd>
                                 <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold

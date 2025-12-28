@@ -188,6 +188,10 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
     Route::get('sites', [SiteController::class, 'index'])->name('sites.index');
     Route::get('sites/{site}', [SiteController::class, 'show'])->where('site', '[0-9]+')->name('sites.show');
 
+    // FBB Islands routes
+    Route::get('fbb-islands', [App\Http\Controllers\FbbIslandController::class, 'index'])->name('fbb-islands.index');
+    Route::get('fbb-islands/{fbbIsland}', [App\Http\Controllers\FbbIslandController::class, 'show'])->where('fbbIsland', '[0-9]+')->name('fbb-islands.show');
+
     // RCA view routes (viewer and above)
     Route::get('rcas', [RcaController::class, 'index'])->name('rcas.index');
     Route::get('rcas/{rca}', [RcaController::class, 'show'])->where('rca', '[0-9]+')->name('rcas.show');
@@ -248,6 +252,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/{site}', [SiteController::class, 'update'])->name('update');
         Route::delete('/{site}', [SiteController::class, 'destroy'])->name('destroy');
         Route::post('/bulk-delete', [SiteController::class, 'destroyBulk'])->name('bulk-delete');
+    });
+
+    // FBB Islands management routes (admin only)
+    Route::prefix('fbb-islands')->name('fbb-islands.')->group(function () {
+        Route::get('/create', [App\Http\Controllers\FbbIslandController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\FbbIslandController::class, 'store'])->name('store');
+        Route::get('/{fbbIsland}/edit', [App\Http\Controllers\FbbIslandController::class, 'edit'])->name('edit');
+        Route::put('/{fbbIsland}', [App\Http\Controllers\FbbIslandController::class, 'update'])->name('update');
+        Route::delete('/{fbbIsland}', [App\Http\Controllers\FbbIslandController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-delete', [App\Http\Controllers\FbbIslandController::class, 'destroyBulk'])->name('bulk-delete');
     });
 });
 

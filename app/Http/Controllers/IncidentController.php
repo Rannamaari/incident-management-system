@@ -85,12 +85,17 @@ class IncidentController extends Controller
         // Load sites with region and location for site selection (only active sites)
         $regions = \App\Models\Region::with(['sites.technologies'])->orderBy('name')->get();
         $sites = \App\Models\Site::with(['region', 'location', 'technologies'])
-            ->select('sites.*') // Explicitly select all site fields including has_fbb
             ->active()
             ->orderBy('site_code')
             ->get();
 
-        return view('incidents.create', compact('categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'regions', 'sites'));
+        // Load FBB islands for FBB service selection (only active islands)
+        $fbbIslands = \App\Models\FbbIsland::with('region')
+            ->where('is_active', true)
+            ->orderBy('island_name')
+            ->get();
+
+        return view('incidents.create', compact('categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'regions', 'sites', 'fbbIslands'));
     }
 
     /**
@@ -176,6 +181,9 @@ class IncidentController extends Controller
 
         // Handle site attachments
         $this->handleSiteAttachments($incident, $request);
+
+        // Handle FBB island attachments
+        $this->handleFbbIslandAttachments($incident, $request);
 
         return redirect()->route('incidents.index')
             ->with('success', 'Incident created successfully.');
@@ -795,6 +803,21 @@ class IncidentController extends Controller
         if (!empty($siteData)) {
             $incident->sites()->attach($siteData);
         }
+    }
+
+    /**
+     * Handle FBB island attachments for the incident.
+     */
+    private function handleFbbIslandAttachments(Incident $incident, Request $request): void
+    {
+        $selectedFbbIslands = $request->input('selected_fbb_islands', []);
+
+        if (empty($selectedFbbIslands)) {
+            return;
+        }
+
+        // Attach FBB islands to incident
+        $incident->fbbIslands()->attach($selectedFbbIslands);
     }
 
     /**

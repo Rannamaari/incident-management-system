@@ -524,7 +524,17 @@ class Incident extends Model
     public function sites()
     {
         return $this->belongsToMany(Site::class, 'incident_sites')
+            ->using(IncidentSite::class)
             ->withPivot('affected_technologies')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get the FBB islands affected by this incident.
+     */
+    public function fbbIslands()
+    {
+        return $this->belongsToMany(FbbIsland::class, 'incident_fbb_island')
             ->withTimestamps();
     }
 

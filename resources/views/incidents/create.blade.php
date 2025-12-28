@@ -221,14 +221,15 @@
                                                 sites: {{ Js::from($sites ?? []) }},
                                                 selectedServices: [], // Track which services are selected
 
+                                                // FBB Islands selection data
+                                                selectedFbbIslands: [],
+                                                searchFbbIsland: '',
+                                                selectedFbbRegion: '',
+                                                fbbIslands: {{ Js::from($fbbIslands ?? []) }},
+
                                                 init() {
                                                     console.log('Sites data:', this.sites);
-                                                    // Log a sample site to check if has_fbb is present
-                                                    if (this.sites.length > 0) {
-                                                        console.log('Sample site (first):', this.sites[0]);
-                                                        const fbbSites = this.sites.filter(s => s.has_fbb);
-                                                        console.log('Sites with FBB enabled:', fbbSites);
-                                                    }
+                                                    console.log('FBB Islands data:', this.fbbIslands);
                                                 },
 
                                                 checkServices() {
@@ -236,10 +237,11 @@
                                                     const values = Array.from(checkboxes).map(cb => cb.value);
 
                                                     // Check if we're switching modes or disabling site selection
-                                                    const wasFbbMode = this.selectedServices.includes('FBB') || this.selectedServices.includes('Single FBB');
-                                                    const isFbbMode = values.includes('FBB') || values.includes('Single FBB');
-                                                    const hadSiteFields = this.selectedServices.includes('Single Site') || this.selectedServices.includes('Multiple Site') || this.selectedServices.includes('FBB') || this.selectedServices.includes('Single FBB');
-                                                    const hasSiteFields = values.includes('Single Site') || values.includes('Multiple Site') || values.includes('FBB') || values.includes('Single FBB');
+                                                    // Only FBB (Supernet) triggers FBB mode for sites, Single FBB is handled via FBB Islands
+                                                    const wasFbbMode = this.selectedServices.includes('FBB');
+                                                    const isFbbMode = values.includes('FBB');
+                                                    const hadSiteFields = this.selectedServices.includes('Single Site') || this.selectedServices.includes('Multiple Site');
+                                                    const hasSiteFields = values.includes('Single Site') || values.includes('Multiple Site');
 
                                                     this.selectedServices = values; // Store selected services
                                                     console.log('Checked services:', values);
@@ -253,20 +255,34 @@
                                                         console.log('Clearing all selected sites - no site-related services selected');
                                                         this.selectedSites = {};
                                                         this.updateCountInputs();
-                                                        return;
+                                                    }
+
+                                                    // If Single FBB is unchecked, clear selected FBB islands
+                                                    const hadSingleFbb = this.selectedServices.includes('Single FBB');
+                                                    const hasSingleFbb = values.includes('Single FBB');
+                                                    if (hadSingleFbb && !hasSingleFbb && this.selectedFbbIslands.length > 0) {
+                                                        console.log('Clearing all selected FBB islands - Single FBB unchecked');
+                                                        this.selectedFbbIslands = [];
+                                                        document.getElementById('fbb_impacted').value = 0;
+                                                        this.updateSummary();
                                                     }
 
                                                     // If switching modes, update selected sites
                                                     if (wasFbbMode !== isFbbMode && Object.keys(this.selectedSites).length > 0) {
-                                                        // Clear sites that don't have FBB when entering FBB mode
+                                                        // Clear sites when entering FBB mode (keep sites with FBB tech available)
                                                         if (isFbbMode) {
                                                             for (const siteId in this.selectedSites) {
                                                                 const site = this.sites.find(s => s.id == siteId);
-                                                                if (!site || !site.has_fbb) {
-                                                                    delete this.selectedSites[siteId];
+                                                                if (site && site.technologies) {
+                                                                    const hasFbbTech = site.technologies.some(t => t.technology === 'FBB' && t.is_active);
+                                                                    if (!hasFbbTech) {
+                                                                        delete this.selectedSites[siteId];
+                                                                    } else {
+                                                                        // Update to FBB technology
+                                                                        this.selectedSites[siteId] = ['FBB'];
+                                                                    }
                                                                 } else {
-                                                                    // Update to FBB technology
-                                                                    this.selectedSites[siteId] = ['FBB'];
+                                                                    delete this.selectedSites[siteId];
                                                                 }
                                                             }
                                                         } else {
@@ -296,18 +312,8 @@
                                                 get filteredSites() {
                                                     if (!this.sites || !Array.isArray(this.sites)) return [];
 
-                                                    // Check if FBB service is selected (using stored selectedServices for reactivity)
-                                                    const isFbbSelected = this.selectedServices.includes('FBB') || this.selectedServices.includes('Single FBB');
-
-                                                    console.log('Filtering sites - FBB selected:', isFbbSelected);
-
                                                     const filtered = this.sites.filter(site => {
                                                         if (!site) return false;
-
-                                                        // If FBB is selected, only show sites with FBB enabled
-                                                        if (isFbbSelected && !site.has_fbb) {
-                                                            return false;
-                                                        }
 
                                                         const matchesSearch = !this.searchSite ||
                                                             (site.site_code && site.site_code.toLowerCase().includes(this.searchSite.toLowerCase())) ||
@@ -320,8 +326,27 @@
                                                     return filtered;
                                                 },
 
+                                                get filteredFbbIslands() {
+                                                    if (!this.fbbIslands || !Array.isArray(this.fbbIslands)) return [];
+
+                                                    const filtered = this.fbbIslands.filter(island => {
+                                                        if (!island) return false;
+
+                                                        const matchesSearch = !this.searchFbbIsland ||
+                                                            (island.island_name && island.island_name.toLowerCase().includes(this.searchFbbIsland.toLowerCase())) ||
+                                                            (island.full_name && island.full_name.toLowerCase().includes(this.searchFbbIsland.toLowerCase()));
+                                                        const matchesRegion = !this.selectedFbbRegion || island.region_id == this.selectedFbbRegion;
+                                                        return matchesSearch && matchesRegion;
+                                                    });
+
+                                                    console.log('Filtered FBB islands count:', filtered.length);
+                                                    return filtered;
+                                                },
+
                                                 get isFbbOnlyMode() {
-                                                    return this.selectedServices.includes('FBB') || this.selectedServices.includes('Single FBB');
+                                                    // Only FBB (Supernet) triggers FBB mode for sites
+                                                    // Single FBB is handled separately via FBB Islands
+                                                    return this.selectedServices.includes('FBB');
                                                 },
 
                                                 get techCounts() {
@@ -386,10 +411,17 @@
                                                 },
 
                                                 updateSummary() {
-                                                    const summaryField = document.getElementById('summary');
-                                                    const selectedCount = Object.keys(this.selectedSites).length;
+                                                    console.log('updateSummary called');
+                                                    console.log('selectedSites:', this.selectedSites);
+                                                    console.log('selectedFbbIslands:', this.selectedFbbIslands);
 
-                                                    if (selectedCount === 0) {
+                                                    const summaryField = document.getElementById('summary');
+                                                    const selectedSitesCount = Object.keys(this.selectedSites).length;
+                                                    const selectedFbbCount = this.selectedFbbIslands.length;
+
+                                                    console.log('Sites count:', selectedSitesCount, 'FBB count:', selectedFbbCount);
+
+                                                    if (selectedSitesCount === 0 && selectedFbbCount === 0) {
                                                         summaryField.readOnly = false;
                                                         summaryField.classList.remove('bg-gray-50', 'cursor-not-allowed');
                                                         summaryField.classList.add('bg-white');
@@ -401,8 +433,10 @@
                                                     summaryField.classList.add('bg-gray-50', 'cursor-not-allowed');
                                                     summaryField.classList.remove('bg-white');
 
-                                                    // Generate summary - just site code and technologies, separated by commas
+                                                    // Generate summary - sites and FBB islands, separated by commas
                                                     let summaryLines = [];
+
+                                                    // Add sites with technologies
                                                     for (const [siteId, techs] of Object.entries(this.selectedSites)) {
                                                         const site = this.sites.find(s => s.id == siteId);
                                                         if (site && Array.isArray(techs) && techs.length > 0) {
@@ -411,6 +445,18 @@
                                                         }
                                                     }
 
+                                                    console.log('After sites, summaryLines:', summaryLines);
+
+                                                    // Add FBB islands
+                                                    for (const islandId of this.selectedFbbIslands) {
+                                                        const island = this.fbbIslands.find(i => i.id == islandId);
+                                                        console.log('Processing FBB island ID:', islandId, 'Found:', island);
+                                                        if (island) {
+                                                            summaryLines.push(`${island.full_name} FBB`);
+                                                        }
+                                                    }
+
+                                                    console.log('Final summaryLines:', summaryLines);
                                                     summaryField.value = summaryLines.join(', ');
                                                 },
 
@@ -467,6 +513,30 @@
                                                 removeSite(siteId) {
                                                     delete this.selectedSites[siteId];
                                                     this.updateCountInputs();
+                                                },
+
+                                                toggleFbbIsland(islandId) {
+                                                    const index = this.selectedFbbIslands.indexOf(islandId);
+                                                    if (index > -1) {
+                                                        this.selectedFbbIslands.splice(index, 1);
+                                                    } else {
+                                                        this.selectedFbbIslands.push(islandId);
+                                                    }
+                                                    // Update FBB count
+                                                    document.getElementById('fbb_impacted').value = this.selectedFbbIslands.length;
+                                                    // Update summary to include FBB islands
+                                                    this.updateSummary();
+                                                },
+
+                                                removeFbbIsland(islandId) {
+                                                    const index = this.selectedFbbIslands.indexOf(islandId);
+                                                    if (index > -1) {
+                                                        this.selectedFbbIslands.splice(index, 1);
+                                                    }
+                                                    // Update FBB count
+                                                    document.getElementById('fbb_impacted').value = this.selectedFbbIslands.length;
+                                                    // Update summary to include FBB islands
+                                                    this.updateSummary();
                                                 }
                                             }));
                                         });
@@ -648,6 +718,119 @@
                                         </div>
                                     </div>
 
+                                    <!-- FBB Islands Selection Section -->
+                                    <div x-show="showFbbField"
+                                         x-transition:enter="transition ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                                         x-transition:leave="transition ease-in duration-200"
+                                         x-transition:leave-start="opacity-100"
+                                         x-transition:leave-end="opacity-0"
+                                         class="bg-purple-50/50 border border-purple-200 rounded-xl p-6 mt-4">
+
+                                        <h5 class="font-heading text-sm font-semibold text-purple-900 mb-4 flex items-center gap-2">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            Select Affected FBB Islands
+                                        </h5>
+                                        <p class="text-sm text-purple-700 mb-4">Search and select FBB islands affected by this outage</p>
+
+                                        <!-- Selected FBB Islands Summary -->
+                                        <div x-show="selectedFbbIslands.length > 0"
+                                             x-transition
+                                             class="mb-4 p-4 bg-purple-50 border border-purple-300 rounded-xl">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <p class="text-sm font-semibold text-purple-900">
+                                                    <span x-text="selectedFbbIslands.length"></span> FBB island(s) selected
+                                                </p>
+                                                <button type="button"
+                                                        @click="selectedFbbIslands = []; document.getElementById('fbb_impacted').value = 0; updateSummary();"
+                                                        class="text-xs text-red-600 hover:text-red-800 font-medium transition-colors">
+                                                    Clear All
+                                                </button>
+                                            </div>
+                                            <div class="flex flex-wrap gap-2">
+                                                <template x-for="islandId in selectedFbbIslands" :key="islandId">
+                                                    <div class="inline-flex items-center gap-2 bg-white border border-purple-300 rounded-lg px-3 py-1.5 shadow-sm">
+                                                        <div class="text-xs">
+                                                            <span class="font-semibold text-gray-900" x-text="fbbIslands.find(i => i.id == islandId)?.full_name || 'Unknown'"></span>
+                                                        </div>
+                                                        <button type="button"
+                                                                @click="removeFbbIsland(islandId)"
+                                                                class="text-gray-400 hover:text-red-600 transition-colors flex-shrink-0"
+                                                                title="Remove this island">
+                                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <!-- Search and Filters -->
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Search Islands</label>
+                                                <input type="text"
+                                                       x-model="searchFbbIsland"
+                                                       placeholder="Search by island name..."
+                                                       class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 bg-white transition-all duration-300">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Region</label>
+                                                <select x-model="selectedFbbRegion"
+                                                        class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 bg-white transition-all duration-300">
+                                                    <option value="">All Regions</option>
+                                                    @foreach($regions as $region)
+                                                        <option value="{{ $region->id }}">{{ $region->name }} ({{ $region->code }})</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- FBB Islands List -->
+                                        <div class="max-h-96 overflow-y-auto grid grid-cols-1 md:grid-cols-3 gap-2 border border-purple-200 rounded-lg p-4 bg-white">
+                                            <template x-for="island in filteredFbbIslands" :key="island.id">
+                                                <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors">
+                                                    <label class="flex items-start gap-3 cursor-pointer">
+                                                        <input type="checkbox"
+                                                               :checked="selectedFbbIslands.includes(island.id)"
+                                                               @change="toggleFbbIsland(island.id)"
+                                                               class="mt-1 h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                                                        <div class="flex-1">
+                                                            <div class="font-medium text-gray-900" x-text="island.island_name"></div>
+                                                            <div class="text-xs text-gray-500">
+                                                                <span x-text="island.region?.code || 'N/A'"></span>
+                                                            </div>
+                                                            <div class="mt-1">
+                                                                <span class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-800" x-text="island.technology"></span>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+
+                                                    <!-- Hidden input for form submission -->
+                                                    <template x-if="selectedFbbIslands.includes(island.id)">
+                                                        <div>
+                                                            <input type="hidden"
+                                                                   name="selected_fbb_islands[]"
+                                                                   :value="island.id">
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+
+                                            <!-- No results message -->
+                                            <div x-show="filteredFbbIslands.length === 0" class="col-span-full text-center py-8 text-gray-500">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <p class="mt-2">No FBB islands found</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -745,7 +928,7 @@
                                         <div>
                                             <label for="summary" class="block text-sm font-heading font-medium text-gray-700 mb-2">Outage
                                                 Details (Incident Summary) <span class="text-red-500">*</span></label>
-                                            <p class="text-xs text-gray-500 mb-2">Auto-fills when sites are selected, or enter manually</p>
+                                            <p class="text-xs text-gray-500 mb-2">Auto-fills when sites or FBB islands are selected, or enter manually</p>
                                             <textarea name="summary" id="summary" rows="8" maxlength="1000"
                                                 placeholder="Provide detailed description of the incident..."
                                                 class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 resize-y @error('summary') border-red-300 @enderror"

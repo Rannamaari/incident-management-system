@@ -84,15 +84,6 @@
                         <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Advanced Filters</h3>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- FBB Filter -->
-                            <div class="flex items-center gap-3 p-3 rounded-xl border-2 border-gray-200 bg-purple-50/50">
-                                <input type="checkbox" name="has_fbb" id="filter_fbb" value="1" {{ request('has_fbb') ? 'checked' : '' }}
-                                    class="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 touch-manipulation">
-                                <label for="filter_fbb" class="flex-1 cursor-pointer text-sm font-medium text-gray-900">
-                                    FBB (Supernet) Sites Only
-                                </label>
-                            </div>
-
                             <!-- Link Site Filter -->
                             <div class="flex items-center gap-3 p-3 rounded-xl border-2 border-gray-200 bg-blue-50/50">
                                 <input type="checkbox" name="is_link_site" id="filter_link" value="1" {{ request('is_link_site') ? 'checked' : '' }}
@@ -186,14 +177,6 @@
                                 @endif">
                                 {{ $site->is_active ? 'Active' : 'Inactive' }}
                             </span>
-                            @if($site->has_fbb)
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">
-                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                    FBB
-                                </span>
-                            @endif
                             @if($site->is_link_site)
                                 <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
                                     Link Site
@@ -265,9 +248,6 @@
                                     </td>
                                     <td class="px-4 py-4">
                                         <div class="flex flex-wrap gap-1">
-                                            @if($site->has_fbb)
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800">FBB</span>
-                                            @endif
                                             @if($site->is_link_site)
                                                 <span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">Link</span>
                                             @endif

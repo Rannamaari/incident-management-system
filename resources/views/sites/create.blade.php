@@ -133,17 +133,6 @@
                                 </div>
                             </label>
 
-                            <label class="flex items-start gap-3 p-4 rounded-lg border-2 border-gray-200 hover:border-purple-300 hover:bg-purple-50 cursor-pointer transition-colors active:scale-[0.98] touch-manipulation">
-                                <input type="checkbox"
-                                       name="has_fbb"
-                                       {{ old('has_fbb') ? 'checked' : '' }}
-                                       class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500 touch-manipulation">
-                                <div class="flex-1">
-                                    <span class="text-sm font-semibold text-gray-900">FBB (Supernet)</span>
-                                    <p class="text-xs text-gray-600 mt-1">Site provides Fixed Broadband services</p>
-                                </div>
-                            </label>
-
                             <label class="flex items-start gap-3 p-4 rounded-lg border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors active:scale-[0.98] touch-manipulation">
                                 <input type="checkbox"
                                        name="is_link_site"

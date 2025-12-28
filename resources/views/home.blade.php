@@ -13,7 +13,7 @@
                         </div>
                         <div>
                             <h1 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-                                Incident Management Portal
+                                Incident Management System
                             </h1>
                             <p class="mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg text-gray-600 font-medium">Real-time network site status and availability</p>
                         </div>
@@ -84,7 +84,11 @@
                         $config = $colors[$type] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600', 'icon_bg' => 'bg-gray-100', 'accent' => 'from-gray-50'];
                         $label = $labels[$type] ?? strtoupper($type);
                     @endphp
-                    <div class="group relative rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm p-6 lg:p-7 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-gray-200/70 hover:shadow-2xl hover:bg-white/90">
+                    @php
+                        $techUpper = strtoupper($type);
+                        $impactedForThis = $impactedByTech[$techUpper] ?? [];
+                    @endphp
+                    <div x-data="{ expanded: false }" class="group relative rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm p-6 lg:p-7 shadow-lg transition-all duration-300 hover:border-gray-200/70 hover:shadow-2xl hover:bg-white/90">
                         <!-- Card Content -->
                         <div class="flex flex-col gap-4 mb-5">
                             <div class="flex items-start justify-between gap-4">
@@ -116,6 +120,35 @@
                                      style="width: {{ $stats['online_percentage'] }}%"></div>
                             </div>
                         </div>
+
+                        <!-- Impacted Sites Button/List -->
+                        @if(count($impactedForThis) > 0)
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <button @click="expanded = !expanded"
+                                        class="w-full flex items-center justify-between text-sm font-semibold text-red-600 hover:text-red-700 transition-colors">
+                                    <span>{{ count($impactedForThis) }} site{{ count($impactedForThis) > 1 ? 's' : '' }} down</span>
+                                    <svg class="w-4 h-4 transition-transform" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+
+                                <div x-show="expanded" x-transition class="mt-3 space-y-2 max-h-48 overflow-y-auto">
+                                    @foreach($impactedForThis as $site)
+                                        <div class="flex items-center justify-between p-2 bg-red-50 rounded-lg border border-red-100">
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs font-semibold text-gray-900 truncate">{{ $site['site_code'] }}</p>
+                                                @if($site['display_name'] !== $site['site_code'])
+                                                    <p class="text-xs text-gray-500 truncate">{{ $site['display_name'] }}</p>
+                                                @endif
+                                            </div>
+                                            <span class="flex-shrink-0 ml-2 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-800">
+                                                {{ $site['region'] }}
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
 
                         <!-- Gradient Overlay -->
                         <div class="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-all duration-300 group-hover:opacity-30 bg-gradient-to-br {{ $config['accent'] }} to-transparent"></div>
@@ -169,8 +202,93 @@
                 </div>
             @endif
 
+            <!-- Currently Impacted Sites Section -->
+            @php
+                // Collect all impacted sites from all active incidents
+                $impactedSites = [];
+
+                if (isset($siteOutages) && $siteOutages->count() > 0) {
+                    foreach($siteOutages as $incident) {
+                        // Try to get from relationship first
+                        if ($incident->sites && $incident->sites->isNotEmpty()) {
+                            foreach($incident->sites as $site) {
+                                $techs = $site->pivot->affected_technologies ?? [];
+                                if (is_string($techs)) {
+                                    $techs = json_decode($techs, true) ?? [];
+                                }
+                                if (!empty($techs) && is_array($techs)) {
+                                    $siteKey = $site->site_code;
+                                    if (!isset($impactedSites[$siteKey])) {
+                                        $impactedSites[$siteKey] = [
+                                            'site_code' => $site->site_code,
+                                            'display_name' => $site->display_name ?? $site->site_code,
+                                            'region' => optional($site->region)->code ?? explode('-', $site->site_code)[0] ?? 'N/A',
+                                            'technologies' => []
+                                        ];
+                                    }
+                                    $impactedSites[$siteKey]['technologies'] = array_unique(array_merge(
+                                        $impactedSites[$siteKey]['technologies'],
+                                        $techs
+                                    ));
+                                }
+                            }
+                        }
+
+                        // Fallback: parse from summary if no sites in relationship
+                        if ($incident->summary && (!$incident->sites || $incident->sites->isEmpty())) {
+                            $summaryParts = explode(',', $incident->summary);
+                            foreach ($summaryParts as $part) {
+                                $part = trim($part);
+                                // Skip FBB islands (contain " FBB" or pattern like "GA - Island")
+                                if (stripos($part, ' FBB') === false && !preg_match('/^[A-Z]{1,3}\s*-\s*[A-Za-z]/', $part)) {
+                                    // Match pattern: AA-3752 2G/3G/4G or similar
+                                    if (preg_match('/([A-Z]+-[A-Z0-9]+-\d+)\s+(.+)/', $part, $matches)) {
+                                        $siteCode = $matches[1];
+                                        $techString = $matches[2];
+                                        $techs = explode('/', $techString);
+
+                                        if (!isset($impactedSites[$siteCode])) {
+                                            $impactedSites[$siteCode] = [
+                                                'site_code' => $siteCode,
+                                                'display_name' => $siteCode,
+                                                'region' => explode('-', $siteCode)[0] ?? 'N/A',
+                                                'technologies' => []
+                                            ];
+                                        }
+                                        $impactedSites[$siteCode]['technologies'] = array_unique(array_merge(
+                                            $impactedSites[$siteCode]['technologies'] ?? [],
+                                            $techs
+                                        ));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ksort($impactedSites);
+                }
+
+                // Group impacted sites by technology for display on cards
+                $impactedByTech = [
+                    '2G' => [],
+                    '3G' => [],
+                    '4G' => [],
+                    '5G' => [],
+                    'FBB' => []
+                ];
+
+                foreach($impactedSites as $site) {
+                    foreach($site['technologies'] as $tech) {
+                        $techUpper = strtoupper($tech);
+                        if (isset($impactedByTech[$techUpper])) {
+                            $impactedByTech[$techUpper][] = $site;
+                        }
+                    }
+                }
+            @endphp
+
+
             <!-- Active Outages Section -->
-            @if($siteOutages->count() > 0 || $fbbOutages->count() > 0)
+            @if($siteOutages->count() > 0 || $cellOutages->count() > 0 || $fbbOutages->count() > 0)
                 <div class="mb-8">
                     <h2 class="text-2xl font-heading font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,7 +297,7 @@
                         Active Outages
                     </h2>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         <!-- Site Outages -->
                         @if($siteOutages->count() > 0)
                             <div class="rounded-2xl border border-red-100 bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
@@ -196,7 +314,44 @@
                                         <div class="p-4 hover:bg-gray-50 transition-colors">
                                             <div class="flex items-start justify-between gap-4">
                                                 <div class="flex-1 min-w-0">
-                                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $incident->summary }}</p>
+                                                    @php
+                                                        $siteSummary = [];
+
+                                                        // Try to get sites from relationship first
+                                                        if ($incident->sites->isNotEmpty()) {
+                                                            foreach($incident->sites as $site) {
+                                                                $techs = $site->pivot->affected_technologies ?? [];
+                                                                // Handle if it's still a JSON string
+                                                                if (is_string($techs)) {
+                                                                    $techs = json_decode($techs, true) ?? [];
+                                                                }
+                                                                if (!empty($techs) && is_array($techs)) {
+                                                                    $techStr = implode('/', $techs);
+                                                                    $siteSummary[] = $site->site_code . ' ' . $techStr;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        // Fallback: Parse summary field to extract site codes (for old incidents)
+                                                        if (empty($siteSummary) && $incident->summary) {
+                                                            // Extract site codes from summary (pattern: REGION-LOCATION-NUMBER)
+                                                            // Split by comma and filter out FBB islands (containing " FBB")
+                                                            $summaryParts = explode(',', $incident->summary);
+                                                            foreach ($summaryParts as $part) {
+                                                                $part = trim($part);
+                                                                // Skip FBB islands (contain " FBB" or " - " pattern like "GA - Dhevvadhoo FBB")
+                                                                if (stripos($part, ' FBB') === false &&
+                                                                    !preg_match('/^[A-Z]+ - [A-Za-z]+/', $part)) {
+                                                                    $siteSummary[] = $part;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        $siteSummaryText = !empty($siteSummary) ? implode(', ', $siteSummary) : 'No site details available';
+                                                    @endphp
+                                                    <p class="text-sm font-semibold text-gray-900" style="overflow-wrap: break-word; word-wrap: break-word;">
+                                                        {{ $siteSummaryText }}
+                                                    </p>
                                                     <div class="mt-2 flex flex-wrap gap-2 text-xs">
                                                         @if($incident->sites_2g_impacted > 0)
                                                             <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-md">2G: {{ $incident->sites_2g_impacted }}</span>
@@ -211,6 +366,50 @@
                                                             <span class="px-2 py-1 bg-red-100 text-red-800 rounded-md">5G: {{ $incident->sites_5g_impacted }}</span>
                                                         @endif
                                                     </div>
+                                                    <div class="mt-2 flex flex-wrap gap-3 text-xs text-gray-500">
+                                                        <span class="flex items-center gap-1">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                            </svg>
+                                                            Started: {{ $incident->started_at ? $incident->started_at->format('M d, H:i') : 'N/A' }}
+                                                        </span>
+                                                        @if($incident->duration_hms)
+                                                            <span class="flex items-center gap-1 text-orange-600 font-medium">
+                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                </svg>
+                                                                Duration: {{ $incident->duration_hms }}
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <span class="flex-shrink-0 px-2.5 py-1 text-xs font-semibold rounded-full {{ $incident->status === 'Open' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                                    {{ $incident->status }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Cell Outages -->
+                        @if($cellOutages->count() > 0)
+                            <div class="rounded-2xl border border-yellow-100 bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
+                                <div class="bg-gradient-to-r from-yellow-50 to-amber-50 px-6 py-4 border-b border-yellow-100">
+                                    <h3 class="font-heading font-semibold text-yellow-900 flex items-center gap-2">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                        Cell Outages ({{ $cellOutages->count() }})
+                                    </h3>
+                                </div>
+                                <div class="divide-y divide-gray-100 max-h-96 overflow-y-auto">
+                                    @foreach($cellOutages as $incident)
+                                        <div class="p-4 hover:bg-gray-50 transition-colors">
+                                            <div class="flex items-start justify-between gap-4">
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-semibold text-gray-900">{{ $incident->summary }}</p>
                                                     <div class="mt-2 flex flex-wrap gap-3 text-xs text-gray-500">
                                                         <span class="flex items-center gap-1">
                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,7 +453,14 @@
                                         <div class="p-4 hover:bg-gray-50 transition-colors">
                                             <div class="flex items-start justify-between gap-4">
                                                 <div class="flex-1 min-w-0">
-                                                    <p class="text-sm font-semibold text-gray-900 truncate">{{ $incident->summary }}</p>
+                                                    @php
+                                                        $fbbSummary = [];
+                                                        foreach($incident->fbbIslands as $island) {
+                                                            $fbbSummary[] = $island->full_name . ' FBB';
+                                                        }
+                                                        $fbbSummaryText = !empty($fbbSummary) ? implode(', ', $fbbSummary) : $incident->summary;
+                                                    @endphp
+                                                    <p class="text-sm font-semibold text-gray-900" style="overflow-wrap: break-word; word-wrap: break-word;">{{ $fbbSummaryText }}</p>
                                                     <div class="mt-2 flex flex-wrap gap-2 text-xs">
                                                         @if($incident->fbb_impacted > 0)
                                                             <span class="px-2 py-1 bg-orange-100 text-orange-800 rounded-md">FBB: {{ $incident->fbb_impacted }}</span>
