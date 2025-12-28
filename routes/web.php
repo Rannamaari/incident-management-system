@@ -169,6 +169,7 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
     // View-only incident routes (viewer and above) - Wildcard routes last
     Route::get('incidents', [IncidentController::class, 'index'])->name('incidents.index');
     Route::get('incidents/{incident}', [IncidentController::class, 'show'])->where('incident', '[0-9]+')->name('incidents.show');
+    Route::get('incidents/{incident}/copy-text', [IncidentController::class, 'getCopyText'])->where('incident', '[0-9]+')->name('incidents.copy-text');
     
     // Logs page routes (viewer and above)
     Route::get('logs', [LogsController::class, 'index'])->name('logs.index');

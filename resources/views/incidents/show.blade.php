@@ -45,48 +45,108 @@
         <div class="mx-auto px-4 sm:px-6 lg:px-8" style="max-width: 1200px;">
 
             <!-- Action Buttons -->
-            <div class="flex flex-wrap gap-3 mb-6">
+            <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
+                <!-- Left Side: Back Button -->
                 <a href="{{ route('incidents.index') }}"
-                    class="inline-flex items-center gap-2 rounded-xl bg-gray-700 px-5 py-2.5 text-white shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500/30 transition-all duration-200">
+                    class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all duration-200"
+                    title="Back to List">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    Back to List
                 </a>
 
-                @if(auth()->user()->canEditIncidents())
-                    <a href="{{ route('incidents.edit', $incident) }}"
-                        class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all duration-200">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        Edit Incident
-                    </a>
-
-                    @if($incident->status !== 'Closed')
-                        <button type="button" id="close-incident-btn"
-                            class="inline-flex items-center gap-2 rounded-xl bg-green-600 px-5 py-2.5 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500/30 transition-all duration-200">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <!-- Right Side: Action Icons -->
+                <div class="flex items-center gap-2">
+                    <!-- Copy Incident Text -->
+                    <div x-data="{ copied: false }">
+                        <button @click="async () => {
+                            try {
+                                const response = await fetch('{{ route('incidents.copy-text', $incident) }}', {
+                                    credentials: 'same-origin',
+                                    headers: { 'Accept': 'text/plain' }
+                                });
+                                if (!response.ok) throw new Error('Failed to fetch');
+                                const text = await response.text();
+                                if (text.includes('<!DOCTYPE') || text.includes('<html')) throw new Error('Session expired');
+                                await navigator.clipboard.writeText(text);
+                                copied = true;
+                                setTimeout(() => copied = false, 2000);
+                            } catch (err) {
+                                console.error('Copy error:', err);
+                            }
+                        }"
+                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'"
+                            class="p-2 rounded-lg transition-all duration-200"
+                            title="Copy Incident Text">
+                            <svg x-show="!copied" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>
-                            Close Incident
+                            <svg x-show="copied" x-cloak class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
                         </button>
+                    </div>
+
+                    <!-- Copy Image -->
+                    <div x-data="{ copied: false }">
+                        <button @click="async () => {
+                            try {
+                                await window.generateIncidentImage({{ $incident->id }});
+                                copied = true;
+                                setTimeout(() => copied = false, 2000);
+                            } catch (err) {
+                                console.error('Image generation error:', err);
+                            }
+                        }"
+                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'"
+                            class="p-2 rounded-lg transition-all duration-200"
+                            title="Copy Image">
+                            <svg x-show="!copied" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <svg x-show="copied" x-cloak class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    @if(auth()->user()->canEditIncidents())
+                        <!-- Edit Button -->
+                        <a href="{{ route('incidents.edit', $incident) }}"
+                            class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200"
+                            title="Edit Incident">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </a>
+
+                        @if($incident->status !== 'Closed')
+                            <!-- Close Button -->
+                            <button type="button" id="close-incident-btn"
+                                class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200"
+                                title="Close Incident">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </button>
+                        @endif
                     @endif
-                @endif
 
-                @if(auth()->user()->canDeleteIncidents())
-                    <form action="{{ route('incidents.destroy', $incident) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete incident {{ $incident->incident_code }}?\n\nThis will permanently delete:\n• The incident record\n• All incident logs\n• All action points\n• All related data\n\nThis action cannot be undone!');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit"
-                            class="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all duration-200">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Delete Incident
-                        </button>
-                    </form>
-                @endif
+                    @if(auth()->user()->canDeleteIncidents())
+                        <!-- Delete Button -->
+                        <form action="{{ route('incidents.destroy', $incident) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete incident {{ $incident->incident_code }}?\n\nThis will permanently delete:\n• The incident record\n• All incident logs\n• All action points\n• All related data\n\nThis action cannot be undone!');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200"
+                                title="Delete Incident">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </div>
 
             <!-- SLA and RCA Information Cards (Top) -->
@@ -843,5 +903,137 @@
                 }
             }
         });
+    </script>
+
+    <!-- HTML2Canvas Library for Image Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        window.generateIncidentImage = async function(incidentId) {
+            try {
+                // Fetch incident data
+                const response = await fetch(`/incidents/${incidentId}/copy-text`);
+                if (!response.ok) throw new Error('Failed to fetch incident data');
+                const incidentText = await response.text();
+
+                // Create a temporary container for the incident display
+                const container = document.createElement('div');
+                container.style.cssText = `
+                    position: fixed;
+                    left: -9999px;
+                    top: 0;
+                    width: 800px;
+                    background: #cb2c30;
+                    padding: 6px;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                    border-radius: 12px;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                `;
+
+                // Create content div with white background
+                const contentDiv = document.createElement('div');
+                contentDiv.style.cssText = `
+                    background: white;
+                    padding: 30px;
+                    border-radius: 8px;
+                    color: #1a202c;
+                    line-height: 1.6;
+                `;
+
+                // Extract incident code from the first line
+                const lines = incidentText.split('\n');
+                const incidentCodeMatch = lines[0].match(/INCIDENT\s+(.+)/);
+                const incidentCode = incidentCodeMatch ? incidentCodeMatch[1].trim() : '';
+
+                // Remove the first line (incident code) from the content
+                const contentWithoutCode = lines.slice(2).join('\n'); // Skip first line and empty line
+
+                // Create professional header
+                const header = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 3px solid #cb2c30;">
+                        <div style="font-size: 24px; font-weight: 700; color: #1a202c; letter-spacing: 0.5px;">INCIDENT SUMMARY</div>
+                        <div style="font-size: 14px; color: #718096; font-weight: 500;">#${incidentCode}</div>
+                    </div>
+                `;
+
+                // Convert text to HTML with proper formatting
+                const formattedHTML = header + contentWithoutCode
+                    .replace(/\*([^*]+)\*/g, '<strong style="color: #2d3748;">$1</strong>')
+                    .replace(/━━━━━━━━━━━━━━━━━━/g, '<hr style="border: none; border-top: 2px solid #e2e8f0; margin: 15px 0;">')
+                    .split('\n')
+                    .map(line => {
+                        if (line.trim() === '') return '<div style="height: 10px;"></div>';
+                        if (line.match(/^\d+\./)) {
+                            return `<div style="margin-left: 20px; color: #4a5568;">${line}</div>`;
+                        }
+                        return `<div style="margin-bottom: 5px;">${line}</div>`;
+                    })
+                    .join('');
+
+                // Get current date and time
+                const now = new Date();
+                const generatedTime = now.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+
+                // Add footer
+                const footer = `
+                    <div style="margin-top: 25px; padding-top: 20px; border-top: 2px solid #e2e8f0; text-align: center; color: #718096; font-size: 12px;">
+                        <div style="font-weight: 600; margin-bottom: 4px;">Generated by Incident Management System</div>
+                        <div>${generatedTime}</div>
+                    </div>
+                `;
+
+                contentDiv.innerHTML = formattedHTML + footer;
+                container.appendChild(contentDiv);
+                document.body.appendChild(container);
+
+                // Generate image using html2canvas
+                const canvas = await html2canvas(container, {
+                    backgroundColor: null,
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                });
+
+                // Remove temporary container
+                document.body.removeChild(container);
+
+                // Convert canvas to blob and copy to clipboard
+                canvas.toBlob(async (blob) => {
+                    try {
+                        // Copy image to clipboard
+                        const item = new ClipboardItem({ 'image/png': blob });
+                        await navigator.clipboard.write([item]);
+                    } catch (clipboardError) {
+                        console.error('Clipboard error:', clipboardError);
+
+                        // Fallback: Download the image if clipboard fails
+                        try {
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `incident-${incidentId}.png`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        } catch (downloadError) {
+                            console.error('Download error:', downloadError);
+                            throw new Error('Failed to copy to clipboard or download image');
+                        }
+                    }
+                }, 'image/png');
+
+            } catch (error) {
+                console.error('Error generating image:', error);
+                throw error;
+            }
+        };
     </script>
 @endsection

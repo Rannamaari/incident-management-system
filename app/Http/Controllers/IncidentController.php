@@ -194,7 +194,22 @@ class IncidentController extends Controller
      */
     public function show(Incident $incident)
     {
-        $incident->load(['logs', 'actionPoints', 'creator', 'updater', 'activityLogs', 'activityLogs.user', 'sites.region', 'sites.location', 'sites.technologies']); // Eager load logs, action points, user tracking, audit trail, and sites
+        $incident->load([
+            'logs',
+            'actionPoints',
+            'creator',
+            'updater',
+            'activityLogs',
+            'activityLogs.user',
+            'sites.region',
+            'sites.location',
+            'sites.technologies',
+            'fbbIslands.region',
+            'category',
+            'outageCategory',
+            'faultType',
+            'resolutionTeam'
+        ]); // Eager load all relationships needed for display and copy function
 
         // Mark incident as viewed by current user
         $incident->markAsViewed();
@@ -1167,6 +1182,258 @@ class IncidentController extends Controller
         $incident->save();
 
         return back()->with('success', 'Timeline update added successfully.');
+    }
+
+    /**
+     * Get formatted incident text for copying to clipboard (Server-Side Option B)
+     */
+    public function getCopyText(Incident $incident)
+    {
+        $incident->load(['sites.technologies', 'sites.region', 'sites.location', 'fbbIslands.region', 'category', 'outageCategory', 'faultType', 'resolutionTeam', 'creator']);
+
+        // Format affected services
+        $services = is_array($incident->affected_services)
+            ? $incident->affected_services
+            : explode(',', $incident->affected_services ?? '');
+        $services = array_filter($services); // Remove empty values
+
+        // Format services as numbered list (1. 2. 3.)
+        $servicesText = null;
+        if (!empty($services)) {
+            $serviceLines = [];
+            $counter = 1;
+            foreach ($services as $service) {
+                $serviceLines[] = "{$counter}. " . trim($service);
+                $counter++;
+            }
+            $servicesText = implode("\n", $serviceLines);
+        }
+
+        // Format impacted sites
+        $sitesText = null;
+        if ($incident->sites && $incident->sites->isNotEmpty()) {
+            $siteLines = [];
+            foreach ($incident->sites as $site) {
+                $techs = $site->pivot->affected_technologies ?? [];
+                if (is_string($techs)) {
+                    $techs = json_decode($techs, true) ?? [];
+                }
+                $techStr = !empty($techs) && is_array($techs) ? ' (' . implode(', ', $techs) . ')' : '';
+                $siteLines[] = "• {$site->site_code}{$techStr}";
+            }
+            $sitesText = implode("\n", $siteLines);
+        }
+
+        // Format FBB islands
+        $fbbText = null;
+        if ($incident->fbbIslands && $incident->fbbIslands->isNotEmpty()) {
+            $fbbLines = [];
+            foreach ($incident->fbbIslands as $island) {
+                $fbbLines[] = "• {$island->full_name}";
+            }
+            $fbbText = implode("\n", $fbbLines);
+        }
+
+        // Calculate duration
+        $start = \Carbon\Carbon::parse($incident->started_at);
+
+        if ($incident->resolved_at) {
+            // Incident is closed - show actual duration
+            $end = \Carbon\Carbon::parse($incident->resolved_at);
+            $diff = $start->diff($end);
+
+            $parts = [];
+            if ($diff->d > 0) $parts[] = $diff->d . 'd';
+            if ($diff->h > 0) $parts[] = $diff->h . 'h';
+            if ($diff->i > 0) $parts[] = $diff->i . 'm';
+
+            $duration = !empty($parts) ? implode(' ', $parts) : 'Less than 1 minute';
+        } else {
+            // Incident is ongoing - show how long it's been ongoing
+            $now = \Carbon\Carbon::now('Indian/Maldives');
+            $diff = $start->diff($now);
+
+            $parts = [];
+            if ($diff->d > 0) $parts[] = $diff->d . 'd';
+            if ($diff->h > 0) $parts[] = $diff->h . 'h';
+            if ($diff->i > 0) $parts[] = $diff->i . 'm';
+
+            $ongoingTime = !empty($parts) ? implode(' ', $parts) : 'Less than 1 minute';
+            $duration = "Ongoing ({$ongoingTime})";
+        }
+
+        // Format started/resolved times in Maldives time
+        $startedAt = \Carbon\Carbon::parse($incident->started_at)->setTimezone('Indian/Maldives')->format('d M Y, H:i');
+        $resolvedAt = $incident->resolved_at
+            ? \Carbon\Carbon::parse($incident->resolved_at)->setTimezone('Indian/Maldives')->format('d M Y, H:i')
+            : 'Ongoing';
+
+        // Helper function to clean and escape user content for WhatsApp
+        $cleanForWhatsApp = function($str) {
+            if (!$str) return '';
+            // Strip all HTML and PHP tags first
+            $str = strip_tags($str);
+            // Decode HTML entities
+            $str = html_entity_decode($str, ENT_QUOTES, 'UTF-8');
+            // Escape WhatsApp markdown characters that users might have entered
+            $str = str_replace(['*', '_', '~', '`'], ['\*', '\_', '\~', '\`'], $str);
+            // Clean up extra whitespace
+            $str = preg_replace('/\s+/', ' ', $str);
+            $str = trim($str);
+            return $str;
+        };
+
+        // Build the formatted text (Professional)
+        $text = "*INCIDENT {$incident->incident_code}*\n\n";
+
+        $text .= "*Started:* {$startedAt}\n";
+        if ($incident->resolved_at) {
+            $text .= "*Resolved:* {$resolvedAt}\n";
+        }
+        $text .= "*Duration:* {$duration}\n";
+        $text .= "*Status:* {$incident->status}\n\n";
+
+        // Only show services section if there are services
+        if ($servicesText) {
+            $text .= "*AFFECTED SERVICES:*\n{$servicesText}\n\n";
+        }
+
+        if ($incident->sites && $incident->sites->isNotEmpty()) {
+            $text .= "*AFFECTED CELLS:*\n{$sitesText}\n\n";
+        }
+
+        if ($incident->fbbIslands && $incident->fbbIslands->isNotEmpty()) {
+            $text .= "*AFFECTED FBB ISLANDS:*\n{$fbbText}\n\n";
+        }
+
+        if ($incident->category && is_object($incident->category)) {
+            $text .= "*CATEGORY:* {$incident->category->name}\n";
+        } elseif ($incident->category && is_string($incident->category)) {
+            $text .= "*CATEGORY:* {$incident->category}\n";
+        }
+        if ($incident->outageCategory && is_object($incident->outageCategory)) {
+            $text .= "*OUTAGE CATEGORY:* {$incident->outageCategory->name}\n";
+        } elseif ($incident->outage_category && is_string($incident->outage_category)) {
+            $text .= "*OUTAGE CATEGORY:* {$incident->outage_category}\n";
+        }
+        if ($incident->root_cause) {
+            $text .= "*ROOT CAUSE:* " . $cleanForWhatsApp($incident->root_cause) . "\n";
+        }
+
+        // Add spacing before summary/resolution if we had category info
+        if ($incident->category || $incident->outageCategory || $incident->root_cause) {
+            $text .= "\n";
+        }
+
+        if ($incident->summary) {
+            $summaryText = $cleanForWhatsApp($incident->summary);
+
+            // Intelligently detect and format cell names
+            // Cell names typically contain underscores, hyphens, and alphanumeric characters
+            // They're usually separated by newlines, commas, or semicolons
+            $formattedSummary = $summaryText;
+
+            // Check if summary contains cell name patterns (e.g., Name_Part_L900-C)
+            // Pattern: Contains underscores/hyphens and appears to be technical cell identifiers
+            $lines = preg_split('/\r\n|\r|\n/', $summaryText);
+            $cellPattern = '/^[A-Za-z0-9_\-]+_[A-Za-z0-9_\-]+/'; // Matches cell name patterns
+
+            $hasCellNames = false;
+            $cellLines = [];
+            $otherLines = [];
+
+            foreach ($lines as $line) {
+                $trimmedLine = trim($line);
+                if (empty($trimmedLine)) continue;
+
+                // Check if line looks like a cell name or comma-separated cell names
+                if (preg_match($cellPattern, $trimmedLine)) {
+                    // Split by comma if multiple cells on one line
+                    $cellsOnLine = array_map('trim', preg_split('/[,;]/', $trimmedLine));
+                    foreach ($cellsOnLine as $cell) {
+                        if (!empty($cell) && preg_match($cellPattern, $cell)) {
+                            $cellLines[] = $cell;
+                            $hasCellNames = true;
+                        }
+                    }
+                } else {
+                    $otherLines[] = $trimmedLine;
+                }
+            }
+
+            // If we detected cell names, format them as numbered list
+            if ($hasCellNames && count($cellLines) > 0) {
+                $formattedSummary = '';
+
+                // Add other text first if any
+                if (count($otherLines) > 0) {
+                    $formattedSummary .= implode("\n", $otherLines) . "\n\n";
+                }
+
+                // Add formatted cell list
+                $formattedSummary .= "*Affected Cells:*\n";
+                $counter = 1;
+                foreach ($cellLines as $cellName) {
+                    $formattedSummary .= "{$counter}. {$cellName}\n";
+                    $counter++;
+                }
+            }
+
+            // Add visual separator and better formatting
+            $text .= "━━━━━━━━━━━━━━━━━━\n";
+            $text .= "*SUMMARY:*\n\n";
+            $text .= $formattedSummary . "\n";
+            $text .= "━━━━━━━━━━━━━━━━━━\n\n";
+        }
+
+        if ($incident->resolution_notes) {
+            $resolutionText = $cleanForWhatsApp($incident->resolution_notes);
+            $text .= "*RESOLUTION:*\n\n";
+            $text .= $resolutionText . "\n\n";
+        }
+
+        // Add delay reason if applicable (incidents that took > 5 hours)
+        if ($incident->delay_reason) {
+            $delayReasonText = $cleanForWhatsApp($incident->delay_reason);
+            $text .= "⚠️ *DELAY REASON:*\n";
+            $text .= $delayReasonText . "\n\n";
+        }
+
+        // Check for recurring incidents in the past 2 months
+        if ($incident->summary) {
+            $twoMonthsAgo = \Carbon\Carbon::now()->subMonths(2);
+
+            // Find similar incidents with the same summary in the past 2 months
+            $recurringIncidents = Incident::where('summary', $incident->summary)
+                ->where('id', '!=', $incident->id) // Exclude current incident
+                ->where('started_at', '>=', $twoMonthsAgo)
+                ->orderBy('started_at', 'desc')
+                ->get();
+
+            if ($recurringIncidents->count() > 0) {
+                $text .= "🔁 *RECURRING INCIDENT ALERT:*\n";
+                $text .= "This incident has occurred *{$recurringIncidents->count()} time(s)* in the past 2 months:\n\n";
+
+                $counter = 1;
+                foreach ($recurringIncidents as $recurring) {
+                    $recurringDate = \Carbon\Carbon::parse($recurring->started_at)
+                        ->setTimezone('Indian/Maldives')
+                        ->format('d M Y, H:i');
+                    $recurringDuration = $recurring->duration_hms ?? 'N/A';
+
+                    $text .= "{$counter}. {$recurring->incident_code} - {$recurringDate}";
+                    if ($recurring->duration_hms) {
+                        $text .= " (Duration: {$recurringDuration})";
+                    }
+                    $text .= "\n";
+                    $counter++;
+                }
+                $text .= "\n";
+            }
+        }
+
+        return response($text, 200)
+            ->header('Content-Type', 'text/plain');
     }
 
 }
