@@ -3,8 +3,8 @@
         class="bg-white/95 backdrop-blur-md shadow-lg border-b-2 border-red-500/20 sticky top-0 z-50 transition-all duration-300">
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 lg:h-20">
-                <div class="flex items-center flex-1 min-w-0">
+            <div class="flex justify-between items-center h-16 lg:h-20">
+                <div class="flex items-center min-w-0 overflow-hidden flex-shrink">
                     <!-- Logo -->
                     <div class="flex-shrink-0">
                         <a href="{{ route('home') }}" class="flex items-center space-x-2 lg:space-x-3">
@@ -20,12 +20,12 @@
                             <div class="hidden sm:block min-w-0">
                                 <div class="flex items-center space-x-2">
                                     <div
-                                        class="text-lg lg:text-xl font-heading font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent truncate">
+                                        class="text-base xl:text-lg font-heading font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent truncate">
                                         Incident Management System</div>
-                                    <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md">v3.6</span>
+                                    <span class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded-md flex-shrink-0">v3.6</span>
                                 </div>
                                 <div
-                                    class="text-xs lg:text-sm font-heading font-medium bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                                    class="text-xs font-heading font-medium bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
                                     Beta</div>
                             </div>
                             <div
@@ -35,9 +35,9 @@
                     </div>
 
                     <!-- Navigation Links -->
-                    <div class="hidden lg:flex lg:ml-8 space-x-2">
+                    <div class="hidden lg:flex lg:ml-6 xl:ml-8 space-x-1 xl:space-x-2 min-w-0 overflow-x-auto">
                         <a href="{{ route('incidents.index') }}"
-                            class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('incidents.*') ? 'bg-gradient-to-r from-red-50 to-red-100 text-red-700 shadow-sm border border-red-200/50' : 'text-gray-600 hover:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100' }}">
+                            class="inline-flex items-center px-2 xl:px-3 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 flex-shrink-0 {{ request()->routeIs('incidents.*') ? 'bg-gradient-to-r from-red-50 to-red-100 text-red-700 shadow-sm border border-red-200/50' : 'text-gray-600 hover:text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100' }}">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.964-1.333-2.732 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
@@ -46,7 +46,7 @@
                         </a>
 
                         <a href="{{ route('logs.index') }}"
-                            class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('logs.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-sm border border-blue-200/50' : 'text-gray-600 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100' }}">
+                            class="inline-flex items-center px-2 xl:px-3 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 flex-shrink-0 {{ request()->routeIs('logs.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 shadow-sm border border-blue-200/50' : 'text-gray-600 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100' }}">
                             <div class="relative">
                                 @php
                                     $unreadCount = \App\Models\Incident::whereNotNull('timeline')
@@ -68,7 +68,7 @@
                         </a>
 
                         <a href="{{ route('reports.index') }}"
-                            class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('reports.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 shadow-sm border border-purple-200/50' : 'text-gray-600 hover:text-purple-600 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100' }}">
+                            class="inline-flex items-center px-2 xl:px-3 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 flex-shrink-0 {{ request()->routeIs('reports.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 shadow-sm border border-purple-200/50' : 'text-gray-600 hover:text-purple-600 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100' }}">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -78,7 +78,7 @@
                         </a>
 
                         <a href="{{ route('rcas.index') }}"
-                            class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('rcas.*') ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 shadow-sm border border-orange-200/50' : 'text-gray-600 hover:text-orange-600 hover:bg-gradient-to-r hover:from-orange-50 hover:to-orange-100' }}">
+                            class="inline-flex items-center px-2 xl:px-3 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 flex-shrink-0 {{ request()->routeIs('rcas.*') ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 shadow-sm border border-orange-200/50' : 'text-gray-600 hover:text-orange-600 hover:bg-gradient-to-r hover:from-orange-50 hover:to-orange-100' }}">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
@@ -89,7 +89,7 @@
                         <!-- Extra Dropdown -->
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" @click.away="open = false"
-                                class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('smart-parser.*') || request()->routeIs('contacts.*') || request()->routeIs('temporary-sites.*') || request()->routeIs('sites.*') || request()->routeIs('fbb-islands.*') ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 shadow-sm border border-green-200/50' : 'text-gray-600 hover:text-green-600 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100' }}">
+                                class="inline-flex items-center px-2 xl:px-3 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 flex-shrink-0 {{ request()->routeIs('smart-parser.*') || request()->routeIs('contacts.*') || request()->routeIs('temporary-sites.*') || request()->routeIs('sites.*') || request()->routeIs('fbb-islands.*') ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-700 shadow-sm border border-green-200/50' : 'text-gray-600 hover:text-green-600 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100' }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
@@ -157,7 +157,7 @@
 
                         @if(Auth::user()->canManageUsers())
                             <a href="{{ route('users.index') }}"
-                                class="inline-flex items-center px-3 lg:px-4 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm border border-indigo-200/50' : 'text-gray-600 hover:text-indigo-600 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-100' }}">
+                                class="inline-flex items-center px-2 xl:px-3 py-2 rounded-xl text-sm font-heading font-medium transition-all duration-300 transform hover:scale-105 flex-shrink-0 {{ request()->routeIs('users.*') ? 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 shadow-sm border border-indigo-200/50' : 'text-gray-600 hover:text-indigo-600 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-100' }}">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
