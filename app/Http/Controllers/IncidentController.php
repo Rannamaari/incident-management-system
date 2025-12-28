@@ -1316,12 +1316,17 @@ class IncidentController extends Controller
         } elseif ($incident->outage_category && is_string($incident->outage_category)) {
             $text .= "*OUTAGE CATEGORY:* {$incident->outage_category}\n";
         }
+        if ($incident->faultType && is_object($incident->faultType)) {
+            $text .= "*FAULT TYPE:* {$incident->faultType->name}\n";
+        } elseif ($incident->fault_type && is_string($incident->fault_type)) {
+            $text .= "*FAULT TYPE:* {$incident->fault_type}\n";
+        }
         if ($incident->root_cause) {
             $text .= "*ROOT CAUSE:* " . $cleanForWhatsApp($incident->root_cause) . "\n";
         }
 
         // Add spacing before summary/resolution if we had category info
-        if ($incident->category || $incident->outageCategory || $incident->root_cause) {
+        if ($incident->category || $incident->outageCategory || $incident->faultType || $incident->root_cause) {
             $text .= "\n";
         }
 
