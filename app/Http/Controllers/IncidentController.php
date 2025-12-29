@@ -162,14 +162,56 @@ class IncidentController extends Controller
         $incident->created_by = auth()->id();
         $incident->updated_by = auth()->id();
 
-        // Try to save and catch model-level validation errors
-        try {
-            $incident->save();
-        } catch (\InvalidArgumentException $e) {
-            // Convert model validation exception to user-friendly error
-            return back()->withErrors([
-                'delay_reason' => $e->getMessage()
-            ])->withInput();
+        // Try to save with retry logic for concurrent incident_code generation
+        $maxRetries = 3;
+        $attempt = 0;
+
+        while ($attempt < $maxRetries) {
+            try {
+                // Wrap in transaction to ensure atomicity with lockForUpdate
+                \DB::transaction(function () use ($incident) {
+                    $incident->save();
+                });
+
+                // Success - break out of retry loop
+                break;
+
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Check if it's a unique constraint violation on incident_code
+                if ($e->getCode() === '23505' && str_contains($e->getMessage(), 'incident_code')) {
+                    $attempt++;
+
+                    if ($attempt >= $maxRetries) {
+                        // All retries exhausted - log and return error
+                        \Log::error('Failed to generate unique incident code after ' . $maxRetries . ' attempts', [
+                            'user_id' => auth()->id(),
+                            'started_at' => $incident->started_at,
+                            'error' => $e->getMessage()
+                        ]);
+
+                        return back()->withErrors([
+                            'incident_code' => 'Unable to generate unique incident code. Please try again in a moment.'
+                        ])->withInput();
+                    }
+
+                    // Retry: Clear the incident_code to force regeneration
+                    $incident->incident_code = null;
+
+                    // Small delay to reduce contention (10-50ms)
+                    usleep(random_int(10000, 50000));
+
+                    continue; // Retry
+                }
+
+                // Not a duplicate incident_code error - rethrow
+                throw $e;
+
+            } catch (\InvalidArgumentException $e) {
+                // Convert model validation exception to user-friendly error
+                return back()->withErrors([
+                    'delay_reason' => $e->getMessage()
+                ])->withInput();
+            }
         }
 
         // Handle RCA file upload

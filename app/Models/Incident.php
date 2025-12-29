@@ -414,13 +414,26 @@ class Incident extends Model
     protected static function generateIncidentCode(Incident $incident): string
     {
         $date = $incident->started_at ? $incident->started_at->format('Ymd') : now()->format('Ymd');
-        
-        // Get daily count of incidents for the same date
-        $dailyCount = static::whereDate('started_at', $incident->started_at ?? now())->count();
-        
+
+        // Use pessimistic locking to prevent race conditions
+        // Lock the last incident for the same date to ensure atomic code generation
+        $lastIncident = static::whereDate('started_at', $incident->started_at ?? now())
+            ->orderByDesc('incident_code')
+            ->lockForUpdate() // 🔒 Pessimistic lock: blocks concurrent reads
+            ->first();
+
+        // Extract the sequence number from the last incident code
+        if ($lastIncident && preg_match('/INC-\d{8}-(\d{4})/', $lastIncident->incident_code, $matches)) {
+            $lastSequence = (int) $matches[1];
+            $nextSequence = $lastSequence + 1;
+        } else {
+            // First incident of the day
+            $nextSequence = 1;
+        }
+
         // Generate code with zero-padded sequential number
-        $sequentialNumber = str_pad($dailyCount + 1, 4, '0', STR_PAD_LEFT);
-        
+        $sequentialNumber = str_pad($nextSequence, 4, '0', STR_PAD_LEFT);
+
         return "INC-{$date}-{$sequentialNumber}";
     }
 
