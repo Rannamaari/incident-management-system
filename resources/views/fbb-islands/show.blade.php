@@ -11,12 +11,12 @@
                     @if($fbbIsland->technology === 'FTTH') bg-blue-100 text-blue-800
                     @elseif($fbbIsland->technology === 'IPOE') bg-green-100 text-green-800
                     @elseif(str_contains($fbbIsland->technology, 'FTTx')) bg-purple-100 text-purple-800
-                    @else bg-gray-100 text-gray-800
+                    @else bg-gray-100 dark:bg-gray-900 text-gray-800
                     @endif">
                     {{ $fbbIsland->technology }}
                 </span>
             </div>
-            <p class="mt-2 text-base text-gray-600">Fixed Broadband Island</p>
+            <p class="mt-2 text-base text-gray-600 dark:text-gray-400">Fixed Broadband Island</p>
         </div>
         <div class="flex gap-3">
             @if(Auth::user()->canManageSites())
@@ -42,8 +42,8 @@
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
 
             <!-- FBB Island Information Card -->
-            <div class="overflow-hidden rounded-2xl sm:rounded-3xl border bg-white shadow-xl p-4 sm:p-6 lg:p-8">
-                <h3 class="text-base sm:text-lg font-heading font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
+            <div class="overflow-hidden rounded-2xl sm:rounded-3xl border bg-white dark:bg-gray-800 shadow-xl p-4 sm:p-6 lg:p-8">
+                <h3 class="text-base sm:text-lg font-heading font-bold text-gray-900 dark:text-gray-100 mb-4 sm:mb-6 flex items-center gap-2">
                     <svg class="h-5 w-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -59,18 +59,18 @@
                         </div>
 
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Region</dt>
-                            <dd class="text-base font-semibold text-gray-900">{{ $fbbIsland->region->name }} ({{ $fbbIsland->region->code }})</dd>
+                            <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Region</dt>
+                            <dd class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $fbbIsland->region->name }} ({{ $fbbIsland->region->code }})</dd>
                         </div>
 
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <dt class="text-xs font-medium text-gray-500 uppercase mb-2">Technology</dt>
+                            <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Technology</dt>
                             <dd>
                                 <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold
                                     @if($fbbIsland->technology === 'FTTH') bg-blue-100 text-blue-800
                                     @elseif($fbbIsland->technology === 'IPOE') bg-green-100 text-green-800
                                     @elseif(str_contains($fbbIsland->technology, 'FTTx')) bg-purple-100 text-purple-800
-                                    @else bg-gray-100 text-gray-800
+                                    @else bg-gray-100 dark:bg-gray-900 text-gray-800
                                     @endif">
                                     {{ $fbbIsland->technology }}
                                 </span>
@@ -81,7 +81,7 @@
                     <!-- Right Column -->
                     <div class="space-y-6">
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <dt class="text-xs font-medium text-gray-500 uppercase mb-2">Status</dt>
+                            <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Status</dt>
                             <dd>
                                 <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold
                                     @if($fbbIsland->is_active) bg-green-100 text-green-800
@@ -93,13 +93,13 @@
                         </div>
 
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Created</dt>
-                            <dd class="text-sm text-gray-900">{{ $fbbIsland->created_at->timezone('Indian/Maldives')->format('M d, Y - h:i A') }}</dd>
+                            <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Created</dt>
+                            <dd class="text-sm text-gray-900 dark:text-gray-100">{{ $fbbIsland->created_at->timezone('Indian/Maldives')->format('M d, Y - h:i A') }}</dd>
                         </div>
 
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <dt class="text-xs font-medium text-gray-500 uppercase mb-1">Last Updated</dt>
-                            <dd class="text-sm text-gray-900">{{ $fbbIsland->updated_at->timezone('Indian/Maldives')->format('M d, Y - h:i A') }}</dd>
+                            <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Last Updated</dt>
+                            <dd class="text-sm text-gray-900 dark:text-gray-100">{{ $fbbIsland->updated_at->timezone('Indian/Maldives')->format('M d, Y - h:i A') }}</dd>
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                             </svg>
                             Remarks
                         </dt>
-                        <dd class="text-sm text-gray-700 whitespace-pre-line">{{ $fbbIsland->remarks }}</dd>
+                        <dd class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ $fbbIsland->remarks }}</dd>
                     </div>
                 @endif
             </div>
@@ -126,26 +126,26 @@
                     ->get();
             @endphp
 
-            <div class="overflow-hidden rounded-3xl border bg-white shadow-xl p-8">
-                <h3 class="text-lg font-heading font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <svg class="h-5 w-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="overflow-hidden rounded-3xl border bg-white dark:bg-gray-800 shadow-xl p-8">
+                <h3 class="text-lg font-heading font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
+                    <svg class="h-5 w-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                     Related Outages
                     @if($relatedIncidents->count() > 0)
-                        <span class="ml-auto text-xs font-normal text-gray-500">(Last {{ $relatedIncidents->count() }} incidents)</span>
+                        <span class="ml-auto text-xs font-normal text-gray-500 dark:text-gray-400">(Last {{ $relatedIncidents->count() }} incidents)</span>
                     @endif
                 </h3>
 
                 @if($relatedIncidents->count() > 0)
                     <div class="space-y-3">
                         @foreach($relatedIncidents as $incident)
-                            <a href="{{ route('incidents.show', $incident) }}" class="block border border-gray-200 rounded-xl p-4 hover:bg-purple-50 hover:border-purple-300 transition-colors">
+                            <a href="{{ route('incidents.show', $incident) }}" class="block border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:bg-purple-50 hover:border-purple-300 dark:border-purple-700 transition-colors">
                                 <div class="flex items-start justify-between gap-4">
                                     <div class="flex-1">
-                                        <p class="font-semibold text-gray-900 mb-2">{{ $incident->summary }}</p>
+                                        <p class="font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ $incident->summary }}</p>
                                         <div class="flex flex-wrap gap-2 text-xs">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-md bg-gray-100 text-gray-700">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300">
                                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                 </svg>
@@ -159,7 +159,7 @@
                                                     Duration: {{ $incident->duration_hms }}
                                                 </span>
                                             @endif
-                                            <span class="inline-flex items-center px-2 py-1 rounded-md bg-blue-100 text-blue-700">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-md bg-blue-100 text-blue-700 dark:text-blue-400">
                                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                                 </svg>
@@ -181,8 +181,8 @@
                         <svg class="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <p class="mt-4 text-base font-medium text-gray-900">No outages recorded</p>
-                        <p class="mt-1 text-sm text-gray-500">This FBB island has no incident history.</p>
+                        <p class="mt-4 text-base font-medium text-gray-900 dark:text-gray-100">No outages recorded</p>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">This FBB island has no incident history.</p>
                     </div>
                 @endif
             </div>

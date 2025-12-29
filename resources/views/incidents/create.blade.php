@@ -6,7 +6,7 @@
             <h2 class="font-heading text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 Create New Incident
             </h2>
-            <p class="mt-2 text-lg text-gray-600 font-medium">Report and track a new system incident</p>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400 font-medium">Report and track a new system incident</p>
         </div>
 
         <div class="flex gap-3">
@@ -54,12 +54,12 @@
                 </div>
 
                 <!-- SLA Summary -->
-                <div class="rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-sm p-5 shadow-sm">
+                <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-5 shadow-sm">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex-1">
-                            <h4 class="font-heading mb-3 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">SLA Summary</h4>
+                            <h4 class="font-heading mb-3 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">SLA Summary</h4>
                             <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                <div class="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 p-3 border border-green-200/30">
+                                <div class="rounded-xl bg-gradient-to-br from-green-50 to-emerald-50 p-3 border border-green-200 dark:border-green-700/30">
                                     <dt class="text-green-800 font-medium text-sm">Low</dt>
                                     <dd class="font-bold text-green-900 text-lg">12h</dd>
                                 </div>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <button type="button" onclick="dismissHelpSection()"
-                            class="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                            class="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -89,7 +89,7 @@
                 <!-- Show Help Button (appears when help is dismissed) -->
                 <div id="show-help-btn-container" class="hidden">
                     <button type="button" onclick="showHelpSection()"
-                        class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
+                        class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 16h-1v-4h-1m1-4h.01M12 19a7 7 0 100-14 7 7 0 000 14z" />
@@ -100,9 +100,9 @@
             </div>
 
             <!-- Main Form -->
-            <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
+            <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg">
                 <!-- Section Header -->
-                <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
+                <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-md">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,8 +111,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Incident Details</h3>
-                            <p class="text-sm text-gray-600">Fill in the fields below</p>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Incident Details</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Fill in the fields below</p>
                         </div>
                     </div>
                 </div>
@@ -154,14 +154,14 @@
 
                         <!-- Group 1: Basics -->
                         <div>
-                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Step 1: Select Affected Systems</h4>
+                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">Step 1: Select Affected Systems</h4>
                             <div class="space-y-6">
 
                                 <!-- Affected Services - MOVED TO TOP -->
                                 <div>
-                                    <label class="block text-sm font-heading font-medium text-gray-700 mb-3">Affected Systems/Services
+                                    <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-3">Affected Systems/Services
                                         <span class="text-red-500">*</span></label>
-                                    <p class="text-xs text-gray-500 mb-3">Select one or more affected systems/services</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Select one or more affected systems/services</p>
                                     <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
                                         @php
                                             $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data', 'Others'];
@@ -177,10 +177,10 @@
                                                        id="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}"
                                                        value="{{ $option }}"
                                                        {{ in_array($option, $oldValues) ? 'checked' : '' }}
-                                                       class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 transition-all duration-200"
+                                                       class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-2 transition-all duration-200"
                                                        onchange="toggleOthersInput()">
                                                 <label for="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}"
-                                                       class="ml-2 text-sm font-heading font-medium text-gray-700 cursor-pointer hover:text-blue-600 transition-colors">
+                                                       class="ml-2 text-sm font-heading font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:text-blue-600 transition-colors">
                                                     {{ $option }}
                                                 </label>
                                             </div>
@@ -189,7 +189,7 @@
 
                                     <!-- Others Input Field -->
                                     <div id="affected_services_others_input" class="mt-3" style="display: none;">
-                                        <label for="affected_services_others_text" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                        <label for="affected_services_others_text" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             Please specify other affected services
                                         </label>
                                         <input type="text"
@@ -197,13 +197,13 @@
                                                id="affected_services_others_text"
                                                placeholder="Enter other affected services..."
                                                value="{{ old('affected_services_others_text') }}"
-                                               class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
+                                               class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-blue-50/50 transition-all duration-300">
                                     </div>
 
                                     <input type="hidden" name="affected_services_validation" value="1">
-                                    @error('affected_services') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                                    @error('affected_services.*') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                                    @error('affected_services_others_text') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                                    @error('affected_services') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+                                    @error('affected_services.*') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+                                    @error('affected_services_others_text') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                 </div>
 
                                 <!-- Site Impact Fields (Conditional) -->
@@ -424,14 +424,14 @@
                                                     if (selectedSitesCount === 0 && selectedFbbCount === 0) {
                                                         summaryField.readOnly = false;
                                                         summaryField.classList.remove('bg-gray-50', 'cursor-not-allowed');
-                                                        summaryField.classList.add('bg-white');
+                                                        summaryField.classList.add('bg-white dark:bg-gray-800');
                                                         return;
                                                     }
 
                                                     // Make field readonly
                                                     summaryField.readOnly = true;
                                                     summaryField.classList.add('bg-gray-50', 'cursor-not-allowed');
-                                                    summaryField.classList.remove('bg-white');
+                                                    summaryField.classList.remove('bg-white dark:bg-gray-800');
 
                                                     // Generate summary - sites and FBB islands, separated by commas
                                                     let summaryLines = [];
@@ -559,7 +559,7 @@
                                          x-transition:leave="transition ease-in duration-200"
                                          x-transition:leave-start="opacity-100"
                                          x-transition:leave-end="opacity-0"
-                                         class="bg-green-50/50 border border-green-200 rounded-xl p-6 mt-4">
+                                         class="bg-green-50/50 border border-green-200 dark:border-green-700 rounded-xl p-6 mt-4">
 
                                         <h5 class="font-heading text-sm font-semibold text-green-900 mb-4 flex items-center gap-2">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -568,33 +568,33 @@
                                             </svg>
                                             Select Affected Sites
                                         </h5>
-                                        <p class="text-sm text-green-700 mb-4">Search and select specific sites affected by this outage</p>
+                                        <p class="text-sm text-green-700 dark:text-green-400 mb-4">Search and select specific sites affected by this outage</p>
 
                                         <!-- Selected Sites Summary (Above List) -->
                                         <div x-show="Object.keys(selectedSites).length > 0"
                                              x-transition
-                                             class="mb-4 p-4 bg-green-50 border border-green-300 rounded-xl">
+                                             class="mb-4 p-4 bg-green-50 border border-green-300 dark:border-green-700 rounded-xl">
                                             <div class="flex items-center justify-between mb-3">
                                                 <p class="text-sm font-semibold text-green-900">
                                                     <span x-text="Object.keys(selectedSites).length"></span> site(s) selected
                                                 </p>
                                                 <button type="button"
                                                         @click="selectedSites = {}; updateCountInputs();"
-                                                        class="text-xs text-red-600 hover:text-red-800 font-medium transition-colors">
+                                                        class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium transition-colors">
                                                     Clear All
                                                 </button>
                                             </div>
                                             <div class="flex flex-wrap gap-2">
                                                 <template x-for="(techs, siteId) in selectedSites" :key="siteId">
-                                                    <div class="inline-flex items-center gap-2 bg-white border border-green-300 rounded-lg px-3 py-1.5 shadow-sm">
+                                                    <div class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 border border-green-300 dark:border-green-700 rounded-lg px-3 py-1.5 shadow-sm">
                                                         <div class="text-xs">
-                                                            <span class="font-semibold text-gray-900" x-text="sites.find(s => s.id == siteId)?.site_code || 'Unknown'"></span>
-                                                            <span class="text-gray-500 mx-1">•</span>
-                                                            <span class="text-green-700 font-medium" x-text="Array.isArray(techs) ? techs.join('/') : ''"></span>
+                                                            <span class="font-semibold text-gray-900 dark:text-gray-100" x-text="sites.find(s => s.id == siteId)?.site_code || 'Unknown'"></span>
+                                                            <span class="text-gray-500 dark:text-gray-400 mx-1">•</span>
+                                                            <span class="text-green-700 dark:text-green-400 font-medium" x-text="Array.isArray(techs) ? techs.join('/') : ''"></span>
                                                         </div>
                                                         <button type="button"
                                                                 @click="removeSite(siteId)"
-                                                                class="text-gray-400 hover:text-red-600 transition-colors flex-shrink-0"
+                                                                class="text-gray-400 hover:text-red-600 dark:text-red-400 transition-colors flex-shrink-0"
                                                                 title="Remove this site">
                                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -608,16 +608,16 @@
                                         <!-- Search and Filters -->
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                             <div>
-                                                <label class="block text-sm font-medium text-gray-700 mb-2">Search Sites</label>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search Sites</label>
                                                 <input type="text"
                                                        x-model="searchSite"
                                                        placeholder="Search by code or name..."
-                                                       class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300">
+                                                       class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-2 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300">
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Region</label>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Region</label>
                                                 <select x-model="selectedRegion"
-                                                        class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300">
+                                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-2 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300">
                                                     <option value="">All Regions</option>
                                                     @foreach($regions as $region)
                                                         <option value="{{ $region->id }}">{{ $region->name }} ({{ $region->code }})</option>
@@ -627,17 +627,17 @@
                                         </div>
 
                                         <!-- Sites List (2 Column Layout) -->
-                                        <div class="max-h-96 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-2 border border-green-200 rounded-lg p-4 bg-white">
+                                        <div class="max-h-96 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-2 border border-green-200 dark:border-green-700 rounded-lg p-4 bg-white dark:bg-gray-800">
                                             <template x-for="site in filteredSites" :key="site.id">
-                                                <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors h-fit">
+                                                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 hover:bg-gray-50 transition-colors h-fit">
                                                     <div class="flex items-start gap-3">
                                                         <input type="checkbox"
                                                                :checked="selectedSites[site.id]"
                                                                @change="toggleSite(site.id)"
-                                                               class="mt-1 h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                                               class="mt-1 h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-green-600 focus:ring-green-500 dark:focus:ring-green-400">
                                                         <div class="flex-1">
-                                                            <div class="font-medium text-gray-900" x-text="site.display_name"></div>
-                                                            <div class="text-sm text-gray-500">
+                                                            <div class="font-medium text-gray-900 dark:text-gray-100" x-text="site.display_name"></div>
+                                                            <div class="text-sm text-gray-500 dark:text-gray-400">
                                                                 <span x-text="site.region?.code || 'N/A'"></span> -
                                                                 <span x-text="site.location?.location_name || 'N/A'"></span>
                                                             </div>
@@ -649,11 +649,11 @@
                                                                 <!-- FBB Only Mode -->
                                                                 <template x-if="isFbbOnlyMode">
                                                                     <div>
-                                                                        <div class="text-xs font-medium text-gray-600 mb-1">FBB Service:</div>
+                                                                        <div class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">FBB Service:</div>
                                                                         <div class="flex gap-2 flex-wrap">
                                                                             <button type="button"
                                                                                     @click="toggleTechnology(site.id, 'FBB')"
-                                                                                    :class="selectedSites[site.id] && selectedSites[site.id].includes('FBB') ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'"
+                                                                                    :class="selectedSites[site.id] && selectedSites[site.id].includes('FBB') ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600 dark:text-gray-400'"
                                                                                     class="px-3 py-1 rounded-lg text-xs font-medium hover:opacity-80 transition-all">
                                                                                 FBB (Supernet)
                                                                             </button>
@@ -664,12 +664,12 @@
                                                                 <!-- Normal Mode (Cellular + Other Services) -->
                                                                 <template x-if="!isFbbOnlyMode">
                                                                     <div>
-                                                                        <div class="text-xs font-medium text-gray-600 mb-1">Cellular Technologies:</div>
+                                                                        <div class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Cellular Technologies:</div>
                                                                         <div class="flex gap-2 flex-wrap">
                                                                             <template x-for="tech in site.technologies?.filter(t => ['2G', '3G', '4G', '5G'].includes(t.technology) && t.is_active) || []" :key="tech.technology">
                                                                                 <button type="button"
                                                                                         @click="toggleTechnology(site.id, tech.technology)"
-                                                                                        :class="selectedSites[site.id] && selectedSites[site.id].includes(tech.technology) ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'"
+                                                                                        :class="selectedSites[site.id] && selectedSites[site.id].includes(tech.technology) ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600 dark:text-gray-400'"
                                                                                         class="px-3 py-1 rounded-lg text-xs font-medium hover:opacity-80 transition-all"
                                                                                         x-text="tech.technology">
                                                                                 </button>
@@ -678,12 +678,12 @@
 
                                                                         <template x-if="site.technologies?.some(t => ['ILL', 'SIP', 'IPTV'].includes(t.technology) && t.is_active)">
                                                                             <div>
-                                                                                <div class="text-xs font-medium text-gray-600 mb-1 mt-2">Other Services:</div>
+                                                                                <div class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 mt-2">Other Services:</div>
                                                                                 <div class="flex gap-2 flex-wrap">
                                                                                     <template x-for="tech in site.technologies?.filter(t => ['ILL', 'SIP', 'IPTV'].includes(t.technology) && t.is_active) || []" :key="tech.technology">
                                                                                         <button type="button"
                                                                                                 @click="toggleTechnology(site.id, tech.technology)"
-                                                                                                :class="selectedSites[site.id] && selectedSites[site.id].includes(tech.technology) ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'"
+                                                                                                :class="selectedSites[site.id] && selectedSites[site.id].includes(tech.technology) ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 dark:text-gray-400'"
                                                                                                 class="px-3 py-1 rounded-lg text-xs font-medium hover:opacity-80 transition-all"
                                                                                                 x-text="tech.technology">
                                                                                         </button>
@@ -709,7 +709,7 @@
                                             </template>
 
                                             <!-- No results message -->
-                                            <div x-show="filteredSites.length === 0" class="text-center py-8 text-gray-500">
+                                            <div x-show="filteredSites.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
                                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
@@ -726,7 +726,7 @@
                                          x-transition:leave="transition ease-in duration-200"
                                          x-transition:leave-start="opacity-100"
                                          x-transition:leave-end="opacity-0"
-                                         class="bg-purple-50/50 border border-purple-200 rounded-xl p-6 mt-4">
+                                         class="bg-purple-50/50 border border-purple-200 dark:border-purple-700 rounded-xl p-6 mt-4">
 
                                         <h5 class="font-heading text-sm font-semibold text-purple-900 mb-4 flex items-center gap-2">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -734,31 +734,31 @@
                                             </svg>
                                             Select Affected FBB Islands
                                         </h5>
-                                        <p class="text-sm text-purple-700 mb-4">Search and select FBB islands affected by this outage</p>
+                                        <p class="text-sm text-purple-700 dark:text-purple-400 mb-4">Search and select FBB islands affected by this outage</p>
 
                                         <!-- Selected FBB Islands Summary -->
                                         <div x-show="selectedFbbIslands.length > 0"
                                              x-transition
-                                             class="mb-4 p-4 bg-purple-50 border border-purple-300 rounded-xl">
+                                             class="mb-4 p-4 bg-purple-50 border border-purple-300 dark:border-purple-700 rounded-xl">
                                             <div class="flex items-center justify-between mb-3">
                                                 <p class="text-sm font-semibold text-purple-900">
                                                     <span x-text="selectedFbbIslands.length"></span> FBB island(s) selected
                                                 </p>
                                                 <button type="button"
                                                         @click="selectedFbbIslands = []; document.getElementById('fbb_impacted').value = 0; updateSummary();"
-                                                        class="text-xs text-red-600 hover:text-red-800 font-medium transition-colors">
+                                                        class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 font-medium transition-colors">
                                                     Clear All
                                                 </button>
                                             </div>
                                             <div class="flex flex-wrap gap-2">
                                                 <template x-for="islandId in selectedFbbIslands" :key="islandId">
-                                                    <div class="inline-flex items-center gap-2 bg-white border border-purple-300 rounded-lg px-3 py-1.5 shadow-sm">
+                                                    <div class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 border border-purple-300 dark:border-purple-700 rounded-lg px-3 py-1.5 shadow-sm">
                                                         <div class="text-xs">
-                                                            <span class="font-semibold text-gray-900" x-text="fbbIslands.find(i => i.id == islandId)?.full_name || 'Unknown'"></span>
+                                                            <span class="font-semibold text-gray-900 dark:text-gray-100" x-text="fbbIslands.find(i => i.id == islandId)?.full_name || 'Unknown'"></span>
                                                         </div>
                                                         <button type="button"
                                                                 @click="removeFbbIsland(islandId)"
-                                                                class="text-gray-400 hover:text-red-600 transition-colors flex-shrink-0"
+                                                                class="text-gray-400 hover:text-red-600 dark:text-red-400 transition-colors flex-shrink-0"
                                                                 title="Remove this island">
                                                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -772,16 +772,16 @@
                                         <!-- Search and Filters -->
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                             <div>
-                                                <label class="block text-sm font-medium text-gray-700 mb-2">Search Islands</label>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search Islands</label>
                                                 <input type="text"
                                                        x-model="searchFbbIsland"
                                                        placeholder="Search by island name..."
-                                                       class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 bg-white transition-all duration-300">
+                                                       class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-2 shadow-sm focus:border-purple-600 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-600/20 dark:focus:ring-purple-400/20 bg-white dark:bg-gray-800 transition-all duration-300">
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-medium text-gray-700 mb-2">Filter by Region</label>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Region</label>
                                                 <select x-model="selectedFbbRegion"
-                                                        class="w-full rounded-xl border border-gray-300 px-4 py-2 shadow-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 bg-white transition-all duration-300">
+                                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-2 shadow-sm focus:border-purple-600 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-600/20 dark:focus:ring-purple-400/20 bg-white dark:bg-gray-800 transition-all duration-300">
                                                     <option value="">All Regions</option>
                                                     @foreach($regions as $region)
                                                         <option value="{{ $region->id }}">{{ $region->name }} ({{ $region->code }})</option>
@@ -791,17 +791,17 @@
                                         </div>
 
                                         <!-- FBB Islands List -->
-                                        <div class="max-h-96 overflow-y-auto grid grid-cols-1 md:grid-cols-3 gap-2 border border-purple-200 rounded-lg p-4 bg-white">
+                                        <div class="max-h-96 overflow-y-auto grid grid-cols-1 md:grid-cols-3 gap-2 border border-purple-200 dark:border-purple-700 rounded-lg p-4 bg-white dark:bg-gray-800">
                                             <template x-for="island in filteredFbbIslands" :key="island.id">
-                                                <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors">
+                                                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 hover:bg-gray-50 transition-colors">
                                                     <label class="flex items-start gap-3 cursor-pointer">
                                                         <input type="checkbox"
                                                                :checked="selectedFbbIslands.includes(island.id)"
                                                                @change="toggleFbbIsland(island.id)"
-                                                               class="mt-1 h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                                                               class="mt-1 h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-500 dark:focus:ring-purple-400">
                                                         <div class="flex-1">
-                                                            <div class="font-medium text-gray-900" x-text="island.island_name"></div>
-                                                            <div class="text-xs text-gray-500">
+                                                            <div class="font-medium text-gray-900 dark:text-gray-100" x-text="island.island_name"></div>
+                                                            <div class="text-xs text-gray-500 dark:text-gray-400">
                                                                 <span x-text="island.region?.code || 'N/A'"></span>
                                                             </div>
                                                             <div class="mt-1">
@@ -822,7 +822,7 @@
                                             </template>
 
                                             <!-- No results message -->
-                                            <div x-show="filteredFbbIslands.length === 0" class="col-span-full text-center py-8 text-gray-500">
+                                            <div x-show="filteredFbbIslands.length === 0" class="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
                                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
@@ -836,48 +836,48 @@
                                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <!-- Status -->
                                     <div>
-                                        <label for="status" class="block text-sm font-heading font-medium text-gray-700 mb-2">Incident
+                                        <label for="status" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Incident
                                             Status <span class="text-red-500">*</span></label>
                                         <select name="status" id="status"
-                                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('status') border-red-300 @enderror">
+                                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('status') border-red-300 dark:border-red-700 @enderror">
                                             @foreach(\App\Models\Incident::STATUSES as $status)
                                                 <option value="{{ $status }}" {{ old('status', 'Open') === $status ? 'selected' : '' }}>{{ $status }}</option>
                                             @endforeach
                                         </select>
-                                        @error('status') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @error('status') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <!-- Severity -->
                                     <div>
-                                        <label for="severity" class="block text-sm font-heading font-medium text-gray-700 mb-2">Severity
+                                        <label for="severity" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Severity
                                             Level <span class="text-red-500">*</span></label>
                                         <select name="severity" id="severity"
-                                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('severity') border-red-300 @enderror">
+                                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('severity') border-red-300 dark:border-red-700 @enderror">
                                             @foreach(\App\Models\Incident::SEVERITIES as $severity)
                                                 <option value="{{ $severity }}" {{ old('severity', 'Low') === $severity ? 'selected' : '' }}>{{ $severity }}</option>
                                             @endforeach
                                         </select>
-                                        <p id="slaHint" class="mt-2 text-sm text-gray-600">SLA is derived from Severity.</p>
-                                        @error('severity') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        <p id="slaHint" class="mt-2 text-sm text-gray-600 dark:text-gray-400">SLA is derived from Severity.</p>
+                                        @error('severity') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
 
                                 <!-- Step 2: Categorization & Summary (Two Column Layout) -->
                                 <div class="mt-8">
-                                    <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Step 2: Categorize & Describe</h4>
+                                    <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">Step 2: Categorize & Describe</h4>
                                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                         <!-- Left Column: Categories -->
                                         <div class="space-y-4">
                                             <!-- Outage Category -->
                                             <div>
                                                 <label for="outage_category_id"
-                                                    class="block text-sm font-heading font-medium text-gray-700 mb-2">Outage Category <span
+                                                    class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Outage Category <span
                                                         class="text-red-500">*</span></label>
                                                 <select name="outage_category_id" id="outage_category_id"
                                                     onchange="toggleNewInput('outage_category')"
-                                                    class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('outage_category_id') border-red-300 @enderror">
+                                                    class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('outage_category_id') border-red-300 dark:border-red-700 @enderror">
                                                     <option value="">Select Outage Category</option>
                                                     @foreach($outageCategories as $outageCategory)
                                                         <option value="{{ $outageCategory->id }}" {{ old('outage_category_id') == $outageCategory->id ? 'selected' : '' }}>
@@ -886,24 +886,24 @@
                                                     @endforeach
                                                     <option value="new">Add new...</option>
                                                 </select>
-                                                @error('outage_category_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                                @error('outage_category_id') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
 
                                                 <!-- New Outage Category Input -->
                                                 <div id="new_outage_category_input" class="mt-2" style="display: none;">
                                                     <input type="text" name="new_outage_category_name" id="new_outage_category_name"
                                                         placeholder="Enter new outage category name"
                                                         value="{{ old('new_outage_category_name') }}"
-                                                        class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
+                                                        class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-blue-50/50 transition-all duration-300">
                                                 </div>
                                             </div>
 
                                             <!-- Category -->
                                             <div>
-                                                <label for="category_id" class="block text-sm font-heading font-medium text-gray-700 mb-2">Category
+                                                <label for="category_id" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Category
                                                     <span class="text-red-500">*</span></label>
                                                 <select name="category_id" id="category_id"
                                                     onchange="toggleNewInput('category')"
-                                                    class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('category_id') border-red-300 @enderror">
+                                                    class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('category_id') border-red-300 dark:border-red-700 @enderror">
                                                     <option value="">Select Category</option>
                                                     @foreach($categories as $category)
                                                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
@@ -912,30 +912,30 @@
                                                     @endforeach
                                                     <option value="new">Add new...</option>
                                                 </select>
-                                                @error('category_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                                @error('category_id') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
 
                                                 <!-- New Category Input -->
                                                 <div id="new_category_input" class="mt-2" style="display: none;">
                                                     <input type="text" name="new_category_name" id="new_category_name"
                                                         placeholder="Enter new category name"
                                                         value="{{ old('new_category_name') }}"
-                                                        class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
+                                                        class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-blue-50/50 transition-all duration-300">
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- Right Column: Summary -->
                                         <div>
-                                            <label for="summary" class="block text-sm font-heading font-medium text-gray-700 mb-2">Outage
+                                            <label for="summary" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Outage
                                                 Details (Incident Summary) <span class="text-red-500">*</span></label>
-                                            <p class="text-xs text-gray-500 mb-2">Auto-fills when sites or FBB islands are selected, or enter manually</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Auto-fills when sites or FBB islands are selected, or enter manually</p>
                                             <textarea name="summary" id="summary" rows="8" maxlength="1000"
                                                 placeholder="Provide detailed description of the incident..."
-                                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 resize-y @error('summary') border-red-300 @enderror"
+                                                class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 resize-y @error('summary') border-red-300 dark:border-red-700 @enderror"
                                                 oninput="updateCharCount('summary', 1000)">{{ old('summary') }}</textarea>
                                             <div class="mt-1 flex justify-between">
-                                                <div>@error('summary') <span class="text-sm text-red-600">{{ $message }}</span> @enderror</div>
-                                                <div class="text-xs text-gray-500">
+                                                <div>@error('summary') <span class="text-sm text-red-600 dark:text-red-400">{{ $message }}</span> @enderror</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">
                                                     <span id="summary-count">{{ strlen(old('summary', '')) }}</span>/1000 characters
                                                 </div>
                                             </div>
@@ -948,57 +948,57 @@
 
                         <!-- Group 2: Timing -->
                         <div>
-                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Timing</h4>
+                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">Timing</h4>
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <!-- Started At -->
                                 <div>
-                                    <label for="started_at" class="block text-sm font-heading font-medium text-gray-700 mb-2">Start
+                                    <label for="started_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Start
                                         Date and Time <span class="text-red-500">*</span></label>
                                     <input type="datetime-local" name="started_at" id="started_at"
                                         value="{{ old('started_at') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('started_at') border-red-300 @enderror">
-                                    @error('started_at') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('started_at') border-red-300 dark:border-red-700 @enderror">
+                                    @error('started_at') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
-                                    <p class="mt-1 text-xs text-gray-500">Enter the actual time when the incident started</p>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Enter the actual time when the incident started</p>
                                 </div>
 
                                 <!-- Resolved At (Only shown when status is Closed) -->
                                 <div id="resolved-at-field" style="display: none;">
-                                    <label for="resolved_at" class="block text-sm font-heading font-medium text-gray-700 mb-2">Date
+                                    <label for="resolved_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Date
                                         and Time Resolved <span class="text-red-500">*</span></label>
                                     <input type="datetime-local" name="resolved_at" id="resolved_at"
                                         value="{{ old('resolved_at', now()->format('Y-m-d\TH:i')) }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('resolved_at') border-red-300 @enderror">
-                                    @error('resolved_at') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('resolved_at') border-red-300 dark:border-red-700 @enderror">
+                                    @error('resolved_at') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <!-- Manual Duration -->
                                 <div class="sm:col-span-2">
                                     <label for="duration_minutes"
-                                        class="block text-sm font-heading font-medium text-gray-700 mb-2">Manual Duration (minutes,
+                                        class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Manual Duration (minutes,
                                         optional)</label>
                                     <input type="number" name="duration_minutes" id="duration_minutes" min="0"
                                         value="{{ old('duration_minutes') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('duration_minutes') border-red-300 @enderror">
-                                    <p class="mt-2 text-sm text-gray-500">Leave blank to auto-calc from Start/Resolved</p>
-                                    @error('duration_minutes') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('duration_minutes') border-red-300 dark:border-red-700 @enderror">
+                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Leave blank to auto-calc from Start/Resolved</p>
+                                    @error('duration_minutes') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                 </div>
                             </div>
                         </div>
 
                         <!-- Group 3: Fault & Notes -->
                         <div>
-                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Fault & Notes</h4>
+                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">Fault & Notes</h4>
                             <div class="space-y-4">
                                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                     <!-- Fault Type -->
                                     <div>
                                         <label for="fault_type_id"
-                                            class="block text-sm font-heading font-medium text-gray-700 mb-2">Fault/Issue Type</label>
+                                            class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Fault/Issue Type</label>
                                         <select name="fault_type_id" id="fault_type_id"
                                             onchange="toggleNewInput('fault_type')"
-                                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('fault_type_id') border-red-300 @enderror">
+                                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('fault_type_id') border-red-300 dark:border-red-700 @enderror">
                                             <option value="">Select Fault Type</option>
                                             @foreach($faultTypes as $faultType)
                                                 <option value="{{ $faultType->id }}" {{ old('fault_type_id') == $faultType->id ? 'selected' : '' }}>
@@ -1007,24 +1007,24 @@
                                             @endforeach
                                             <option value="new">Add new...</option>
                                         </select>
-                                        @error('fault_type_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                        @error('fault_type_id') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
 
                                         <!-- New Fault Type Input -->
                                         <div id="new_fault_type_input" class="mt-2" style="display: none;">
                                             <input type="text" name="new_fault_type_name" id="new_fault_type_name"
                                                 placeholder="Enter new fault type name"
                                                 value="{{ old('new_fault_type_name') }}"
-                                                class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
+                                                class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-blue-50/50 transition-all duration-300">
                                         </div>
                                     </div>
 
                                     <!-- Resolution Team -->
                                     <div>
                                         <label for="resolution_team_id"
-                                            class="block text-sm font-heading font-medium text-gray-700 mb-2">Resolution Team</label>
+                                            class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Resolution Team</label>
                                         <select name="resolution_team_id" id="resolution_team_id"
                                             onchange="toggleNewInput('resolution_team')"
-                                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('resolution_team_id') border-red-300 @enderror">
+                                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('resolution_team_id') border-red-300 dark:border-red-700 @enderror">
                                             <option value="">Select Resolution Team</option>
                                             @foreach($resolutionTeams as $resolutionTeam)
                                                 <option value="{{ $resolutionTeam->id }}" {{ old('resolution_team_id') == $resolutionTeam->id ? 'selected' : '' }}>
@@ -1033,33 +1033,33 @@
                                             @endforeach
                                             <option value="new">Add new...</option>
                                         </select>
-                                        @error('resolution_team_id') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                        @error('resolution_team_id') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
 
                                         <!-- New Resolution Team Input -->
                                         <div id="new_resolution_team_input" class="mt-2" style="display: none;">
                                             <input type="text" name="new_resolution_team_name" id="new_resolution_team_name"
                                                 placeholder="Enter new resolution team name"
                                                 value="{{ old('new_resolution_team_name') }}"
-                                                class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-blue-50/50 transition-all duration-300">
+                                                class="w-full rounded-xl border border-blue-300 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-blue-50/50 transition-all duration-300">
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Root Cause -->
                                 <div>
-                                    <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700 mb-2">Root Cause</label>
+                                    <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Root Cause</label>
                                     <textarea name="root_cause" id="root_cause" rows="4"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('root_cause') border-red-300 @enderror">{{ old('root_cause') }}</textarea>
-                                    @error('root_cause') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('root_cause') border-red-300 dark:border-red-700 @enderror">{{ old('root_cause') }}</textarea>
+                                    @error('root_cause') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <!-- Delay Reason -->
                                 <div>
-                                    <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700 mb-2">Reason for Delay</label>
+                                    <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Reason for Delay</label>
                                     <textarea name="delay_reason" id="delay_reason" rows="4"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('delay_reason') border-red-300 @enderror">{{ old('delay_reason') }}</textarea>
-                                    @error('delay_reason') <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('delay_reason') border-red-300 dark:border-red-700 @enderror">{{ old('delay_reason') }}</textarea>
+                                    @error('delay_reason') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -1067,55 +1067,55 @@
 
                         <!-- Group 4: Travel & Work -->
                         <div>
-                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Travel & Work</h4>
+                            <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">Travel & Work</h4>
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <label for="journey_started_at"
-                                        class="block text-sm font-heading font-medium text-gray-700 mb-2">Journey Start Time</label>
+                                        class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Journey Start Time</label>
                                     <input type="datetime-local" name="journey_started_at" id="journey_started_at"
                                         value="{{ old('journey_started_at') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20">
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20">
                                 </div>
                                 <div>
                                     <label for="island_arrival_at"
-                                        class="block text-sm font-heading font-medium text-gray-700 mb-2">Island Arrival Time</label>
+                                        class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Island Arrival Time</label>
                                     <input type="datetime-local" name="island_arrival_at" id="island_arrival_at"
                                         value="{{ old('island_arrival_at') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20">
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20">
                                 </div>
                                 <div>
                                     <label for="work_started_at"
-                                        class="block text-sm font-heading font-medium text-gray-700 mb-2">Work/Repair Start Time</label>
+                                        class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Work/Repair Start Time</label>
                                     <input type="datetime-local" name="work_started_at" id="work_started_at"
                                         value="{{ old('work_started_at') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20">
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20">
                                 </div>
                                 <div>
                                     <label for="work_completed_at"
-                                        class="block text-sm font-heading font-medium text-gray-700 mb-2">Repair Completion Time</label>
+                                        class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Repair Completion Time</label>
                                     <input type="datetime-local" name="work_completed_at" id="work_completed_at"
                                         value="{{ old('work_completed_at') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20">
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20">
                                 </div>
 
                                 <div>
                                     <label for="travel_time"
-                                        class="block text-sm font-heading font-medium text-gray-700 mb-2">Travel Time (minutes)</label>
+                                        class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Travel Time (minutes)</label>
                                     <input type="number" name="travel_time" id="travel_time" min="0"
                                         value="{{ old('travel_time') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('travel_time') border-red-300 @enderror"
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('travel_time') border-red-300 dark:border-red-700 @enderror"
                                         placeholder="Enter travel time in minutes">
-                                    @error('travel_time') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                    @error('travel_time') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                 </div>
 
                                 <div>
                                     <label for="work_time"
-                                        class="block text-sm font-heading font-medium text-gray-700 mb-2">Work Time (minutes)</label>
+                                        class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Work Time (minutes)</label>
                                     <input type="number" name="work_time" id="work_time" min="0"
                                         value="{{ old('work_time') }}"
-                                        class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('work_time') border-red-300 @enderror"
+                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('work_time') border-red-300 dark:border-red-700 @enderror"
                                         placeholder="Enter work time in minutes">
-                                    @error('work_time') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                                    @error('work_time') <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                                 </div>
                             </div>
                         </div>
@@ -1123,9 +1123,9 @@
                         <!-- Group 5: Incident Logs -->
                         <div>
                             <div class="flex items-center justify-between mb-4">
-                                <h4 class="font-heading text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">Incident Logs</h4>
+                                <h4 class="font-heading text-sm font-heading font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">Incident Logs</h4>
                                 <button type="button" id="add-log-btn"
-                                    class="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700">
+                                    class="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                     </svg>
@@ -1138,18 +1138,18 @@
                             </div>
 
                             <div id="log-template" class="hidden">
-                                <div class="log-entry border border-gray-200 rounded-xl p-4 bg-gray-50/50">
+                                <div class="log-entry border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50/50">
                                     <div class="flex items-start gap-4">
                                         <div class="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
                                             <div class="sm:col-span-1">
-                                                <label class="block text-sm font-heading font-medium text-gray-700 mb-2">Occurred At</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Occurred At</label>
                                                 <input type="datetime-local" name="logs[INDEX][occurred_at]"
-                                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                                                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20">
                                             </div>
                                             <div class="sm:col-span-2">
-                                                <label class="block text-sm font-heading font-medium text-gray-700 mb-2">Note</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Note</label>
                                                 <textarea name="logs[INDEX][note]" rows="2"
-                                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20"
                                                     placeholder="Enter log note..."></textarea>
                                             </div>
                                         </div>
@@ -1164,11 +1164,11 @@
                         </div>
 
                         <!-- Action Points (Critical Incidents) -->
-                        <div class="border-t border-gray-200 pt-8" id="action-points-section" style="display: none;">
+                        <div class="border-t border-gray-200 dark:border-gray-700 pt-8" id="action-points-section" style="display: none;">
                             <div class="flex items-center justify-between mb-6">
-                                <h4 class="font-heading text-lg font-heading font-semibold text-gray-900">Action Points</h4>
+                                <h4 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Action Points</h4>
                                 <button type="button" id="add-action-point-btn"
-                                    class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
+                                    class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                     </svg>
@@ -1181,23 +1181,23 @@
                             </div>
 
                             <div id="action-point-template" class="hidden">
-                                <div class="action-point-entry border border-gray-200 rounded-xl p-4 bg-gray-50/50">
+                                <div class="action-point-entry border border-gray-200 dark:border-gray-700 rounded-xl p-4 bg-gray-50/50">
                                     <div class="flex items-start gap-4">
                                         <div class="flex-1 grid grid-cols-1 gap-4 sm:grid-cols-3">
                                             <div class="sm:col-span-2">
-                                                <label class="block text-sm font-heading font-medium text-gray-700 mb-2">Description</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
                                                 <textarea name="action_points[INDEX][description]" rows="2"
-                                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                                                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20"
                                                     placeholder="Enter action point description..."></textarea>
                                             </div>
                                             <div class="sm:col-span-1 flex flex-col">
-                                                <label class="block text-sm font-heading font-medium text-gray-700 mb-2">Due Date</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Due Date</label>
                                                 <input type="date" name="action_points[INDEX][due_date]"
-                                                    class="w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                                                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20">
                                                 <div class="flex items-center mt-3">
                                                     <input type="checkbox" name="action_points[INDEX][completed]" value="1"
-                                                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                                    <label class="ml-2 text-sm text-gray-600">Completed</label>
+                                                        class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400">
+                                                    <label class="ml-2 text-sm text-gray-600 dark:text-gray-400">Completed</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -1212,7 +1212,7 @@
                         </div>
 
                         <!-- Actions -->
-                        <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+                        <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                             <a href="{{ route('incidents.index') }}"
                                 class="rounded-xl bg-gray-200 px-6 py-3 font-medium text-gray-800 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400/30 transition-all duration-300">Cancel</a>
                             <button type="submit"
@@ -1432,7 +1432,7 @@
 
                 // Change color when approaching limit
                 if (field.value.length > maxLength * 0.9) {
-                    counter.className = 'text-red-600 font-medium';
+                    counter.className = 'text-red-600 dark:text-red-400 font-medium';
                 } else if (field.value.length > maxLength * 0.8) {
                     counter.className = 'text-yellow-600';
                 } else {

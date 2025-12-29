@@ -6,7 +6,7 @@
             <h2 class="font-heading text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 Temporary Sites
             </h2>
-            <p class="mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg text-gray-600 font-medium">Master list of temporary sites and their status</p>
+            <p class="mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg text-gray-600 dark:text-gray-400 font-medium">Master list of temporary sites and their status</p>
         </div>
 
         <div class="flex gap-2 sm:gap-3">
@@ -36,22 +36,22 @@
     <div class="py-4 sm:py-6">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <!-- Search and Filters -->
-            <div class="mb-4 sm:mb-6 rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg p-4 sm:p-6">
+            <div class="mb-4 sm:mb-6 rounded-2xl sm:rounded-3xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg p-4 sm:p-6">
                 <form method="GET" action="{{ route('temporary-sites.index') }}" class="space-y-3 sm:space-y-4">
                     <!-- Search -->
                     <div>
-                        <label for="search" class="block text-xs sm:text-sm font-heading font-medium text-gray-700 mb-1.5 sm:mb-2">Search</label>
+                        <label for="search" class="block text-xs sm:text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">Search</label>
                         <input type="text" name="search" id="search" value="{{ request('search') }}"
                             placeholder="Search by Temp ID, Site Name, Atoll, or Backhaul"
-                            class="w-full rounded-xl sm:rounded-2xl border border-gray-300/50 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300">
+                            class="w-full rounded-xl sm:rounded-2xl border border-gray-300 dark:border-gray-600/50 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300">
                     </div>
 
                     <!-- Filters -->
                     <div class="grid grid-cols-2 sm:flex gap-2 sm:gap-3">
                         <div class="flex-1">
-                            <label for="atoll" class="block text-xs font-heading font-medium text-gray-700 mb-1">Atoll</label>
+                            <label for="atoll" class="block text-xs font-heading font-medium text-gray-700 dark:text-gray-300 mb-1">Atoll</label>
                             <select name="atoll" id="atoll"
-                                class="w-full rounded-xl border border-gray-300/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300">
+                                class="w-full rounded-xl border border-gray-300 dark:border-gray-600/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300">
                                 <option value="">All Atolls</option>
                                 @foreach($atolls as $atoll)
                                     <option value="{{ $atoll }}" {{ request('atoll') == $atoll ? 'selected' : '' }}>{{ $atoll }}</option>
@@ -60,9 +60,9 @@
                         </div>
 
                         <div class="flex-1">
-                            <label for="coverage" class="block text-xs font-heading font-medium text-gray-700 mb-1">Coverage</label>
+                            <label for="coverage" class="block text-xs font-heading font-medium text-gray-700 dark:text-gray-300 mb-1">Coverage</label>
                             <select name="coverage" id="coverage"
-                                class="w-full rounded-xl border border-gray-300/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300">
+                                class="w-full rounded-xl border border-gray-300 dark:border-gray-600/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300">
                                 <option value="">All Coverage</option>
                                 @foreach($coverages as $coverage)
                                     <option value="{{ $coverage }}" {{ request('coverage') == $coverage ? 'selected' : '' }}>{{ $coverage }}</option>
@@ -71,9 +71,9 @@
                         </div>
 
                         <div class="flex-1">
-                            <label for="status" class="block text-xs font-heading font-medium text-gray-700 mb-1">Status</label>
+                            <label for="status" class="block text-xs font-heading font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
                             <select name="status" id="status"
-                                class="w-full rounded-xl border border-gray-300/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300">
+                                class="w-full rounded-xl border border-gray-300 dark:border-gray-600/50 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300">
                                 <option value="">All Status</option>
                                 @foreach($statuses as $status)
                                     <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>{{ $status }}</option>
@@ -87,7 +87,7 @@
                                 Apply
                             </button>
                             <a href="{{ route('temporary-sites.index') }}"
-                                class="flex-1 sm:flex-none rounded-xl border border-gray-300 bg-white px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-heading font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-all duration-300 text-center">
+                                class="flex-1 sm:flex-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 sm:px-6 py-1.5 sm:py-2 text-xs sm:text-sm font-heading font-semibold text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 transition-all duration-300 text-center">
                                 Clear
                             </a>
                         </div>
@@ -99,7 +99,7 @@
             @if(Auth::user()->canManageTemporarySites())
                 <form method="POST" action="{{ route('temporary-sites.bulk-delete') }}" id="bulkDeleteForm" class="mb-4">
                     @csrf
-                    <div id="bulkActionsBar" class="hidden rounded-2xl bg-blue-50 border border-blue-200 px-4 sm:px-6 py-3 mb-4">
+                    <div id="bulkActionsBar" class="hidden rounded-2xl bg-blue-50 border border-blue-200 dark:border-blue-700 px-4 sm:px-6 py-3 mb-4">
                         <div class="flex items-center justify-between">
                             <span class="text-xs sm:text-sm font-medium text-blue-900">
                                 <span id="selectedCount">0</span> site(s) selected
@@ -116,22 +116,22 @@
                         </div>
                     </div>
 
-                    <div class="hidden sm:block overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-xl">
+                    <div class="hidden sm:block overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl">
                         <table class="min-w-full divide-y divide-gray-200/50">
                             <thead class="bg-gradient-to-r from-slate-50/80 to-white/60">
                                 <tr>
                                     <th scope="col" class="px-4 py-4">
                                         <input type="checkbox" id="selectAll"
-                                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer">
+                                            class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-600 cursor-pointer">
                                     </th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Temp ID</th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Atoll</th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Site Name</th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Coverage</th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Site Status</th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Added Date</th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Temp ID</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Atoll</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Site Name</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Coverage</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Site Status</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Added Date</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200/30 bg-white/60">
@@ -139,16 +139,16 @@
                                     <tr class="hover:bg-blue-50/30 transition-colors duration-200">
                                         <td class="px-4 py-4">
                                             <input type="checkbox" name="site_ids[]" value="{{ $site->id }}"
-                                                class="site-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer">
+                                                class="site-checkbox h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-600 cursor-pointer">
                                         </td>
                                         <td class="px-4 py-4">
                                             <a href="{{ route('temporary-sites.show', $site) }}" class="text-blue-600 hover:text-blue-800 font-heading font-semibold hover:underline">
                                                 {{ $site->temp_site_id }}
                                             </a>
                                         </td>
-                                        <td class="px-4 py-4 text-sm text-gray-900">{{ $site->atoll_code }}</td>
-                                        <td class="px-4 py-4 text-sm text-gray-900">{{ $site->site_name }}</td>
-                                        <td class="px-4 py-4 text-sm text-gray-900">{{ $site->coverage }}</td>
+                                        <td class="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{{ $site->atoll_code }}</td>
+                                        <td class="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{{ $site->site_name }}</td>
+                                        <td class="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{{ $site->coverage }}</td>
                                         <td class="px-4 py-4">
                                             <div class="flex flex-col gap-1.5">
                                                 @if(str_contains(strtolower($site->coverage), '2g'))
@@ -156,9 +156,9 @@
                                                         <input type="checkbox"
                                                                data-site-id="{{ $site->id }}"
                                                                data-tech="2g"
-                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-600"
+                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-purple-600 focus:ring-purple-600"
                                                                {{ $site->is_2g_online ? 'checked' : '' }}>
-                                                        <span class="text-xs font-medium {{ $site->is_2g_online ? 'text-green-600' : 'text-red-600' }}">
+                                                        <span class="text-xs font-medium {{ $site->is_2g_online ? 'text-green-600' : 'text-red-600 dark:text-red-400' }}">
                                                             2G {{ $site->is_2g_online ? 'Online' : 'Offline' }}
                                                         </span>
                                                     </label>
@@ -169,9 +169,9 @@
                                                         <input type="checkbox"
                                                                data-site-id="{{ $site->id }}"
                                                                data-tech="3g"
-                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-600"
                                                                {{ $site->is_3g_online ? 'checked' : '' }}>
-                                                        <span class="text-xs font-medium {{ $site->is_3g_online ? 'text-green-600' : 'text-red-600' }}">
+                                                        <span class="text-xs font-medium {{ $site->is_3g_online ? 'text-green-600' : 'text-red-600 dark:text-red-400' }}">
                                                             3G {{ $site->is_3g_online ? 'Online' : 'Offline' }}
                                                         </span>
                                                     </label>
@@ -182,22 +182,22 @@
                                                         <input type="checkbox"
                                                                data-site-id="{{ $site->id }}"
                                                                data-tech="4g"
-                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-600"
+                                                               class="tech-toggle h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-green-600 focus:ring-green-600"
                                                                {{ $site->is_4g_online ? 'checked' : '' }}>
-                                                        <span class="text-xs font-medium {{ $site->is_4g_online ? 'text-green-600' : 'text-red-600' }}">
+                                                        <span class="text-xs font-medium {{ $site->is_4g_online ? 'text-green-600' : 'text-red-600 dark:text-red-400' }}">
                                                             4G {{ $site->is_4g_online ? 'Online' : 'Offline' }}
                                                         </span>
                                                     </label>
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="px-4 py-4 text-sm text-gray-600">{{ $site->added_date->format('d M Y') }}</td>
+                                        <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $site->added_date->format('d M Y') }}</td>
                                         <td class="px-4 py-4">
                                             <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold
                                                 @if($site->status === 'Temporary') bg-yellow-100 text-yellow-800
                                                 @elseif($site->status === 'Resolved') bg-green-100 text-green-800
                                                 @elseif($site->status === 'Monitoring') bg-blue-100 text-blue-800
-                                                @else bg-gray-100 text-gray-800
+                                                @else bg-gray-100 dark:bg-gray-900 text-gray-800
                                                 @endif">
                                                 {{ $site->status }}
                                             </span>
@@ -240,8 +240,8 @@
                                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                             </svg>
-                                            <p class="mt-4 text-sm font-medium text-gray-900">No temporary sites found</p>
-                                            <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
+                                            <p class="mt-4 text-sm font-medium text-gray-900 dark:text-gray-100">No temporary sites found</p>
+                                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter to find what you're looking for.</p>
                                         </td>
                                     </tr>
                                 @endforelse
@@ -252,17 +252,17 @@
                     <!-- Mobile Cards -->
                     <div class="sm:hidden space-y-3">
                         @forelse($temporarySites as $site)
-                            <div class="rounded-2xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
+                            <div class="rounded-2xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg overflow-hidden">
                                 <div class="p-3">
                                     <div class="flex items-start gap-2.5 mb-3">
                                         <input type="checkbox" name="site_ids[]" value="{{ $site->id }}"
-                                            class="site-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600 cursor-pointer mt-0.5">
+                                            class="site-checkbox h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-600 cursor-pointer mt-0.5">
                                         <div class="flex-1 min-w-0">
                                             <a href="{{ route('temporary-sites.show', $site) }}" class="font-heading font-bold text-blue-600 hover:text-blue-800 text-sm mb-1 block">
                                                 {{ $site->temp_site_id }}
                                             </a>
-                                            <p class="text-xs text-gray-900 mb-1">{{ $site->site_name }}</p>
-                                            <div class="flex flex-wrap gap-1.5 text-xs text-gray-600 mb-2">
+                                            <p class="text-xs text-gray-900 dark:text-gray-100 mb-1">{{ $site->site_name }}</p>
+                                            <div class="flex flex-wrap gap-1.5 text-xs text-gray-600 dark:text-gray-400 mb-2">
                                                 <span class="inline-flex items-center gap-1">
                                                     <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -279,13 +279,13 @@
                                                 @if($site->status === 'Temporary') bg-yellow-100 text-yellow-800
                                                 @elseif($site->status === 'Resolved') bg-green-100 text-green-800
                                                 @elseif($site->status === 'Monitoring') bg-blue-100 text-blue-800
-                                                @else bg-gray-100 text-gray-800
+                                                @else bg-gray-100 dark:bg-gray-900 text-gray-800
                                                 @endif">
                                                 {{ $site->status }}
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="flex gap-2 pt-2 border-t border-gray-100">
+                                    <div class="flex gap-2 pt-2 border-t border-gray-100 dark:border-gray-700">
                                         <a href="{{ route('temporary-sites.show', $site) }}"
                                             class="flex-1 inline-flex items-center justify-center gap-1 rounded-lg bg-gradient-to-r from-gray-600 to-gray-700 px-2.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:from-gray-700 hover:to-gray-800 transition-all duration-300 active:scale-95">
                                             <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -317,29 +317,29 @@
                                 </div>
                             </div>
                         @empty
-                            <div class="rounded-2xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg p-8 text-center">
+                            <div class="rounded-2xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg p-8 text-center">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                 </svg>
-                                <p class="mt-4 text-sm font-medium text-gray-900">No temporary sites found</p>
-                                <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter.</p>
+                                <p class="mt-4 text-sm font-medium text-gray-900 dark:text-gray-100">No temporary sites found</p>
+                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter.</p>
                             </div>
                         @endforelse
                     </div>
                 </form>
             @else
                 <!-- Non-admin view (no checkboxes or bulk actions) -->
-                <div class="hidden sm:block overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-xl">
+                <div class="hidden sm:block overflow-hidden rounded-2xl sm:rounded-3xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl">
                     <table class="min-w-full divide-y divide-gray-200/50">
                         <thead class="bg-gradient-to-r from-slate-50/80 to-white/60">
                             <tr>
-                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Temp ID</th>
-                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Atoll</th>
-                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Site Name</th>
-                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Coverage</th>
-                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Added Date</th>
-                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Temp ID</th>
+                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Atoll</th>
+                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Site Name</th>
+                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Coverage</th>
+                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Added Date</th>
+                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-4 py-4 text-left text-xs font-heading font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200/30 bg-white/60">
@@ -350,16 +350,16 @@
                                             {{ $site->temp_site_id }}
                                         </a>
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">{{ $site->atoll_code }}</td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">{{ $site->site_name }}</td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">{{ $site->coverage }}</td>
-                                    <td class="px-4 py-4 text-sm text-gray-600">{{ $site->added_date->format('d M Y') }}</td>
+                                    <td class="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{{ $site->atoll_code }}</td>
+                                    <td class="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{{ $site->site_name }}</td>
+                                    <td class="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{{ $site->coverage }}</td>
+                                    <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-400">{{ $site->added_date->format('d M Y') }}</td>
                                     <td class="px-4 py-4">
                                         <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold
                                             @if($site->status === 'Temporary') bg-yellow-100 text-yellow-800
                                             @elseif($site->status === 'Resolved') bg-green-100 text-green-800
                                             @elseif($site->status === 'Monitoring') bg-blue-100 text-blue-800
-                                            @else bg-gray-100 text-gray-800
+                                            @else bg-gray-100 dark:bg-gray-900 text-gray-800
                                             @endif">
                                             {{ $site->status }}
                                         </span>
@@ -381,8 +381,8 @@
                                         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                         </svg>
-                                        <p class="mt-4 text-sm font-medium text-gray-900">No temporary sites found</p>
-                                        <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
+                                        <p class="mt-4 text-sm font-medium text-gray-900 dark:text-gray-100">No temporary sites found</p>
+                                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter to find what you're looking for.</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -393,13 +393,13 @@
                 <!-- Mobile Cards for non-admin -->
                 <div class="sm:hidden space-y-3">
                     @forelse($temporarySites as $site)
-                        <div class="rounded-2xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg overflow-hidden">
+                        <div class="rounded-2xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg overflow-hidden">
                             <div class="p-3">
                                 <a href="{{ route('temporary-sites.show', $site) }}" class="font-heading font-bold text-blue-600 hover:text-blue-800 text-sm mb-1 block">
                                     {{ $site->temp_site_id }}
                                 </a>
-                                <p class="text-xs text-gray-900 mb-1">{{ $site->site_name }}</p>
-                                <div class="flex flex-wrap gap-1.5 text-xs text-gray-600 mb-2">
+                                <p class="text-xs text-gray-900 dark:text-gray-100 mb-1">{{ $site->site_name }}</p>
+                                <div class="flex flex-wrap gap-1.5 text-xs text-gray-600 dark:text-gray-400 mb-2">
                                     <span class="inline-flex items-center gap-1">
                                         <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -417,7 +417,7 @@
                                         @if($site->status === 'Temporary') bg-yellow-100 text-yellow-800
                                         @elseif($site->status === 'Resolved') bg-green-100 text-green-800
                                         @elseif($site->status === 'Monitoring') bg-blue-100 text-blue-800
-                                        @else bg-gray-100 text-gray-800
+                                        @else bg-gray-100 dark:bg-gray-900 text-gray-800
                                         @endif">
                                         {{ $site->status }}
                                     </span>
@@ -433,12 +433,12 @@
                             </div>
                         </div>
                     @empty
-                        <div class="rounded-2xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg p-8 text-center">
+                        <div class="rounded-2xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg p-8 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                             </svg>
-                            <p class="mt-4 text-sm font-medium text-gray-900">No temporary sites found</p>
-                            <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filter.</p>
+                            <p class="mt-4 text-sm font-medium text-gray-900 dark:text-gray-100">No temporary sites found</p>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try adjusting your search or filter.</p>
                         </div>
                     @endforelse
                 </div>
@@ -512,12 +512,12 @@
                     // Update UI immediately for better UX
                     if (isOnline) {
                         label.textContent = `${tech.toUpperCase()} Online`;
-                        label.classList.remove('text-red-600');
+                        label.classList.remove('text-red-600 dark:text-red-400');
                         label.classList.add('text-green-600');
                     } else {
                         label.textContent = `${tech.toUpperCase()} Offline`;
                         label.classList.remove('text-green-600');
-                        label.classList.add('text-red-600');
+                        label.classList.add('text-red-600 dark:text-red-400');
                     }
 
                     // Send AJAX request to update the database
@@ -542,12 +542,12 @@
                             this.checked = !isOnline;
                             if (!isOnline) {
                                 label.textContent = `${tech.toUpperCase()} Online`;
-                                label.classList.remove('text-red-600');
+                                label.classList.remove('text-red-600 dark:text-red-400');
                                 label.classList.add('text-green-600');
                             } else {
                                 label.textContent = `${tech.toUpperCase()} Offline`;
                                 label.classList.remove('text-green-600');
-                                label.classList.add('text-red-600');
+                                label.classList.add('text-red-600 dark:text-red-400');
                             }
                         }
                     })
@@ -557,12 +557,12 @@
                         this.checked = !isOnline;
                         if (!isOnline) {
                             label.textContent = `${tech.toUpperCase()} Online`;
-                            label.classList.remove('text-red-600');
+                            label.classList.remove('text-red-600 dark:text-red-400');
                             label.classList.add('text-green-600');
                         } else {
                             label.textContent = `${tech.toUpperCase()} Offline`;
                             label.classList.remove('text-green-600');
-                            label.classList.add('text-red-600');
+                            label.classList.add('text-red-600 dark:text-red-400');
                         }
                     });
                 });

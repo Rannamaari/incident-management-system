@@ -6,7 +6,7 @@
             <h2 class="font-heading text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 {{ __('Edit Incident') }} - {{ $incident->incident_code }}
             </h2>
-            <p class="mt-2 text-lg text-gray-600 font-medium">Update incident details and status</p>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400 font-medium">Update incident details and status</p>
         </div>
         <a href="{{ route('incidents.index') }}" class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-gray-700 to-gray-800 px-5 py-2.5 text-white shadow-lg hover:from-gray-800 hover:to-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500/30 transition-all duration-300 transform hover:-translate-y-0.5">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -21,8 +21,8 @@
 
     <div class="py-6 sm:py-8">
         <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white/80 backdrop-blur-sm overflow-hidden shadow-xl rounded-3xl border border-gray-100/50">
-                <div class="p-8 text-gray-900">
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm overflow-hidden shadow-xl rounded-3xl border border-gray-100 dark:border-gray-700/50">
+                <div class="p-8 text-gray-900 dark:text-gray-100">
                     <form method="POST" action="{{ route('incidents.update', $incident) }}" enctype="multipart/form-data" class="space-y-8">
                         @csrf
                         @method('PUT')
@@ -30,17 +30,17 @@
 
                         <!-- Summary -->
                         <div>
-                            <label for="summary" class="block text-sm font-heading font-medium text-gray-700">Outage Details (Incident Summary) *</label>
+                            <label for="summary" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Outage Details (Incident Summary) *</label>
                             <textarea name="summary" 
                                       id="summary" 
                                       rows="4" 
                                       maxlength="1000"
                                       placeholder="Provide detailed description of the incident..."
-                                      class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white resize-y @error('summary') border-red-300 @enderror"
+                                      class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 resize-y @error('summary') border-red-300 dark:border-red-700 @enderror"
                                       oninput="updateCharCount('summary', 1000)">{{ old('summary', $incident->summary) }}</textarea>
                             <div class="mt-1 flex justify-between">
-                                <div>@error('summary') <span class="text-sm text-red-600">{{ $message }}</span> @enderror</div>
-                                <div class="text-xs text-gray-500">
+                                <div>@error('summary') <span class="text-sm text-red-600 dark:text-red-400">{{ $message }}</span> @enderror</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">
                                     <span id="summary-count">{{ strlen(old('summary', $incident->summary)) }}</span>/1000 characters
                                 </div>
                             </div>
@@ -48,44 +48,44 @@
 
                         <!-- Outage Category -->
                         <div>
-                            <label for="outage_category" class="block text-sm font-heading font-medium text-gray-700">Outage Category *</label>
+                            <label for="outage_category" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Outage Category *</label>
                             <input list="outage_categories" 
                                    name="outage_category" 
                                    id="outage_category" 
                                    value="{{ old('outage_category', $incident->outage_category) }}"
-                                   class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('outage_category') border-red-300 @enderror">
+                                   class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('outage_category') border-red-300 dark:border-red-700 @enderror">
                             <datalist id="outage_categories">
                                 @foreach(\App\Models\Incident::OUTAGE_CATEGORIES as $category)
                                     <option value="{{ $category }}">
                                 @endforeach
                             </datalist>
                             @error('outage_category')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Category -->
                         <div>
-                            <label for="category" class="block text-sm font-heading font-medium text-gray-700">Category *</label>
+                            <label for="category" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Category *</label>
                             <input list="categories" 
                                    name="category" 
                                    id="category" 
                                    value="{{ old('category', $incident->category) }}"
-                                   class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('category') border-red-300 @enderror">
+                                   class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('category') border-red-300 dark:border-red-700 @enderror">
                             <datalist id="categories">
                                 @foreach(\App\Models\Incident::CATEGORIES as $category)
                                     <option value="{{ $category }}">
                                 @endforeach
                             </datalist>
                             @error('category')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Affected Services -->
                         <div>
-                            <label class="block text-sm font-heading font-medium text-gray-700 mb-3">Affected Systems/Services *</label>
-                            <p class="text-xs text-gray-500 mb-2">Select one or more affected systems/services</p>
+                            <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-3">Affected Systems/Services *</label>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Select one or more affected systems/services</p>
                             <div class="mt-2 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
                                 @php
                                     $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data'];
@@ -106,9 +106,9 @@
                                                id="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}" 
                                                value="{{ $option }}"
                                                {{ in_array(trim($option), array_map('trim', $currentValues)) ? 'checked' : '' }}
-                                               class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 transition-all duration-200">
+                                               class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-2 transition-all duration-200">
                                         <label for="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}" 
-                                               class="ml-2 text-sm font-heading font-medium text-gray-700 cursor-pointer hover:text-blue-600 transition-colors">
+                                               class="ml-2 text-sm font-heading font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:text-blue-600 transition-colors">
                                             {{ $option }}
                                         </label>
                                     </div>
@@ -116,10 +116,10 @@
                             </div>
                             <input type="hidden" name="affected_services_validation" value="1">
                             @error('affected_services')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                             @error('affected_services.*')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -157,7 +157,7 @@
                                  x-transition:leave="transition ease-in duration-200"
                                  x-transition:leave-start="opacity-100"
                                  x-transition:leave-end="opacity-0"
-                                 class="bg-blue-50/50 border border-blue-200 rounded-xl p-6">
+                                 class="bg-blue-50/50 border border-blue-200 dark:border-blue-700 rounded-xl p-6">
 
                                 <h5 class="font-heading text-sm font-semibold text-blue-900 mb-4 flex items-center gap-2">
                                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -165,12 +165,12 @@
                                     </svg>
                                     Site Impact Details
                                 </h5>
-                                <p class="text-sm text-blue-700 mb-4">Please specify how many sites of each type are impacted</p>
+                                <p class="text-sm text-blue-700 dark:text-blue-400 mb-4">Please specify how many sites of each type are impacted</p>
 
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     <!-- 2G Sites -->
                                     <div>
-                                        <label for="sites_2g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                        <label for="sites_2g_impacted" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             2G Sites
                                         </label>
                                         <input type="number"
@@ -178,15 +178,15 @@
                                                id="sites_2g_impacted"
                                                min="0"
                                                value="{{ old('sites_2g_impacted', $incident->sites_2g_impacted ?? 0) }}"
-                                               class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_2g_impacted') border-red-300 @enderror">
+                                               class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('sites_2g_impacted') border-red-300 dark:border-red-700 @enderror">
                                         @error('sites_2g_impacted')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <!-- 3G Sites -->
                                     <div>
-                                        <label for="sites_3g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                        <label for="sites_3g_impacted" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             3G Sites
                                         </label>
                                         <input type="number"
@@ -194,15 +194,15 @@
                                                id="sites_3g_impacted"
                                                min="0"
                                                value="{{ old('sites_3g_impacted', $incident->sites_3g_impacted ?? 0) }}"
-                                               class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_3g_impacted') border-red-300 @enderror">
+                                               class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('sites_3g_impacted') border-red-300 dark:border-red-700 @enderror">
                                         @error('sites_3g_impacted')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <!-- 4G Sites -->
                                     <div>
-                                        <label for="sites_4g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                        <label for="sites_4g_impacted" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             4G Sites
                                         </label>
                                         <input type="number"
@@ -210,15 +210,15 @@
                                                id="sites_4g_impacted"
                                                min="0"
                                                value="{{ old('sites_4g_impacted', $incident->sites_4g_impacted ?? 0) }}"
-                                               class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_4g_impacted') border-red-300 @enderror">
+                                               class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('sites_4g_impacted') border-red-300 dark:border-red-700 @enderror">
                                         @error('sites_4g_impacted')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <!-- 5G Sites -->
                                     <div>
-                                        <label for="sites_5g_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                        <label for="sites_5g_impacted" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             5G Sites
                                         </label>
                                         <input type="number"
@@ -226,9 +226,9 @@
                                                id="sites_5g_impacted"
                                                min="0"
                                                value="{{ old('sites_5g_impacted', $incident->sites_5g_impacted ?? 0) }}"
-                                               class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('sites_5g_impacted') border-red-300 @enderror">
+                                               class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('sites_5g_impacted') border-red-300 dark:border-red-700 @enderror">
                                         @error('sites_5g_impacted')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
@@ -252,7 +252,7 @@
                                 </h5>
 
                                 <div class="max-w-xs">
-                                    <label for="fbb_impacted" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                    <label for="fbb_impacted" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                         Number of FBB Impacted
                                     </label>
                                     <input type="number"
@@ -260,9 +260,9 @@
                                            id="fbb_impacted"
                                            min="0"
                                            value="{{ old('fbb_impacted', $incident->fbb_impacted ?? 0) }}"
-                                           class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white transition-all duration-300 @error('fbb_impacted') border-red-300 @enderror">
+                                           class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 @error('fbb_impacted') border-red-300 dark:border-red-700 @enderror">
                                     @error('fbb_impacted')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -273,227 +273,227 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Status -->
                             <div>
-                                <label for="status" class="block text-sm font-heading font-medium text-gray-700">Incident Status *</label>
+                                <label for="status" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Incident Status *</label>
                                 <select name="status" 
                                         id="status"
-                                        class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('status') border-red-300 @enderror">
+                                        class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('status') border-red-300 dark:border-red-700 @enderror">
                                     @foreach(\App\Models\Incident::STATUSES as $status)
                                         <option value="{{ $status }}" {{ old('status', $incident->status) === $status ? 'selected' : '' }}>{{ $status }}</option>
                                     @endforeach
                                 </select>
                                 @error('status')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <!-- Severity -->
                             <div>
-                                <label for="severity" class="block text-sm font-heading font-medium text-gray-700">Severity Level *</label>
+                                <label for="severity" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Severity Level *</label>
                                 <select name="severity" 
                                         id="severity"
-                                        class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('severity') border-red-300 @enderror">
+                                        class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('severity') border-red-300 dark:border-red-700 @enderror">
                                     @foreach(\App\Models\Incident::SEVERITIES as $severity)
                                         <option value="{{ $severity }}" {{ old('severity', $incident->severity) === $severity ? 'selected' : '' }}>{{ $severity }}</option>
                                     @endforeach
                                 </select>
-                                <p id="slaHint" class="mt-1 text-sm text-gray-500">SLA is derived from Severity.</p>
+                                <p id="slaHint" class="mt-1 text-sm text-gray-500 dark:text-gray-400">SLA is derived from Severity.</p>
                                 @error('severity')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
                         </div>
 
                         <!-- Started At -->
                         <div>
-                            <label for="started_at" class="block text-sm font-heading font-medium text-gray-700">Start Date and Time *</label>
+                            <label for="started_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Start Date and Time *</label>
                             <input type="datetime-local" 
                                    name="started_at" 
                                    id="started_at" 
                                    value="{{ old('started_at', $incident->started_at ? $incident->started_at->format('Y-m-d\TH:i') : '') }}"
-                                   class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('started_at') border-red-300 @enderror">
+                                   class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('started_at') border-red-300 dark:border-red-700 @enderror">
                             @error('started_at')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Resolved At (Only shown when status is Closed) -->
                         <div id="resolved-at-field" style="{{ $incident->status === 'Closed' ? '' : 'display: none;' }}">
-                            <label for="resolved_at" class="block text-sm font-heading font-medium text-gray-700">Date and Time Resolved <span class="text-red-500">*</span></label>
+                            <label for="resolved_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Date and Time Resolved <span class="text-red-500">*</span></label>
                             <input type="datetime-local" 
                                    name="resolved_at" 
                                    id="resolved_at" 
                                    value="{{ old('resolved_at', $incident->resolved_at ? $incident->resolved_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i')) }}"
-                                   class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('resolved_at') border-red-300 @enderror">
+                                   class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('resolved_at') border-red-300 dark:border-red-700 @enderror">
                             @error('resolved_at')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Manual Duration -->
                         <div>
-                            <label for="duration_minutes" class="block text-sm font-heading font-medium text-gray-700">Manual Duration (minutes, optional)</label>
+                            <label for="duration_minutes" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Manual Duration (minutes, optional)</label>
                             <input type="number" 
                                    name="duration_minutes" 
                                    id="duration_minutes" 
                                    min="0"
                                    value="{{ old('duration_minutes', $incident->duration_minutes) }}"
-                                   class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('duration_minutes') border-red-300 @enderror">
-                            <p class="mt-1 text-sm text-gray-500">Leave blank to auto-calculate from start/resolved times</p>
+                                   class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('duration_minutes') border-red-300 dark:border-red-700 @enderror">
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Leave blank to auto-calculate from start/resolved times</p>
                             @error('duration_minutes')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Fault Type -->
                         <div>
-                            <label for="fault_type" class="block text-sm font-heading font-medium text-gray-700">Fault/Issue Type</label>
+                            <label for="fault_type" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Fault/Issue Type</label>
                             <input list="fault_types" 
                                    name="fault_type" 
                                    id="fault_type" 
                                    value="{{ old('fault_type', $incident->fault_type) }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('fault_type') border-red-300 @enderror">
+                                   class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('fault_type') border-red-300 dark:border-red-700 @enderror">
                             <datalist id="fault_types">
                                 @foreach(\App\Models\Incident::FAULT_TYPES as $type)
                                     <option value="{{ $type }}">
                                 @endforeach
                             </datalist>
                             @error('fault_type')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Root Cause -->
                         <div>
-                            <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700">Root Cause</label>
+                            <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Root Cause</label>
                             <textarea name="root_cause" 
                                       id="root_cause" 
                                       rows="4"
-                                      class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('root_cause') border-red-300 @enderror">{{ old('root_cause', $incident->root_cause) }}</textarea>
+                                      class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('root_cause') border-red-300 dark:border-red-700 @enderror">{{ old('root_cause', $incident->root_cause) }}</textarea>
                             @error('root_cause')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Delay Reason -->
                         <div>
-                            <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700">Reason for Delay</label>
+                            <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Reason for Delay</label>
                             <textarea name="delay_reason" 
                                       id="delay_reason" 
                                       rows="4"
-                                      class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('delay_reason') border-red-300 @enderror">{{ old('delay_reason', $incident->delay_reason) }}</textarea>
+                                      class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('delay_reason') border-red-300 dark:border-red-700 @enderror">{{ old('delay_reason', $incident->delay_reason) }}</textarea>
                             @error('delay_reason')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Resolution Team -->
                         <div>
-                            <label for="resolution_team" class="block text-sm font-heading font-medium text-gray-700">Resolution Team</label>
+                            <label for="resolution_team" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Resolution Team</label>
                             <input type="text" 
                                    name="resolution_team" 
                                    id="resolution_team" 
                                    value="{{ old('resolution_team', $incident->resolution_team) }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('resolution_team') border-red-300 @enderror">
+                                   class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('resolution_team') border-red-300 dark:border-red-700 @enderror">
                             @error('resolution_team')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Journey Times Grid -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="journey_started_at" class="block text-sm font-heading font-medium text-gray-700">Journey Start Time</label>
+                                <label for="journey_started_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Journey Start Time</label>
                                 <input type="datetime-local" 
                                        name="journey_started_at" 
                                        id="journey_started_at" 
                                        value="{{ old('journey_started_at', $incident->journey_started_at ? $incident->journey_started_at->format('Y-m-d\TH:i') : '') }}"
-                                       class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white">
+                                       class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800">
                             </div>
 
                             <div>
-                                <label for="island_arrival_at" class="block text-sm font-heading font-medium text-gray-700">Island Arrival Time</label>
+                                <label for="island_arrival_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Island Arrival Time</label>
                                 <input type="datetime-local" 
                                        name="island_arrival_at" 
                                        id="island_arrival_at" 
                                        value="{{ old('island_arrival_at', $incident->island_arrival_at ? $incident->island_arrival_at->format('Y-m-d\TH:i') : '') }}"
-                                       class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white">
+                                       class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800">
                             </div>
 
                             <div>
-                                <label for="work_started_at" class="block text-sm font-heading font-medium text-gray-700">Work/Repair Start Time</label>
+                                <label for="work_started_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Work/Repair Start Time</label>
                                 <input type="datetime-local" 
                                        name="work_started_at" 
                                        id="work_started_at" 
                                        value="{{ old('work_started_at', $incident->work_started_at ? $incident->work_started_at->format('Y-m-d\TH:i') : '') }}"
-                                       class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white">
+                                       class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800">
                             </div>
 
                             <div>
-                                <label for="work_completed_at" class="block text-sm font-heading font-medium text-gray-700">Repair Completion Time</label>
+                                <label for="work_completed_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Repair Completion Time</label>
                                 <input type="datetime-local" 
                                        name="work_completed_at" 
                                        id="work_completed_at" 
                                        value="{{ old('work_completed_at', $incident->work_completed_at ? $incident->work_completed_at->format('Y-m-d\TH:i') : '') }}"
-                                       class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white">
+                                       class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800">
                             </div>
                         </div>
 
                         <!-- Structured RCA Fields -->
-                        <div class="border-t border-gray-200/50 pt-8" id="rca-fields" style="{{ in_array($incident->severity ?? '', ['High', 'Critical']) ? '' : 'display: none;' }}">
-                            <h4 class="font-heading text-lg font-heading font-semibold text-gray-900 mb-6">Root Cause Analysis</h4>
+                        <div class="border-t border-gray-200 dark:border-gray-700/50 pt-8" id="rca-fields" style="{{ in_array($incident->severity ?? '', ['High', 'Critical']) ? '' : 'display: none;' }}">
+                            <h4 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100 mb-6">Root Cause Analysis</h4>
                             
                             <!-- High Severity RCA Fields -->
                             <div id="high-severity-rca" style="{{ ($incident->severity ?? '') === 'High' ? '' : 'display: none;' }}">
                                 <div class="space-y-6">
                                     <!-- Corrective Actions -->
                                     <div>
-                                        <label for="corrective_actions" class="block text-sm font-heading font-medium text-gray-700">Corrective Actions *</label>
+                                        <label for="corrective_actions" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Corrective Actions *</label>
                                         <textarea name="corrective_actions" 
                                                   id="corrective_actions" 
                                                   rows="4"
                                                   placeholder="Describe the corrective actions taken to resolve the incident..."
-                                                  class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white resize-y @error('corrective_actions') border-red-300 @enderror">{{ old('corrective_actions', $incident->corrective_actions) }}</textarea>
+                                                  class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 resize-y @error('corrective_actions') border-red-300 dark:border-red-700 @enderror">{{ old('corrective_actions', $incident->corrective_actions) }}</textarea>
                                         @error('corrective_actions')
-                                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <!-- Workaround -->
                                     <div>
-                                        <label for="workaround" class="block text-sm font-heading font-medium text-gray-700">Workaround *</label>
+                                        <label for="workaround" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Workaround *</label>
                                         <textarea name="workaround" 
                                                   id="workaround" 
                                                   rows="4"
                                                   placeholder="Describe any temporary workarounds implemented..."
-                                                  class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white resize-y @error('workaround') border-red-300 @enderror">{{ old('workaround', $incident->workaround) }}</textarea>
+                                                  class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 resize-y @error('workaround') border-red-300 dark:border-red-700 @enderror">{{ old('workaround', $incident->workaround) }}</textarea>
                                         @error('workaround')
-                                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <!-- Solution -->
                                     <div>
-                                        <label for="solution" class="block text-sm font-heading font-medium text-gray-700">Solution *</label>
+                                        <label for="solution" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Solution *</label>
                                         <textarea name="solution" 
                                                   id="solution" 
                                                   rows="4"
                                                   placeholder="Describe the permanent solution implemented..."
-                                                  class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white resize-y @error('solution') border-red-300 @enderror">{{ old('solution', $incident->solution) }}</textarea>
+                                                  class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 resize-y @error('solution') border-red-300 dark:border-red-700 @enderror">{{ old('solution', $incident->solution) }}</textarea>
                                         @error('solution')
-                                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
 
                                     <!-- Recommendation -->
                                     <div>
-                                        <label for="recommendation" class="block text-sm font-heading font-medium text-gray-700">Recommendation *</label>
+                                        <label for="recommendation" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Recommendation *</label>
                                         <textarea name="recommendation" 
                                                   id="recommendation" 
                                                   rows="4"
                                                   placeholder="Provide recommendations to prevent similar incidents..."
-                                                  class="mt-2 block w-full border border-gray-300/50 rounded-2xl shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 px-4 py-3 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white resize-y @error('recommendation') border-red-300 @enderror">{{ old('recommendation', $incident->recommendation) }}</textarea>
+                                                  class="mt-2 block w-full border border-gray-300 dark:border-gray-600/50 rounded-2xl shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 resize-y @error('recommendation') border-red-300 dark:border-red-700 @enderror">{{ old('recommendation', $incident->recommendation) }}</textarea>
                                         @error('recommendation')
-                                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
                                 </div>
@@ -501,11 +501,11 @@
                         </div>
 
                         <!-- Incident Logs -->
-                        <div class="border-t border-gray-200/50 pt-8">
+                        <div class="border-t border-gray-200 dark:border-gray-700/50 pt-8">
                             <div class="flex items-center justify-between mb-6">
-                                <h4 class="font-heading text-lg font-heading font-semibold text-gray-900">Incident Logs</h4>
+                                <h4 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Incident Logs</h4>
                                 <button type="button" id="add-log-btn" 
-                                    class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
+                                    class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                     </svg>
@@ -516,19 +516,19 @@
                             <div id="logs-container" class="space-y-4">
                                 <!-- Existing logs -->
                                 @foreach($incident->logs as $index => $log)
-                                    <div class="log-entry border border-gray-200 rounded-2xl p-4 bg-gray-50/50">
+                                    <div class="log-entry border border-gray-200 dark:border-gray-700 rounded-2xl p-4 bg-gray-50/50">
                                         <div class="flex items-start gap-4">
                                             <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
                                                 <div class="md:col-span-1">
-                                                    <label class="block text-sm font-heading font-medium text-gray-700">Occurred At</label>
+                                                    <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Occurred At</label>
                                                     <input type="datetime-local" name="logs[{{ $index }}][occurred_at]" 
                                                         value="{{ old('logs.' . $index . '.occurred_at', $log->occurred_at->format('Y-m-d\TH:i')) }}"
-                                                        class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                                                        class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20">
                                                 </div>
                                                 <div class="md:col-span-2">
-                                                    <label class="block text-sm font-heading font-medium text-gray-700">Note</label>
+                                                    <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Note</label>
                                                     <textarea name="logs[{{ $index }}][note]" rows="2" 
-                                                        class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
+                                                        class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20" 
                                                         placeholder="Enter log note...">{{ old('logs.' . $index . '.note', $log->note) }}</textarea>
                                                 </div>
                                             </div>
@@ -543,18 +543,18 @@
                             </div>
                             
                             <div id="log-template" class="hidden">
-                                <div class="log-entry border border-gray-200 rounded-2xl p-4 bg-gray-50/50">
+                                <div class="log-entry border border-gray-200 dark:border-gray-700 rounded-2xl p-4 bg-gray-50/50">
                                     <div class="flex items-start gap-4">
                                         <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
                                             <div class="md:col-span-1">
-                                                <label class="block text-sm font-heading font-medium text-gray-700">Occurred At</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Occurred At</label>
                                                 <input type="datetime-local" name="logs[INDEX][occurred_at]" 
-                                                    class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                                                    class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20">
                                             </div>
                                             <div class="md:col-span-2">
-                                                <label class="block text-sm font-heading font-medium text-gray-700">Note</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Note</label>
                                                 <textarea name="logs[INDEX][note]" rows="2" 
-                                                    class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
+                                                    class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20" 
                                                     placeholder="Enter log note..."></textarea>
                                             </div>
                                         </div>
@@ -569,11 +569,11 @@
                         </div>
 
                         <!-- Action Points (Critical Incidents) -->
-                        <div class="border-t border-gray-200/50 pt-8" id="action-points-section" style="{{ ($incident->severity ?? '') === 'Critical' ? '' : 'display: none;' }}">
+                        <div class="border-t border-gray-200 dark:border-gray-700/50 pt-8" id="action-points-section" style="{{ ($incident->severity ?? '') === 'Critical' ? '' : 'display: none;' }}">
                             <div class="flex items-center justify-between mb-6">
-                                <h4 class="font-heading text-lg font-heading font-semibold text-gray-900">Action Points</h4>
+                                <h4 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Action Points</h4>
                                 <button type="button" id="add-action-point-btn" 
-                                    class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
+                                    class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-all duration-300">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                     </svg>
@@ -584,25 +584,25 @@
                             <div id="action-points-container" class="space-y-4">
                                 <!-- Existing action points -->
                                 @foreach($incident->actionPoints as $index => $actionPoint)
-                                    <div class="action-point-entry border border-gray-200 rounded-2xl p-4 bg-gray-50/50">
+                                    <div class="action-point-entry border border-gray-200 dark:border-gray-700 rounded-2xl p-4 bg-gray-50/50">
                                         <div class="flex items-start gap-4">
                                             <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
                                                 <div class="md:col-span-2">
-                                                    <label class="block text-sm font-heading font-medium text-gray-700">Description</label>
+                                                    <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Description</label>
                                                     <textarea name="action_points[{{ $index }}][description]" rows="2" 
-                                                        class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
+                                                        class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20" 
                                                         placeholder="Enter action point description...">{{ old('action_points.' . $index . '.description', $actionPoint->description) }}</textarea>
                                                 </div>
                                                 <div class="md:col-span-1 flex flex-col">
-                                                    <label class="block text-sm font-heading font-medium text-gray-700">Due Date</label>
+                                                    <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Due Date</label>
                                                     <input type="date" name="action_points[{{ $index }}][due_date]" 
                                                         value="{{ old('action_points.' . $index . '.due_date', $actionPoint->due_date->format('Y-m-d')) }}"
-                                                        class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                                                        class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20">
                                                     <div class="flex items-center mt-2">
                                                         <input type="checkbox" name="action_points[{{ $index }}][completed]" value="1" 
                                                             {{ $actionPoint->completed ? 'checked' : '' }}
-                                                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                                        <label class="ml-2 text-sm text-gray-600">Completed</label>
+                                                            class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400">
+                                                        <label class="ml-2 text-sm text-gray-600 dark:text-gray-400">Completed</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -617,23 +617,23 @@
                             </div>
                             
                             <div id="action-point-template" class="hidden">
-                                <div class="action-point-entry border border-gray-200 rounded-2xl p-4 bg-gray-50/50">
+                                <div class="action-point-entry border border-gray-200 dark:border-gray-700 rounded-2xl p-4 bg-gray-50/50">
                                     <div class="flex items-start gap-4">
                                         <div class="flex-1 grid grid-cols-1 gap-4 md:grid-cols-3">
                                             <div class="md:col-span-2">
-                                                <label class="block text-sm font-heading font-medium text-gray-700">Description</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Description</label>
                                                 <textarea name="action_points[INDEX][description]" rows="2" 
-                                                    class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" 
+                                                    class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20" 
                                                     placeholder="Enter action point description..."></textarea>
                                             </div>
                                             <div class="md:col-span-1 flex flex-col">
-                                                <label class="block text-sm font-heading font-medium text-gray-700">Due Date</label>
+                                                <label class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Due Date</label>
                                                 <input type="date" name="action_points[INDEX][due_date]" 
-                                                    class="mt-1 w-full rounded-xl border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20">
+                                                    class="mt-1 w-full rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/20">
                                                 <div class="flex items-center mt-2">
                                                     <input type="checkbox" name="action_points[INDEX][completed]" value="1" 
-                                                        class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                                    <label class="ml-2 text-sm text-gray-600">Completed</label>
+                                                        class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400">
+                                                    <label class="ml-2 text-sm text-gray-600 dark:text-gray-400">Completed</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -731,7 +731,7 @@
                 
                 // Change color when approaching limit
                 if (field.value.length > maxLength * 0.9) {
-                    counter.className = 'text-red-600 font-medium';
+                    counter.className = 'text-red-600 dark:text-red-400 font-medium';
                 } else if (field.value.length > maxLength * 0.8) {
                     counter.className = 'text-yellow-600';
                 } else {

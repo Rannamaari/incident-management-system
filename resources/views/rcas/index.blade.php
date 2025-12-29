@@ -6,7 +6,7 @@
             <h2 class="font-heading text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 RCA Management
             </h2>
-            <p class="mt-2 text-lg text-gray-600 font-medium">Root Cause Analysis documents and tracking</p>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400 font-medium">Root Cause Analysis documents and tracking</p>
         </div>
 
         @if(auth()->user()->canEditIncidents())
@@ -39,8 +39,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Incidents Requiring RCA</h3>
-                                <p class="text-sm text-gray-600">{{ $incidentsRequiringRca->count() }} High/Critical incidents need RCA documents</p>
+                                <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Incidents Requiring RCA</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ $incidentsRequiringRca->count() }} High/Critical incidents need RCA documents</p>
                             </div>
                         </div>
                     </div>
@@ -50,14 +50,14 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr class="bg-gray-50">
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Incident</th>
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Summary</th>
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Severity</th>
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Started At</th>
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Incident</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Summary</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Severity</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Started At</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
+                                <tbody class="divide-y divide-gray-200 bg-white dark:bg-gray-800">
                                     @foreach($incidentsRequiringRca as $incident)
                                     <tr onclick="window.location='{{ route('incidents.show', $incident) }}'"
                                         class="cursor-pointer hover:bg-gray-50 transition-colors duration-200">
@@ -67,7 +67,7 @@
                                             </a>
                                         </td>
                                         <td class="px-4 py-3">
-                                            <div class="text-sm text-gray-900 max-w-md truncate">{{ $incident->summary }}</div>
+                                            <div class="text-sm text-gray-900 dark:text-gray-100 max-w-md truncate">{{ $incident->summary }}</div>
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-heading font-medium
@@ -77,7 +77,7 @@
                                                 {{ $incident->severity }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                             {{ $incident->started_at->format('M j, Y') }}
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap" onclick="event.stopPropagation()">
@@ -107,11 +107,11 @@
                     <div class="flex-1 min-w-64">
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Search by title, RCA number, or incident code..."
-                            class="w-full rounded-xl border border-gray-300 px-4 py-2.5 shadow-sm focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20">
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-2.5 shadow-sm focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20">
                     </div>
                     <div>
                         <select name="status"
-                            class="rounded-xl border border-gray-300 px-4 py-2.5 shadow-sm focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20">
+                            class="rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-2.5 shadow-sm focus:border-orange-600 focus:ring-2 focus:ring-orange-600/20">
                             <option value="">All Statuses</option>
                             <option value="Draft" {{ request('status') === 'Draft' ? 'selected' : '' }}>Draft</option>
                             <option value="In Review" {{ request('status') === 'In Review' ? 'selected' : '' }}>In Review</option>
@@ -129,7 +129,7 @@
                         </button>
                         @if(request('search') || request('status'))
                             <a href="{{ route('rcas.index') }}"
-                                class="inline-flex items-center gap-2 rounded-xl bg-gray-200 px-5 py-2.5 text-gray-700 hover:bg-gray-300">
+                                class="inline-flex items-center gap-2 rounded-xl bg-gray-200 px-5 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-300">
                                 Clear
                             </a>
                         @endif
@@ -138,8 +138,8 @@
             </div>
 
             <!-- RCA List -->
-            <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
-                <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+            <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg">
+                <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-600 to-orange-700 shadow-md">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,8 +147,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">All RCA Documents</h3>
-                            <p class="text-sm text-gray-600">{{ $rcas->total() }} total RCAs</p>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">All RCA Documents</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ $rcas->total() }} total RCAs</p>
                         </div>
                     </div>
                 </div>
@@ -158,16 +158,16 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead>
                                 <tr class="bg-gray-50">
-                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">RCA Number</th>
-                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Incident</th>
-                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Title</th>
-                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
-                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Created By</th>
-                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Created</th>
-                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">RCA Number</th>
+                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Incident</th>
+                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Title</th>
+                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Status</th>
+                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Created By</th>
+                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Created</th>
+                                    <th class="font-heading px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 bg-white">
+                            <tbody class="divide-y divide-gray-200 bg-white dark:bg-gray-800">
                                 @foreach($rcas as $rca)
                                 <tr onclick="window.location='{{ route('rcas.show', $rca) }}'"
                                     class="cursor-pointer hover:bg-gray-50 transition-colors duration-200">
@@ -182,17 +182,17 @@
                                         </a>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="text-sm text-gray-900 max-w-md truncate">{{ $rca->title }}</div>
+                                        <div class="text-sm text-gray-900 dark:text-gray-100 max-w-md truncate">{{ $rca->title }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-heading font-medium {{ $rca->getStatusBadgeColorClass() }}">
                                             {{ $rca->status }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         {{ $rca->creator->name ?? 'N/A' }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
                                         {{ $rca->created_at->format('M j, Y') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm" onclick="event.stopPropagation()">
@@ -216,8 +216,8 @@
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <h3 class="font-heading mt-2 text-sm font-heading font-medium text-gray-900">No RCA documents found</h3>
-                            <p class="mt-1 text-sm text-gray-500">Get started by creating a new RCA document.</p>
+                            <h3 class="font-heading mt-2 text-sm font-heading font-medium text-gray-900 dark:text-gray-100">No RCA documents found</h3>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new RCA document.</p>
                             @if(auth()->user()->canEditIncidents())
                                 <div class="mt-6">
                                     <a href="{{ route('rcas.create') }}"
@@ -235,7 +235,7 @@
 
                 <!-- Pagination -->
                 @if($rcas->hasPages())
-                    <div class="border-t border-gray-200 bg-gray-50/50 px-6 py-4">
+                    <div class="border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 px-6 py-4">
                         {{ $rcas->links() }}
                     </div>
                 @endif

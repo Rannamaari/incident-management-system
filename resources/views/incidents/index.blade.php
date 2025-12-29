@@ -2,7 +2,7 @@
 
 @section('header')
     <!-- Hero -->
-    <div class="-mx-4 sm:-mx-6 lg:-mx-8 bg-gradient-to-br from-slate-50 via-white to-red-50/50 px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8 border-b border-gray-200/30">
+    <div class="-mx-4 sm:-mx-6 lg:-mx-8 bg-gradient-to-br from-slate-50 via-white to-red-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-gray-900 px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8 border-b border-gray-200 dark:border-white/10 dark:shadow-lg dark:shadow-black/40">
         <div class="mx-auto max-w-7xl">
             <div class="flex flex-col gap-3 sm:gap-4 lg:gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div class="min-w-0 flex-1">
@@ -14,8 +14,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h1 class="font-heading text-xl sm:text-2xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">Incident Dashboard</h1>
-                            <p class="mt-1 sm:mt-2 text-xs sm:text-sm lg:text-lg text-gray-600 font-medium">Monitor, track, and resolve system incidents efficiently</p>
+                            <h1 class="font-heading text-xl sm:text-2xl lg:text-4xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 dark:from-white dark:via-gray-100 dark:to-white bg-clip-text text-transparent">Incident Dashboard</h1>
+                            <p class="mt-1 sm:mt-2 text-xs sm:text-sm lg:text-lg text-gray-600 dark:text-gray-400 font-medium">Monitor, track, and resolve system incidents efficiently</p>
                         </div>
                     </div>
                 </div>
@@ -23,14 +23,14 @@
                 <div class="flex flex-col gap-3 w-full lg:w-auto lg:flex-row lg:items-center lg:gap-4">
                     <!-- Month Selector -->
                     <form method="GET" class="flex items-center gap-2 w-full lg:w-auto">
-                        <label for="month" class="text-sm font-heading font-medium text-gray-700 whitespace-nowrap hidden sm:inline">View Month:</label>
-                        <label for="month" class="text-sm font-heading font-medium text-gray-700 whitespace-nowrap sm:hidden">Month:</label>
+                        <label for="month" class="text-sm font-heading font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap hidden sm:inline">View Month:</label>
+                        <label for="month" class="text-sm font-heading font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap sm:hidden">Month:</label>
                         <input type="month"
                                id="month"
                                name="month"
                                value="{{ $selectedMonth }}"
                                onchange="this.form.submit()"
-                               class="flex-1 lg:flex-none rounded-xl border border-gray-300 px-3 py-2 text-sm font-medium bg-white shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all duration-200">
+                               class="flex-1 lg:flex-none rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm font-medium bg-white dark:bg-gray-800 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all duration-200">
                     </form>
 
                     <!-- Action Buttons -->
@@ -79,7 +79,7 @@
                             'iconBg' => 'bg-red-100 group-hover:bg-red-200',
                             'icon' => 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z',
                             'accent' => 'from-red-50',
-                            'valueColor' => 'text-gray-900'
+                            'valueColor' => 'text-gray-900 dark:text-gray-100'
                         ],
                         [
                             'label' => 'Open',
@@ -113,13 +113,13 @@
 
                 @foreach($kpis as $kpi)
                     <div
-                        class="group relative rounded-2xl sm:rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm p-3 sm:p-6 lg:p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-gray-200/70 hover:shadow-2xl hover:bg-white/90">
+                        class="group relative rounded-2xl sm:rounded-3xl border border-gray-100 dark:border-white/10 bg-white/80 dark:bg-slate-900 backdrop-blur-sm p-3 sm:p-6 lg:p-8 shadow-lg dark:shadow-black/40 transition-all duration-300 hover:-translate-y-2 hover:border-gray-200 dark:hover:border-white/20 hover:shadow-2xl hover:bg-white/90">
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <div class="flex-1 min-w-0">
-                                <p class="mb-2 text-xs sm:text-sm lg:text-base font-heading font-medium text-gray-600">{{ $kpi['label'] }}</p>
+                                <p class="mb-2 text-xs sm:text-sm lg:text-base font-heading font-medium text-gray-600 dark:text-gray-400">{{ $kpi['label'] }}</p>
                                 <p class="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight {{ $kpi['valueColor'] }}">
                                     {{ $kpi['value'] }}</p>
-                                <p class="mt-1 sm:mt-2 text-xs lg:text-sm text-gray-500">{{ $kpi['hint'] }}</p>
+                                <p class="mt-1 sm:mt-2 text-xs lg:text-sm text-gray-500 dark:text-gray-400">{{ $kpi['hint'] }}</p>
                             </div>
                             <div class="flex-shrink-0 self-end sm:self-auto rounded-xl sm:rounded-2xl p-2 sm:p-4 lg:p-5 {{ $kpi['iconBg'] }} transition-colors">
                                 <svg class="h-8 w-8 sm:h-8 sm:w-8 lg:h-10 lg:w-10 text-current" viewBox="0 0 24 24" fill="none"
@@ -140,7 +140,7 @@
             <!-- Per Page Selector -->
             <div class="mb-4 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <label for="per_page" class="text-sm font-heading font-medium text-gray-700">Show:</label>
+                    <label for="per_page" class="text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Show:</label>
                     <form method="GET" id="per-page-form" class="inline-block">
                         <!-- Preserve month filter -->
                         @if(request('month'))
@@ -148,7 +148,7 @@
                         @endif
 
                         <select name="per_page" id="per_page" onchange="this.form.submit()"
-                            class="rounded-xl border border-gray-300 px-3 py-2 text-sm font-medium bg-white shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all duration-200">
+                            class="rounded-xl border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm font-medium bg-white dark:bg-gray-800 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all duration-200">
                             <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15 incidents</option>
                             <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25 incidents</option>
                             <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50 incidents</option>
@@ -156,18 +156,18 @@
                         </select>
                     </form>
                 </div>
-                <div class="text-sm text-gray-600">
+                <div class="text-sm text-gray-600 dark:text-gray-400">
                     Showing <span class="font-medium">{{ $incidents->firstItem() ?? 0 }}</span>–<span class="font-medium">{{ $incidents->lastItem() ?? 0 }}</span> of <span class="font-medium">{{ $incidents->total() }}</span>
                 </div>
             </div>
 
             <!-- Table/Card container -->
-            <div class="overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg">
+            <div class="overflow-hidden rounded-3xl border border-gray-100 dark:border-white/10 bg-white/80 dark:bg-slate-900 backdrop-blur-sm shadow-lg dark:shadow-black/40">
                 <!-- Desktop table -->
                 <div class="hidden lg:block">
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-sm">
-                            <thead class="sticky top-0 z-10 bg-gradient-to-r from-gray-50 to-gray-100/80 backdrop-blur-sm text-xs uppercase tracking-wide text-gray-700 font-semibold">
+                            <thead class="sticky top-0 z-10 bg-gradient-to-r from-gray-50 to-gray-100/80 dark:from-slate-800 dark:to-slate-900/80 backdrop-blur-sm text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 font-semibold">
                                 <tr>
                                     <th class="font-heading px-3 xl:px-4 py-3 text-left">Incident</th>
                                     <th class="font-heading px-3 xl:px-4 py-3 text-left">Summary</th>
@@ -180,7 +180,7 @@
                             <tbody class="divide-y divide-gray-100">
                                 @forelse($incidents as $incident)
                                     <tr onclick="window.location='{{ route('incidents.show', $incident) }}'"
-                                        class="cursor-pointer transition-all duration-200 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-red-50/30' }}">
+                                        class="cursor-pointer transition-all duration-200 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80 dark:bg-red-900/20 dark:border-red-500 dark:hover:bg-red-900/30' : 'hover:bg-gradient-to-r hover:from-gray-50/50 hover:to-red-50/30 dark:hover:bg-white/5' }}">
                                                             <td class="px-3 xl:px-4 py-4 whitespace-nowrap">
                                                                 <div class="flex items-center">
                                                                     <div class="relative">
@@ -192,7 +192,7 @@
                                     ($incident->severity === 'High' ? 'bg-orange-100' :
                                         ($incident->severity === 'Medium' ? 'bg-yellow-100' : 'bg-green-100')) }}">
                                                                             <svg class="h-5 w-5
-                                                    {{ $incident->severity === 'Critical' ? 'text-red-600' :
+                                                    {{ $incident->severity === 'Critical' ? 'text-red-600 dark:text-red-400' :
                                     ($incident->severity === 'High' ? 'text-orange-600' :
                                         ($incident->severity === 'Medium' ? 'text-yellow-600' : 'text-green-600')) }}"
                                                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -202,15 +202,15 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="ml-3">
-                                                                        <div class="font-heading font-medium text-gray-900">{{ $incident->incident_code }}</div>
-                                                                        <div class="text-xs text-gray-500">{{ $incident->category }}</div>
+                                                                        <div class="font-heading font-medium text-gray-900 dark:text-gray-100">{{ $incident->incident_code }}</div>
+                                                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $incident->category }}</div>
                                                                     </div>
                                                                 </div>
                                                             </td>
                                                             <td class="px-3 xl:px-4 py-4">
                                                                 <div class="max-w-sm">
-                                                                    <div class="font-heading font-medium text-gray-900 break-words leading-relaxed">{{ $incident->summary }}</div>
-                                                                    <div class="text-xs text-gray-500 mt-1 break-words">{{ $incident->affected_services }}</div>
+                                                                    <div class="font-heading font-medium text-gray-900 dark:text-gray-100 break-words leading-relaxed">{{ $incident->summary }}</div>
+                                                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1 break-words">{{ $incident->affected_services }}</div>
                                                                     <div class="mt-2 text-xs text-gray-400">
                                                                         {{ $incident->started_at->timezone('Indian/Maldives')->format('M d, H:i') }}</div>
                                                                 </div>
@@ -225,7 +225,7 @@
                                                                 </span>
                                                             </td>
                                                             <td class="px-3 xl:px-4 py-4 whitespace-nowrap">
-                                                                <div class="text-gray-900 text-xs xl:text-sm">
+                                                                <div class="text-gray-900 dark:text-gray-100 text-xs xl:text-sm">
                                                                     @if($incident->duration_hms)
                                                                         {{ $incident->duration_hms }}
                                                                     @elseif($incident->status === 'Closed')
@@ -235,7 +235,7 @@
                                                                     @endif
                                                                 </div>
                                                                 @if($incident->resolved_at)
-                                                                    <div class="text-xs text-gray-500 hidden xl:block">{{ $incident->resolved_at->timezone('Indian/Maldives')->format('M d, H:i') }}
+                                                                    <div class="text-xs text-gray-500 dark:text-gray-400 hidden xl:block">{{ $incident->resolved_at->timezone('Indian/Maldives')->format('M d, H:i') }}
                                                                     </div>
                                                                 @endif
                                                             </td>
@@ -259,7 +259,7 @@
                                                             <td class="px-3 xl:px-4 py-4 whitespace-nowrap text-sm font-medium" onclick="event.stopPropagation()">
                                                                 <div class="flex items-center gap-1 xl:gap-2">
                                                                     <a href="{{ route('incidents.show', $incident) }}"
-                                                                        class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200" title="View Details">
+                                                                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200" title="View Details">
                                                                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -276,7 +276,7 @@
                                                                                 console.error('Image generation error:', err);
                                                                             }
                                                                         }"
-                                                                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'"
+                                                                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-100'"
                                                                             class="p-2 rounded-lg transition-all duration-200" title="Copy Image">
                                                                             <svg x-show="!copied" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -288,7 +288,7 @@
                                                                     </div>
                                                                     @if(auth()->user()->canEditIncidents())
                                                                         <a href="{{ route('incidents.edit', $incident) }}"
-                                                                            class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200" title="Edit Incident">
+                                                                            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200" title="Edit Incident">
                                                                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -296,7 +296,7 @@
                                                                         </a>
                                                                         @if($incident->status !== 'Closed')
                                                                             <button type="button" onclick="openCloseModal({{ $incident->id }}, '{{ $incident->incident_code }}', '{{ $incident->started_at->toISOString() }}', '{{ $incident->severity }}')"
-                                                                                class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200" title="Close Incident">
+                                                                                class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200" title="Close Incident">
                                                                                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                                 </svg>
@@ -308,7 +308,7 @@
                                                                             class="inline-block" onsubmit="return confirm('Delete this incident?')">
                                                                             @csrf @method('DELETE')
                                                                             <button type="submit"
-                                                                                class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200" title="Delete Incident">
+                                                                                class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200" title="Delete Incident">
                                                                                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                                                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -328,7 +328,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                 </svg>
-                                                <p class="text-lg font-heading font-medium text-gray-600">No incidents found</p>
+                                                <p class="text-lg font-heading font-medium text-gray-600 dark:text-gray-400">No incidents found</p>
                                                 <p class="mt-1 text-sm text-gray-400">Try adjusting your search filters</p>
                                             </div>
                                         </td>
@@ -340,7 +340,7 @@
 
                     <!-- Pagination (desktop) -->
                     @if($incidents->hasPages())
-                        <div class="border-t border-gray-200 px-6 py-4 flex items-center justify-center">
+                        <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-center">
                             {{ $incidents->links() }}
                         </div>
                     @endif
@@ -350,14 +350,14 @@
                 <div class="lg:hidden divide-y divide-gray-100/50">
                     @forelse($incidents as $incident)
                         <div onclick="window.location='{{ route('incidents.show', $incident) }}'"
-                             class="cursor-pointer p-5 transition-all duration-300 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80' : 'hover:bg-gradient-to-r hover:from-gray-50/30 hover:to-red-50/20' }}">
+                             class="cursor-pointer p-5 transition-all duration-300 {{ $incident->isCurrentlySlaExceeded() ? 'bg-red-50/80 border-l-4 border-red-400 hover:bg-red-100/80 dark:bg-red-900/20 dark:border-red-500 dark:hover:bg-red-900/30' : 'hover:bg-gradient-to-r hover:from-gray-50/30 hover:to-red-50/20 dark:hover:bg-white/5' }}">
                                     <div class="flex items-start gap-3">
                                         <div class="grid h-10 w-10 place-items-center rounded-lg
                                 {{ $incident->severity === 'Critical' ? 'bg-red-100' :
                         ($incident->severity === 'High' ? 'bg-orange-100' :
                             ($incident->severity === 'Medium' ? 'bg-yellow-100' : 'bg-green-100')) }}">
                                             <svg class="h-5 w-5
-                                  {{ $incident->severity === 'Critical' ? 'text-red-600' :
+                                  {{ $incident->severity === 'Critical' ? 'text-red-600 dark:text-red-400' :
                         ($incident->severity === 'High' ? 'text-orange-600' :
                             ($incident->severity === 'Medium' ? 'text-yellow-600' : 'text-green-600')) }}" viewBox="0 0 24 24"
                                                 fill="none" stroke="currentColor">
@@ -367,7 +367,7 @@
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <div class="mb-2 flex items-center justify-between">
-                                                <p class="text-sm font-heading font-medium text-gray-900">{{ $incident->incident_code }}</p>
+                                                <p class="text-sm font-heading font-medium text-gray-900 dark:text-gray-100">{{ $incident->incident_code }}</p>
                                                 <span
                                                     class="inline-flex items-center rounded-full px-2 py-1 text-xs font-heading font-medium
                                     {{ $incident->severity === 'Critical' ? 'bg-red-100 text-red-800' :
@@ -376,12 +376,12 @@
                                                     {{ $incident->severity }}
                                                 </span>
                                             </div>
-                                            <p class="mb-2 text-sm text-gray-900 break-words leading-relaxed">{{ $incident->summary }}</p>
-                                            <div class="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 text-xs text-gray-500">
+                                            <p class="mb-2 text-sm text-gray-900 dark:text-gray-100 break-words leading-relaxed">{{ $incident->summary }}</p>
+                                            <div class="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 text-xs text-gray-500 dark:text-gray-400">
                                                 <span>{{ $incident->started_at->timezone('Indian/Maldives')->format('M d, Y H:i') }}</span>
                                                 <span>{{ $incident->category }}</span>
                                             </div>
-                                            <div class="mb-3 flex items-center justify-between text-xs text-gray-600">
+                                            <div class="mb-3 flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
                                                 <span class="font-medium">Duration:</span>
                                                 <span>
                                                     @if($incident->duration_hms)
@@ -411,7 +411,7 @@
                                                 </div>
                                                 <div class="flex gap-2 flex-wrap" onclick="event.stopPropagation()">
                                                     <a href="{{ route('incidents.show', $incident) }}"
-                                                        class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200" title="View Details">
+                                                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200" title="View Details">
                                                         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -428,7 +428,7 @@
                                                                 console.error('Image generation error:', err);
                                                             }
                                                         }"
-                                                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'"
+                                                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-100'"
                                                             class="p-2 rounded-lg transition-all duration-200" title="Copy Image">
                                                             <svg x-show="!copied" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -440,7 +440,7 @@
                                                     </div>
                                                     @if(auth()->user()->canEditIncidents())
                                                         <a href="{{ route('incidents.edit', $incident) }}"
-                                                            class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200" title="Edit Incident">
+                                                            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200" title="Edit Incident">
                                                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -448,7 +448,7 @@
                                                         </a>
                                                         @if($incident->status !== 'Closed')
                                                             <button type="button" onclick="openCloseModal({{ $incident->id }}, '{{ $incident->incident_code }}', '{{ $incident->started_at->toISOString() }}', '{{ $incident->severity }}')"
-                                                                class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200" title="Close Incident">
+                                                                class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200" title="Close Incident">
                                                                 <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                 </svg>
@@ -467,29 +467,29 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <p class="text-lg font-heading font-medium text-gray-600">No incidents found</p>
+                            <p class="text-lg font-heading font-medium text-gray-600 dark:text-gray-400">No incidents found</p>
                             <p class="mt-1 text-sm text-gray-400">Try adjusting your search filters</p>
                         </div>
                     @endforelse
 
                     @if($incidents->hasPages())
-                        <div class="border-t border-gray-200 px-4 py-3 sm:px-6">
+                        <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6">
                             <div class="flex items-center justify-between">
                                 <div class="flex flex-1 justify-between sm:hidden">
                                     @if ($incidents->onFirstPage())
                                         <span
-                                            class="inline-flex cursor-default items-center rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-500">Previous</span>
+                                            class="inline-flex cursor-default items-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-500 dark:text-gray-400">Previous</span>
                                     @else
                                         <a href="{{ $incidents->previousPageUrl() }}"
-                                            class="inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700">Previous</a>
+                                            class="inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-700 dark:text-gray-300">Previous</a>
                                     @endif
 
                                     @if ($incidents->hasMorePages())
                                         <a href="{{ $incidents->nextPageUrl() }}"
-                                            class="ml-3 inline-flex items-center rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-700">Next</a>
+                                            class="ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-700 dark:text-gray-300">Next</a>
                                     @else
                                         <span
-                                            class="ml-3 inline-flex cursor-default items-center rounded-md border border-gray-300 px-4 py-2 text-sm text-gray-500">Next</span>
+                                            class="ml-3 inline-flex cursor-default items-center rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-500 dark:text-gray-400">Next</span>
                                     @endif
                                 </div>
                                 <div class="flex justify-center">
@@ -506,11 +506,11 @@
 
     <!-- Close Incident Modal -->
     <div id="closeModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-2xl bg-white">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-2xl bg-white dark:bg-gray-800">
             <div class="mt-3">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-heading font-bold text-gray-900">Close Incident</h3>
-                    <button onclick="closeCloseModal()" class="text-gray-400 hover:text-gray-600">
+                    <h3 class="text-2xl font-heading font-bold text-gray-900 dark:text-gray-100">Close Incident</h3>
+                    <button onclick="closeCloseModal()" class="text-gray-400 hover:text-gray-600 dark:text-gray-400">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -522,46 +522,46 @@
                     @method('PUT')
 
                     <div class="mb-4">
-                        <p class="text-sm text-gray-600 mb-4">Closing incident: <span id="modalIncidentCode" class="font-heading font-semibold text-gray-900"></span></p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Closing incident: <span id="modalIncidentCode" class="font-heading font-semibold text-gray-900 dark:text-gray-100"></span></p>
                     </div>
 
                     <div class="mb-4">
-                        <label for="resolved_at" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                        <label for="resolved_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Resolved Date and Time <span class="text-red-500">*</span>
                         </label>
                         <input type="datetime-local" id="resolved_at" name="resolved_at" required
-                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300">
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300">
                     </div>
 
                     <div class="mb-4">
-                        <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                        <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Root Cause <span class="text-red-500">*</span>
                         </label>
                         <textarea id="root_cause" name="root_cause" rows="4" required
-                            class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300"
                             placeholder="Enter the root cause of this incident..."></textarea>
-                        <p class="mt-1 text-xs text-gray-500">Root cause is required when closing an incident</p>
+                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Root cause is required when closing an incident</p>
                     </div>
 
                     <!-- Conditional Fields Container -->
                     <div id="conditionalFieldsContainer" class="space-y-4 mb-6">
                         <!-- Travel Time (for Medium/High/Critical) -->
                         <div id="travelTimeField" class="hidden">
-                            <label for="travel_time" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="travel_time" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Travel Time (minutes) <span class="text-red-500">*</span>
                             </label>
                             <input type="number" id="travel_time" name="travel_time" min="0"
-                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
+                                class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300"
                                 placeholder="Enter travel time in minutes">
                         </div>
 
                         <!-- Work Time (for Medium/High/Critical) -->
                         <div id="workTimeField" class="hidden">
-                            <label for="work_time" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="work_time" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Work Time (minutes) <span class="text-red-500">*</span>
                             </label>
                             <input type="number" id="work_time" name="work_time" min="0"
-                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
+                                class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300"
                                 placeholder="Enter work time in minutes">
                         </div>
 
@@ -581,19 +581,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Reason for Delay <span class="text-red-500">*</span>
                             </label>
                             <textarea id="delay_reason" name="delay_reason" rows="4"
-                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-green-600 focus:ring-2 focus:ring-green-600/20 bg-white transition-all duration-300"
+                                class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300"
                                 placeholder="Please provide a detailed explanation for why this incident took more than 5 hours to resolve..."></textarea>
-                            <p class="mt-1 text-xs text-gray-500">This field is required for incidents with duration exceeding 5 hours.</p>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">This field is required for incidents with duration exceeding 5 hours.</p>
                         </div>
                     </div>
 
                     <div class="flex justify-end gap-3">
                         <button type="button" onclick="closeCloseModal()"
-                            class="px-6 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-heading font-medium hover:bg-gray-200 transition-colors duration-200">
+                            class="px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-heading font-medium hover:bg-gray-200 transition-colors duration-200">
                             Cancel
                         </button>
                         <button type="submit"

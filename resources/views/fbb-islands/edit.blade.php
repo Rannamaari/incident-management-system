@@ -6,7 +6,7 @@
             <h2 class="font-heading text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900 bg-clip-text text-transparent">
                 Edit FBB Island
             </h2>
-            <p class="mt-2 text-lg text-gray-600">{{ $fbbIsland->region->code }} - {{ $fbbIsland->island_name }}</p>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400">{{ $fbbIsland->region->code }} - {{ $fbbIsland->island_name }}</p>
         </div>
         <div class="flex gap-3">
             <a href="{{ route('fbb-islands.show', $fbbIsland) }}" class="inline-flex items-center gap-2 rounded-2xl bg-gray-700 px-5 py-2.5 text-white hover:bg-gray-800 transition-colors">
@@ -24,30 +24,30 @@
                 @method('PUT')
 
                 <!-- FBB Island Information (Read-only) -->
-                <div class="overflow-hidden rounded-3xl border bg-white shadow-xl p-8">
-                    <h3 class="text-lg font-heading font-semibold text-gray-900 mb-6">FBB Island Information</h3>
+                <div class="overflow-hidden rounded-3xl border bg-white dark:bg-gray-800 shadow-xl p-8">
+                    <h3 class="text-lg font-heading font-semibold text-gray-900 dark:text-gray-100 mb-6">FBB Island Information</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Region</label>
-                            <p class="text-base font-semibold text-gray-900">{{ $fbbIsland->region->name }} ({{ $fbbIsland->region->code }})</p>
+                            <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Region</label>
+                            <p class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $fbbIsland->region->name }} ({{ $fbbIsland->region->code }})</p>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Island Name</label>
-                            <p class="text-base font-semibold text-gray-900">{{ $fbbIsland->island_name }}</p>
+                            <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Island Name</label>
+                            <p class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $fbbIsland->island_name }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Editable Settings -->
-                <div class="overflow-hidden rounded-3xl border bg-white shadow-xl p-8">
-                    <h3 class="text-lg font-heading font-semibold text-gray-900 mb-6">Settings</h3>
+                <div class="overflow-hidden rounded-3xl border bg-white dark:bg-gray-800 shadow-xl p-8">
+                    <h3 class="text-lg font-heading font-semibold text-gray-900 dark:text-gray-100 mb-6">Settings</h3>
 
                     <div class="space-y-4">
                         <!-- Technology -->
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <label for="technology" class="block text-sm font-medium text-gray-900 mb-2">
+                            <label for="technology" class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                                 Technology <span class="text-red-500">*</span>
                             </label>
                             <input type="text"
@@ -55,10 +55,10 @@
                                    id="technology"
                                    value="{{ old('technology', $fbbIsland->technology) }}"
                                    required
-                                   class="w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                   class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:focus:ring-purple-400"
                                    placeholder="e.g., FTTH, FTTx, IPOE, FTTx-IPOE">
-                            <p class="mt-1 text-xs text-gray-500">Specify the FBB technology used</p>
-                            @error('technology')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Specify the FBB technology used</p>
+                            @error('technology')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                         </div>
 
                         <!-- Active Status -->
@@ -68,25 +68,25 @@
                                    id="is_active"
                                    value="1"
                                    {{ $fbbIsland->is_active ? 'checked' : '' }}
-                                   class="h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                   class="h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-green-600 focus:ring-green-500 dark:focus:ring-green-400">
                             <label for="is_active" class="flex-1 cursor-pointer">
-                                <span class="block text-sm font-medium text-gray-900">Active Island</span>
-                                <span class="text-xs text-gray-500">FBB service is currently active on this island</span>
+                                <span class="block text-sm font-medium text-gray-900 dark:text-gray-100">Active Island</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">FBB service is currently active on this island</span>
                             </label>
                         </div>
 
                         <!-- Remarks -->
                         <div class="p-4 rounded-xl bg-gray-50">
-                            <label for="remarks" class="block text-sm font-medium text-gray-900 mb-2">
+                            <label for="remarks" class="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
                                 Remarks
                             </label>
                             <textarea name="remarks"
                                       id="remarks"
                                       rows="4"
-                                      class="w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                      class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-purple-500 focus:ring-purple-500 dark:focus:ring-purple-400"
                                       placeholder="Additional notes or remarks about this FBB island">{{ old('remarks', $fbbIsland->remarks) }}</textarea>
-                            <p class="mt-1 text-xs text-gray-500">Any additional information about this FBB island</p>
-                            @error('remarks')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Any additional information about this FBB island</p>
+                            @error('remarks')<p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@
                 <!-- Submit Button -->
                 <div class="flex justify-end gap-3">
                     <a href="{{ route('fbb-islands.show', $fbbIsland) }}"
-                       class="inline-flex items-center gap-2 rounded-2xl border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                       class="inline-flex items-center gap-2 rounded-2xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-6 py-3 font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 transition-colors">
                         Cancel
                     </a>
                     <button type="submit"

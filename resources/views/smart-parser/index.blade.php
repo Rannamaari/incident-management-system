@@ -6,7 +6,7 @@
             <h2 class="font-heading text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900 bg-clip-text text-transparent">
                 AI Logger
             </h2>
-            <p class="mt-2 text-lg text-gray-600 font-medium">Instantly create incidents from messages</p>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400 font-medium">Instantly create incidents from messages</p>
         </div>
 
         <div class="flex gap-3">
@@ -60,7 +60,7 @@
                      x-transition:leave-end="opacity-0 -translate-y-2"
                      class="px-6 pb-6"
                      style="display: none;">
-                    <div class="space-y-2 text-sm text-purple-800 border-t border-purple-200/50 pt-4">
+                    <div class="space-y-2 text-sm text-purple-800 border-t border-purple-200 dark:border-purple-700/50 pt-4">
                         <p>This tool intelligently parses incident closure messages and automatically extracts key details:</p>
                         <ul class="ml-4 space-y-1">
                             <li>• <strong>Summary:</strong> Service names, cell IDs, or affected elements</li>
@@ -70,15 +70,15 @@
                             <li>• <strong>Root Cause:</strong> Captures the cause description</li>
                             <li>• <strong>Status:</strong> Detects Open (down) or Closed (on service)</li>
                         </ul>
-                        <p class="mt-3 text-purple-700 font-medium">Simply paste your message below and let the AI do the work!</p>
+                        <p class="mt-3 text-purple-700 dark:text-purple-400 font-medium">Simply paste your message below and let the AI do the work!</p>
                     </div>
                 </div>
             </div>
 
             <!-- Main Form -->
-            <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
+            <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg">
                 <!-- Section Header -->
-                <div class="border-b border-gray-200/50 bg-gradient-to-r from-purple-50/80 to-white/60 px-6 py-5">
+                <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-purple-50/80 to-white/60 px-6 py-5">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-purple-700 shadow-md">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -87,8 +87,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Paste Incident Closure Message</h3>
-                            <p class="text-sm text-gray-600">The AI will extract and populate all fields automatically</p>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Paste Incident Closure Message</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">The AI will extract and populate all fields automatically</p>
                         </div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
 
                         <!-- Incident Message Textarea -->
                         <div>
-                            <label for="incident_message" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="incident_message" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Incident Closure Message <span class="text-red-500">*</span>
                             </label>
                             <textarea
@@ -107,18 +107,18 @@
                                 id="incident_message"
                                 rows="12"
                                 placeholder="Example:&#10;&#10;GA_Kondey FBB is on service since 1220hrs 21/12/2025&#10;Duration: 30mins&#10;Cause: Local power failure.&#10;&#10;OR&#10;&#10;Below mentioned cells are on service since 1042hrs 21/12/2025&#10;AA_Kandholhudhoo_Resort_U900-3752B&#10;AA_Kandholhudhoo_Resort_G900-3751B&#10;AA_Kandholhudhoo_Resort_L900_B&#10;Duration: 2hrs 12mins&#10;Cause: Under investigation. Cells came on service after Resort IT gave power reset to RRU."
-                                class="w-full rounded-xl border border-gray-300 px-4 py-3 shadow-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 bg-white transition-all duration-300 resize-y font-mono text-sm @error('incident_message') border-red-300 @enderror"
+                                class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-purple-600 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-600/20 dark:focus:ring-purple-400/20 bg-white dark:bg-gray-800 transition-all duration-300 resize-y font-mono text-sm @error('incident_message') border-red-300 dark:border-red-700 @enderror"
                             >{{ old('incident_message') }}</textarea>
                             @error('incident_message')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
-                            <p class="mt-2 text-xs text-gray-500">
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                                 Paste the complete incident closure message including service details, duration, and cause
                             </p>
                         </div>
 
                         <!-- Actions -->
-                        <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                             <a href="{{ route('incidents.index') }}"
                                 class="rounded-xl bg-gray-200 px-6 py-3 font-medium text-gray-800 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400/30 transition-all duration-300">
                                 Cancel
@@ -137,18 +137,18 @@
             </div>
 
             <!-- Example Messages -->
-            <div class="mt-6 rounded-2xl border border-gray-200 bg-gray-50/50 backdrop-blur-sm p-6">
-                <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700">
+            <div class="mt-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 backdrop-blur-sm p-6">
+                <h4 class="font-heading mb-4 text-sm font-heading font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
                     Example Messages
                 </h4>
 
                 <div class="space-y-4">
                     <!-- Example 1 -->
-                    <div class="rounded-xl border border-gray-200 bg-white p-4">
+                    <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1">
                                 <h5 class="text-xs font-semibold text-purple-600 mb-2">Single FBB Outage (Closed)</h5>
-                                <pre class="text-xs text-gray-700 font-mono whitespace-pre-wrap">Gn_Fuvahmulah FBB is on service since 1454hrs 18/12/2025
+                                <pre class="text-xs text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap">Gn_Fuvahmulah FBB is on service since 1454hrs 18/12/2025
 Duration: 40mins
 Cause: Local Power Failure</pre>
                                 <span class="inline-flex items-center mt-2 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -156,18 +156,18 @@ Cause: Local Power Failure</pre>
                                 </span>
                             </div>
                             <button type="button" onclick="copyExample(1)"
-                                class="flex-shrink-0 text-purple-600 hover:text-purple-700 text-xs font-medium">
+                                class="flex-shrink-0 text-purple-600 hover:text-purple-700 dark:text-purple-400 text-xs font-medium">
                                 Copy
                             </button>
                         </div>
                     </div>
 
                     <!-- Example 2 -->
-                    <div class="rounded-xl border border-gray-200 bg-white p-4">
+                    <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1">
                                 <h5 class="text-xs font-semibold text-purple-600 mb-2">Multiple Cell (RAN) Outage (Closed)</h5>
-                                <pre class="text-xs text-gray-700 font-mono whitespace-pre-wrap">Below mentioned cells are on service since 1909hrs 20/12/2025
+                                <pre class="text-xs text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap">Below mentioned cells are on service since 1909hrs 20/12/2025
 K_Hulhumale_TreeTop_ATM_AAU_L1800A,B
 K_Hulhumale_TreeTop_ATM_AAU_L2100A,B
 K_Hulhumale_TreeTop_ATM_AAU_U2100-2762A,B
@@ -178,18 +178,18 @@ Cause: Local power failure from pole.</pre>
                                 </span>
                             </div>
                             <button type="button" onclick="copyExample(2)"
-                                class="flex-shrink-0 text-purple-600 hover:text-purple-700 text-xs font-medium">
+                                class="flex-shrink-0 text-purple-600 hover:text-purple-700 dark:text-purple-400 text-xs font-medium">
                                 Copy
                             </button>
                         </div>
                     </div>
 
                     <!-- Example 3 -->
-                    <div class="rounded-xl border border-gray-200 bg-white p-4">
+                    <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1">
                                 <h5 class="text-xs font-semibold text-purple-600 mb-2">Single Site (5G) Outage (Closed)</h5>
-                                <pre class="text-xs text-gray-700 font-mono whitespace-pre-wrap">GDh_Thinadhoo 5G is on service since 1708hrs 18/12/2025
+                                <pre class="text-xs text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap">GDh_Thinadhoo 5G is on service since 1708hrs 18/12/2025
 Duration: 41mins
 Cause: DCDU Breaker Tripped during power outage. Site on service after power was restored and battery breaker was turned on.</pre>
                                 <span class="inline-flex items-center mt-2 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -197,25 +197,25 @@ Cause: DCDU Breaker Tripped during power outage. Site on service after power was
                                 </span>
                             </div>
                             <button type="button" onclick="copyExample(3)"
-                                class="flex-shrink-0 text-purple-600 hover:text-purple-700 text-xs font-medium">
+                                class="flex-shrink-0 text-purple-600 hover:text-purple-700 dark:text-purple-400 text-xs font-medium">
                                 Copy
                             </button>
                         </div>
                     </div>
 
                     <!-- Example 4 - Open Incident -->
-                    <div class="rounded-xl border border-gray-200 bg-white p-4">
+                    <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
                         <div class="flex items-start justify-between gap-3">
                             <div class="flex-1">
-                                <h5 class="text-xs font-semibold text-red-600 mb-2">Ongoing Outage (Open)</h5>
-                                <pre class="text-xs text-gray-700 font-mono whitespace-pre-wrap">AA_Mahibadhoo FBB is down since 1430hrs 21/12/2025
+                                <h5 class="text-xs font-semibold text-red-600 dark:text-red-400 mb-2">Ongoing Outage (Open)</h5>
+                                <pre class="text-xs text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap">AA_Mahibadhoo FBB is down since 1430hrs 21/12/2025
 Cause: Under investigation</pre>
                                 <span class="inline-flex items-center mt-2 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                     Status: Open
                                 </span>
                             </div>
                             <button type="button" onclick="copyExample(4)"
-                                class="flex-shrink-0 text-purple-600 hover:text-purple-700 text-xs font-medium">
+                                class="flex-shrink-0 text-purple-600 hover:text-purple-700 dark:text-purple-400 text-xs font-medium">
                                 Copy
                             </button>
                         </div>

@@ -11,8 +11,8 @@
                     {{ $rca->status }}
                 </span>
             </div>
-            <p class="text-lg text-gray-600 font-medium">{{ $rca->title }}</p>
-            <div class="flex items-center gap-4 mt-2 text-sm text-gray-600">
+            <p class="text-lg text-gray-600 dark:text-gray-400 font-medium">{{ $rca->title }}</p>
+            <div class="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
                 <span>Incident: <a href="{{ route('incidents.show', $rca->incident) }}" class="text-blue-600 hover:text-blue-800 font-medium">{{ $rca->incident->incident_code }}</a></span>
                 <span>•</span>
                 <span>Created: {{ $rca->created_at->format('M j, Y') }}</span>
@@ -55,22 +55,22 @@
 
                 <!-- 1. Problem Description -->
                 @if($rca->problem_description)
-                <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 shadow-lg">
-                    <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
-                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">1. Problem Description</h3>
+                <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 shadow-lg">
+                    <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">1. Problem Description</h3>
                     </div>
                     <div class="p-6">
-                        <p class="text-gray-700 whitespace-pre-wrap">{{ $rca->problem_description }}</p>
+                        <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $rca->problem_description }}</p>
                     </div>
                 </div>
                 @endif
 
                 <!-- Timeline of Events -->
                 @if($rca->timeLogs->count() > 0)
-                <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 shadow-lg">
-                    <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
-                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Timeline of Events</h3>
-                        <p class="text-sm text-gray-600">{{ $rca->timeLogs->count() }} events recorded</p>
+                <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 shadow-lg">
+                    <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Timeline of Events</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $rca->timeLogs->count() }} events recorded</p>
                     </div>
                     <div class="p-6">
                         <div class="flow-root">
@@ -97,11 +97,11 @@
                                                 </div>
                                                 <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                                                     <div class="flex-1">
-                                                        <p class="text-sm {{ $loop->last ? 'text-green-900 font-medium' : 'text-gray-900' }}">
+                                                        <p class="text-sm {{ $loop->last ? 'text-green-900 font-medium' : 'text-gray-900 dark:text-gray-100' }}">
                                                             {{ $log->event_description }}
                                                         </p>
                                                         @if($loop->last)
-                                                            <p class="mt-1 text-xs text-green-700 font-medium">
+                                                            <p class="mt-1 text-xs text-green-700 dark:text-green-400 font-medium">
                                                                 <svg class="inline h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                 </svg>
@@ -109,7 +109,7 @@
                                                             </p>
                                                         @endif
                                                     </div>
-                                                    <div class="text-right text-sm whitespace-nowrap {{ $loop->last ? 'text-green-600' : 'text-gray-500' }}">
+                                                    <div class="text-right text-sm whitespace-nowrap {{ $loop->last ? 'text-green-600' : 'text-gray-500 dark:text-gray-400' }}">
                                                         <time datetime="{{ $log->occurred_at->toISOString() }}">
                                                             {{ $log->occurred_at->format('M j, Y g:i A') }}
                                                         </time>
@@ -127,53 +127,53 @@
 
                 <!-- 2. Problem Analysis -->
                 @if($rca->problem_analysis)
-                <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 shadow-lg">
-                    <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
-                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">2. Problem Analysis</h3>
+                <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 shadow-lg">
+                    <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">2. Problem Analysis</h3>
                     </div>
                     <div class="p-6">
-                        <p class="text-gray-700 whitespace-pre-wrap">{{ $rca->problem_analysis }}</p>
+                        <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $rca->problem_analysis }}</p>
                     </div>
                 </div>
                 @endif
 
                 <!-- 3. Root Cause -->
                 @if($rca->root_cause)
-                <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 shadow-lg">
-                    <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
-                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">3. Root Cause</h3>
+                <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 shadow-lg">
+                    <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">3. Root Cause</h3>
                     </div>
                     <div class="p-6">
-                        <p class="text-gray-700 whitespace-pre-wrap">{{ $rca->root_cause }}</p>
+                        <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $rca->root_cause }}</p>
                     </div>
                 </div>
                 @endif
 
                 <!-- 4. Corrective Actions -->
                 @if($rca->workaround || $rca->solution || $rca->recommendation)
-                <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 shadow-lg">
-                    <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
-                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">4. Corrective Actions</h3>
+                <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 shadow-lg">
+                    <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">4. Corrective Actions</h3>
                     </div>
                     <div class="p-6 space-y-6">
                         @if($rca->workaround)
                         <div>
-                            <h4 class="font-heading text-sm font-heading font-semibold text-gray-700 mb-2">4.1 Workaround</h4>
-                            <p class="text-gray-700 whitespace-pre-wrap">{{ $rca->workaround }}</p>
+                            <h4 class="font-heading text-sm font-heading font-semibold text-gray-700 dark:text-gray-300 mb-2">4.1 Workaround</h4>
+                            <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $rca->workaround }}</p>
                         </div>
                         @endif
 
                         @if($rca->solution)
                         <div>
-                            <h4 class="font-heading text-sm font-heading font-semibold text-gray-700 mb-2">4.2 Solution</h4>
-                            <p class="text-gray-700 whitespace-pre-wrap">{{ $rca->solution }}</p>
+                            <h4 class="font-heading text-sm font-heading font-semibold text-gray-700 dark:text-gray-300 mb-2">4.2 Solution</h4>
+                            <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $rca->solution }}</p>
                         </div>
                         @endif
 
                         @if($rca->recommendation)
                         <div>
-                            <h4 class="font-heading text-sm font-heading font-semibold text-gray-700 mb-2">4.3 Recommendation</h4>
-                            <p class="text-gray-700 whitespace-pre-wrap">{{ $rca->recommendation }}</p>
+                            <h4 class="font-heading text-sm font-heading font-semibold text-gray-700 dark:text-gray-300 mb-2">4.3 Recommendation</h4>
+                            <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ $rca->recommendation }}</p>
                         </div>
                         @endif
                     </div>
@@ -182,28 +182,28 @@
 
                 <!-- Action Points -->
                 @if($rca->actionPoints->count() > 0)
-                <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 shadow-lg">
-                    <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
-                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">4.1 Action Points</h3>
-                        <p class="text-sm text-gray-600">{{ $rca->actionPoints->count() }} action items</p>
+                <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 shadow-lg">
+                    <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+                        <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">4.1 Action Points</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $rca->actionPoints->count() }} action items</p>
                     </div>
                     <div class="p-6">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead>
                                     <tr class="bg-gray-50">
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Action Item</th>
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Responsible Person</th>
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Due Date</th>
-                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Action Item</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Responsible Person</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Due Date</th>
+                                        <th class="font-heading px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
+                                <tbody class="divide-y divide-gray-200 bg-white dark:bg-gray-800">
                                     @foreach($rca->actionPoints as $actionPoint)
                                     <tr>
-                                        <td class="px-4 py-3 text-sm text-gray-900">{{ $actionPoint->action_item }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-700">{{ $actionPoint->responsible_person }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">{{ $actionPoint->action_item }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">{{ $actionPoint->responsible_person }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
                                             {{ $actionPoint->due_date ? $actionPoint->due_date->format('M j, Y') : 'Not set' }}
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap">
@@ -222,8 +222,8 @@
 
                 <!-- Activity Audit Trail -->
                 @if($rca->activityLogs->count() > 0)
-                <div class="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
-                    <div class="border-b border-gray-200/50 bg-gradient-to-r from-purple-50/80 to-white/60 px-6 py-4">
+                <div class="mt-6 overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg">
+                    <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-purple-50/80 to-white/60 px-6 py-4">
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-purple-700 shadow-md">
                                 <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,8 +231,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="font-heading text-lg font-semibold text-gray-900">Audit Trail</h3>
-                                <p class="text-sm text-gray-600">Complete history of all changes made to this RCA</p>
+                                <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-gray-100">Audit Trail</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Complete history of all changes made to this RCA</p>
                             </div>
                         </div>
                     </div>
@@ -254,13 +254,13 @@
                                                 @if($log->action === 'created') bg-green-100
                                                 @elseif($log->action === 'updated') bg-blue-100
                                                 @elseif($log->action === 'deleted') bg-red-100
-                                                @else bg-gray-100
+                                                @else bg-gray-100 dark:bg-gray-900
                                                 @endif">
                                                 <div class="
                                                     @if($log->action === 'created') text-green-600
                                                     @elseif($log->action === 'updated') text-blue-600
-                                                    @elseif($log->action === 'deleted') text-red-600
-                                                    @else text-gray-600
+                                                    @elseif($log->action === 'deleted') text-red-600 dark:text-red-400
+                                                    @else text-gray-600 dark:text-gray-400
                                                     @endif">
                                                     {!! $log->action_icon !!}
                                                 </div>
@@ -270,40 +270,40 @@
                                             <div class="flex-auto">
                                                 <div class="flex items-start justify-between gap-x-4">
                                                     <div class="flex-1">
-                                                        <p class="text-sm font-heading font-semibold text-gray-900">
+                                                        <p class="text-sm font-heading font-semibold text-gray-900 dark:text-gray-100">
                                                             {{ $log->user ? $log->user->name : 'System' }}
                                                             <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ml-2 {{ $log->action_color_class }}">
                                                                 {{ ucfirst($log->action) }}
                                                             </span>
                                                         </p>
 
-                                                        <p class="mt-1 text-sm text-gray-700">
+                                                        <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">
                                                             {{ $log->description }}
                                                         </p>
 
                                                         @if($log->field_name && $log->action === 'updated')
                                                             <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                                                                <div class="rounded-lg bg-white/80 border border-gray-200 p-2">
-                                                                    <span class="font-heading font-medium text-gray-500">Previous:</span>
-                                                                    <span class="text-gray-900 ml-1">{{ $log->old_value ?? '-' }}</span>
+                                                                <div class="rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 p-2">
+                                                                    <span class="font-heading font-medium text-gray-500 dark:text-gray-400">Previous:</span>
+                                                                    <span class="text-gray-900 dark:text-gray-100 ml-1">{{ $log->old_value ?? '-' }}</span>
                                                                 </div>
-                                                                <div class="rounded-lg bg-white/80 border border-gray-200 p-2">
-                                                                    <span class="font-heading font-medium text-gray-500">New:</span>
-                                                                    <span class="text-gray-900 ml-1">{{ $log->new_value ?? '-' }}</span>
+                                                                <div class="rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 p-2">
+                                                                    <span class="font-heading font-medium text-gray-500 dark:text-gray-400">New:</span>
+                                                                    <span class="text-gray-900 dark:text-gray-100 ml-1">{{ $log->new_value ?? '-' }}</span>
                                                                 </div>
                                                             </div>
                                                         @endif
                                                     </div>
 
                                                     <time datetime="{{ $log->created_at->toISOString() }}"
-                                                        class="flex-none text-xs text-gray-500 whitespace-nowrap">
+                                                        class="flex-none text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                                                         {{ $log->created_at->format('M j, Y') }}<br>
                                                         {{ $log->created_at->format('g:i A') }}
                                                     </time>
                                                 </div>
 
                                                 @if($log->ip_address)
-                                                    <p class="mt-2 text-xs text-gray-500">
+                                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                                                         IP: {{ $log->ip_address }}
                                                     </p>
                                                 @endif

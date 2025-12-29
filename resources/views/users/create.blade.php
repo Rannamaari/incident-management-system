@@ -6,7 +6,7 @@
             <h2 class="font-heading text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 Create New User
             </h2>
-            <p class="mt-2 text-lg text-gray-600 font-medium">Add a new user to the system</p>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400 font-medium">Add a new user to the system</p>
         </div>
 
         <div class="flex gap-3">
@@ -24,9 +24,9 @@
 @section('content')
     <div class="py-6 sm:py-8">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div class="overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-xl">
+            <div class="overflow-hidden rounded-3xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl">
                 <!-- Section Header -->
-                <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
+                <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-md">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,8 +35,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">User Information</h3>
-                            <p class="text-sm text-gray-600">Fill in the fields below to create a new user</p>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">User Information</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Fill in the fields below to create a new user</p>
                         </div>
                     </div>
                 </div>
@@ -47,37 +47,37 @@
 
                         <!-- Name -->
                         <div>
-                            <label for="name" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="name" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Full Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                class="w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('name') border-red-300 @enderror"
+                                class="w-full rounded-2xl border border-gray-300 dark:border-gray-600/50 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('name') border-red-300 dark:border-red-700 @enderror"
                                 placeholder="Enter user's full name">
                             @error('name')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Email -->
                         <div>
-                            <label for="email" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="email" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Email Address <span class="text-red-500">*</span>
                             </label>
                             <input type="email" name="email" id="email" value="{{ old('email') }}" required
-                                class="w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('email') border-red-300 @enderror"
+                                class="w-full rounded-2xl border border-gray-300 dark:border-gray-600/50 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('email') border-red-300 dark:border-red-700 @enderror"
                                 placeholder="user@example.com">
                             @error('email')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Role -->
                         <div>
-                            <label for="role" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="role" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Role <span class="text-red-500">*</span>
                             </label>
                             <select name="role" id="role" required
-                                class="w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('role') border-red-300 @enderror">
+                                class="w-full rounded-2xl border border-gray-300 dark:border-gray-600/50 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('role') border-red-300 dark:border-red-700 @enderror">
                                 <option value="">Select Role</option>
                                 <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin - Full system access</option>
                                 <option value="editor" {{ old('role') === 'editor' ? 'selected' : '' }}>Editor - Create and edit incidents</option>
@@ -85,9 +85,9 @@
                                 <option value="viewer" {{ old('role') === 'viewer' ? 'selected' : '' }}>Viewer - Read-only access</option>
                             </select>
                             @error('role')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
-                            <p class="mt-2 text-xs text-gray-500">
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                                 <strong>Admin:</strong> Full system access including user management<br>
                                 <strong>Editor:</strong> Can create, edit, and export incidents<br>
                                 <strong>NOC:</strong> Can manage incidents, sites, temp sites, and phone book<br>
@@ -97,32 +97,32 @@
 
                         <!-- Password -->
                         <div>
-                            <label for="password" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="password" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Password <span class="text-red-500">*</span>
                             </label>
                             <input type="password" name="password" id="password" required
-                                class="w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white @error('password') border-red-300 @enderror"
+                                class="w-full rounded-2xl border border-gray-300 dark:border-gray-600/50 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800 @error('password') border-red-300 dark:border-red-700 @enderror"
                                 placeholder="Minimum 8 characters">
                             @error('password')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
-                            <p class="mt-1 text-xs text-gray-500">Password must be at least 8 characters long</p>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Password must be at least 8 characters long</p>
                         </div>
 
                         <!-- Password Confirmation -->
                         <div>
-                            <label for="password_confirmation" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                            <label for="password_confirmation" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Confirm Password <span class="text-red-500">*</span>
                             </label>
                             <input type="password" name="password_confirmation" id="password_confirmation" required
-                                class="w-full rounded-2xl border border-gray-300/50 px-4 py-3 shadow-sm focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:bg-white focus:bg-white"
+                                class="w-full rounded-2xl border border-gray-300 dark:border-gray-600/50 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 hover:bg-white dark:bg-gray-800 focus:bg-white dark:bg-gray-800"
                                 placeholder="Re-enter password">
                         </div>
 
                         <!-- Form Actions -->
-                        <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
+                        <div class="flex items-center justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
                             <a href="{{ route('users.index') }}"
-                                class="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-700 shadow-sm transition-all duration-300 hover:bg-gray-50">
+                                class="inline-flex items-center gap-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-6 py-3 font-semibold text-gray-700 dark:text-gray-300 shadow-sm transition-all duration-300 hover:bg-gray-50">
                                 Cancel
                             </a>
                             <button type="submit"

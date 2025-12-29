@@ -16,7 +16,7 @@
                     {{ $incident->status }}
                 </span>
             </div>
-            <p class="text-lg text-gray-600 font-medium">{{ $incident->summary }}</p>
+            <p class="text-lg text-gray-600 dark:text-gray-400 font-medium">{{ $incident->summary }}</p>
             <div class="flex items-center gap-4 mt-2">
                 <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-sm font-medium
                     @if($incident->severity === 'Critical') bg-red-100 text-red-800
@@ -48,7 +48,7 @@
             <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
                 <!-- Left Side: Back Button -->
                 <a href="{{ route('incidents.index') }}"
-                    class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-all duration-200"
+                    class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-700 dark:text-gray-300 transition-all duration-200"
                     title="Back to List">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -75,7 +75,7 @@
                                 console.error('Copy error:', err);
                             }
                         }"
-                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'"
+                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-100'"
                             class="p-2 rounded-lg transition-all duration-200"
                             title="Copy Incident Text">
                             <svg x-show="!copied" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -98,7 +98,7 @@
                                 console.error('Image generation error:', err);
                             }
                         }"
-                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'"
+                            :class="copied ? 'bg-green-100 text-green-600' : 'bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-100'"
                             class="p-2 rounded-lg transition-all duration-200"
                             title="Copy Image">
                             <svg x-show="!copied" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +113,7 @@
                     @if(auth()->user()->canEditIncidents())
                         <!-- Edit Button -->
                         <a href="{{ route('incidents.edit', $incident) }}"
-                            class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200"
+                            class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200"
                             title="Edit Incident">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -123,7 +123,7 @@
                         @if($incident->status !== 'Closed')
                             <!-- Close Button -->
                             <button type="button" id="close-incident-btn"
-                                class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200"
+                                class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200"
                                 title="Close Incident">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -138,7 +138,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit"
-                                class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 transition-all duration-200"
+                                class="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-gray-100 transition-all duration-200"
                                 title="Delete Incident">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -152,15 +152,15 @@
             <!-- SLA and RCA Information Cards (Top) -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
                 <!-- SLA Information -->
-                <div class="rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm p-5 shadow-sm">
-                    <h4 class="font-heading text-sm font-heading font-semibold text-gray-900 mb-3">SLA Information</h4>
+                <div class="rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-5 shadow-sm">
+                    <h4 class="font-heading text-sm font-heading font-semibold text-gray-900 dark:text-gray-100 mb-3">SLA Information</h4>
                     <dl class="space-y-2">
                         <div>
-                            <dt class="text-xs font-heading font-medium text-gray-500">SLA Target</dt>
-                            <dd class="text-sm font-heading font-semibold text-gray-900">{{ $incident->sla_minutes / 60 }} hours</dd>
+                            <dt class="text-xs font-heading font-medium text-gray-500 dark:text-gray-400">SLA Target</dt>
+                            <dd class="text-sm font-heading font-semibold text-gray-900 dark:text-gray-100">{{ $incident->sla_minutes / 60 }} hours</dd>
                         </div>
                         <div>
-                            <dt class="text-xs font-heading font-medium text-gray-500">Status</dt>
+                            <dt class="text-xs font-heading font-medium text-gray-500 dark:text-gray-400">Status</dt>
                             <dd class="text-sm">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-heading font-medium {{ $incident->getSlaColorClass() }}">
                                     {{ $incident->getCurrentSlaStatus() }}
@@ -171,11 +171,11 @@
                 </div>
 
                 <!-- RCA Information -->
-                <div class="rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm p-5 shadow-sm">
-                    <h4 class="font-heading text-sm font-heading font-semibold text-gray-900 mb-3">RCA Status</h4>
+                <div class="rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-5 shadow-sm">
+                    <h4 class="font-heading text-sm font-heading font-semibold text-gray-900 dark:text-gray-100 mb-3">RCA Status</h4>
                     <div class="space-y-2">
                         <div>
-                            <dt class="text-xs font-heading font-medium text-gray-500">Required</dt>
+                            <dt class="text-xs font-heading font-medium text-gray-500 dark:text-gray-400">Required</dt>
                             <dd class="text-sm">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-heading font-medium {{ $incident->getRcaColorClass() }}">
                                     {{ $incident->getRcaStatus() }}
@@ -192,33 +192,33 @@
                                 </svg>
                                 View RCA Document
                             </a>
-                            <p class="text-xs text-gray-500 mt-1">{{ $incident->rca->rca_number }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $incident->rca->rca_number }}</p>
                         </div>
                         @endif
                     </div>
                 </div>
 
                 <!-- Quick Stats -->
-                <div class="rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm p-5 shadow-sm">
-                    <h4 class="font-heading text-sm font-heading font-semibold text-gray-900 mb-3">Quick Stats</h4>
+                <div class="rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-5 shadow-sm">
+                    <h4 class="font-heading text-sm font-heading font-semibold text-gray-900 dark:text-gray-100 mb-3">Quick Stats</h4>
                     <dl class="space-y-2">
                         <div class="flex justify-between">
-                            <dt class="text-xs text-gray-500">Created By</dt>
-                            <dd class="text-sm font-heading font-medium text-gray-900">
+                            <dt class="text-xs text-gray-500 dark:text-gray-400">Created By</dt>
+                            <dd class="text-sm font-heading font-medium text-gray-900 dark:text-gray-100">
                                 @if($incident->creator)
                                     {{ $incident->creator->name }}
-                                    <span class="text-xs text-gray-500">({{ $incident->created_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }})</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ $incident->created_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }})</span>
                                 @else
                                     <span class="text-gray-400">-</span>
                                 @endif
                             </dd>
                         </div>
                         <div class="flex justify-between">
-                            <dt class="text-xs text-gray-500">Last Updated By</dt>
-                            <dd class="text-sm font-heading font-medium text-gray-900">
+                            <dt class="text-xs text-gray-500 dark:text-gray-400">Last Updated By</dt>
+                            <dd class="text-sm font-heading font-medium text-gray-900 dark:text-gray-100">
                                 @if($incident->updater)
                                     {{ $incident->updater->name }}
-                                    <span class="text-xs text-gray-500">({{ $incident->updated_at->diffForHumans() }})</span>
+                                    <span class="text-xs text-gray-500 dark:text-gray-400">({{ $incident->updated_at->diffForHumans() }})</span>
                                 @else
                                     <span class="text-gray-400">-</span>
                                 @endif
@@ -226,8 +226,8 @@
                         </div>
                         @if($incident->logs->count() > 0)
                         <div class="flex justify-between">
-                            <dt class="text-xs text-gray-500">Log Entries</dt>
-                            <dd class="text-sm font-heading font-medium text-gray-900">{{ $incident->logs->count() }}</dd>
+                            <dt class="text-xs text-gray-500 dark:text-gray-400">Log Entries</dt>
+                            <dd class="text-sm font-heading font-medium text-gray-900 dark:text-gray-100">{{ $incident->logs->count() }}</dd>
                         </div>
                         @endif
                     </dl>
@@ -235,8 +235,8 @@
             </div>
 
             <!-- Incident Details -->
-            <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg mb-6">
-                <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+            <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg mb-6">
+                <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-md">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,8 +244,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Incident Details</h3>
-                            <p class="text-sm text-gray-600">Complete incident information</p>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Incident Details</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Complete incident information</p>
                         </div>
                     </div>
                 </div>
@@ -253,32 +253,32 @@
                 <div class="p-6">
                     <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Affected Services</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->affected_services }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Affected Services</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->affected_services }}</dd>
                         </div>
 
                         @if($incident->sites && $incident->sites->count() > 0)
                         <div class="sm:col-span-2">
-                            <dt class="text-sm font-heading font-medium text-gray-500 mb-3">Affected Sites</dt>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400 mb-3">Affected Sites</dt>
                             <dd class="mt-1">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     @foreach($incident->sites as $site)
-                                        <div class="rounded-xl border border-gray-200 bg-gradient-to-br from-blue-50/30 to-white p-4 hover:shadow-md transition-shadow">
+                                        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-blue-50/30 to-white p-4 hover:shadow-md transition-shadow">
                                             <div class="flex items-start justify-between mb-2">
                                                 <div class="flex-1">
-                                                    <h4 class="font-heading font-semibold text-gray-900 text-base">{{ $site->site_code }}</h4>
-                                                    <p class="text-xs text-gray-600 mt-0.5">{{ $site->display_name }}</p>
+                                                    <h4 class="font-heading font-semibold text-gray-900 dark:text-gray-100 text-base">{{ $site->site_code }}</h4>
+                                                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ $site->display_name }}</p>
                                                 </div>
                                             </div>
 
                                             <div class="mt-2 space-y-2">
                                                 <div>
-                                                    <span class="text-xs font-medium text-gray-500">Region:</span>
-                                                    <span class="text-xs text-gray-900 ml-1">{{ $site->region->name ?? 'N/A' }} ({{ $site->region->code ?? 'N/A' }})</span>
+                                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Region:</span>
+                                                    <span class="text-xs text-gray-900 dark:text-gray-100 ml-1">{{ $site->region->name ?? 'N/A' }} ({{ $site->region->code ?? 'N/A' }})</span>
                                                 </div>
                                                 <div>
-                                                    <span class="text-xs font-medium text-gray-500">Site Name:</span>
-                                                    <span class="text-xs text-gray-900 ml-1">{{ $site->site_name ?? 'N/A' }}</span>
+                                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400">Site Name:</span>
+                                                    <span class="text-xs text-gray-900 dark:text-gray-100 ml-1">{{ $site->site_name ?? 'N/A' }}</span>
                                                 </div>
 
                                                 @php
@@ -298,15 +298,15 @@
                                                 @endphp
 
                                                 @if(!empty($affectedTechs) && is_array($affectedTechs))
-                                                <div class="mt-2 pt-2 border-t border-gray-200">
-                                                    <span class="text-xs font-medium text-gray-500 block mb-1.5">Affected Technologies:</span>
+                                                <div class="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                                                    <span class="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-1.5">Affected Technologies:</span>
                                                     <div class="flex flex-wrap gap-1.5">
                                                         @foreach($affectedTechs as $tech)
                                                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold
                                                                 @if($tech === '5G') bg-purple-100 text-purple-800
                                                                 @elseif($tech === '4G') bg-blue-100 text-blue-800
                                                                 @elseif($tech === '3G') bg-green-100 text-green-800
-                                                                @elseif($tech === '2G') bg-gray-100 text-gray-800
+                                                                @elseif($tech === '2G') bg-gray-100 dark:bg-gray-900 text-gray-800
                                                                 @endif">
                                                                 {{ $tech }}
                                                             </span>
@@ -323,40 +323,40 @@
                         @endif
 
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Category</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->category ?? 'Not specified' }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Category</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->category ?? 'Not specified' }}</dd>
                         </div>
 
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Outage Category</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->outage_category ?? 'Not specified' }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Outage Category</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->outage_category ?? 'Not specified' }}</dd>
                         </div>
 
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Fault Type</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->fault_type ?? 'Not specified' }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Fault Type</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->fault_type ?? 'Not specified' }}</dd>
                         </div>
 
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Resolution Team</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->resolution_team ?? 'Not assigned' }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Resolution Team</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->resolution_team ?? 'Not assigned' }}</dd>
                         </div>
 
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Started At</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->started_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Started At</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->started_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }}</dd>
                         </div>
 
                         @if($incident->resolved_at)
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Resolved At</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->resolved_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Resolved At</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->resolved_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }}</dd>
                         </div>
                         @endif
 
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Duration</dt>
-                            <dd class="mt-1 text-sm text-gray-900">
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Duration</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
                                 @if($incident->duration_hms)
                                     {{ $incident->duration_hms }}
                                 @else
@@ -367,27 +367,27 @@
 
                         @if($incident->travel_time || $incident->work_time)
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Travel Time</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->travel_time ? $incident->travel_time . ' minutes' : 'Not specified' }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Travel Time</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->travel_time ? $incident->travel_time . ' minutes' : 'Not specified' }}</dd>
                         </div>
 
                         <div>
-                            <dt class="text-sm font-heading font-medium text-gray-500">Work Time</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->work_time ? $incident->work_time . ' minutes' : 'Not specified' }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Work Time</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->work_time ? $incident->work_time . ' minutes' : 'Not specified' }}</dd>
                         </div>
                         @endif
 
                         @if($incident->root_cause)
                         <div class="sm:col-span-2">
-                            <dt class="text-sm font-heading font-medium text-gray-500">Root Cause</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->root_cause }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Root Cause</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->root_cause }}</dd>
                         </div>
                         @endif
 
                         @if($incident->delay_reason)
                         <div class="sm:col-span-2">
-                            <dt class="text-sm font-heading font-medium text-gray-500">Reason for Delay</dt>
-                            <dd class="mt-1 text-sm text-gray-900">{{ $incident->delay_reason }}</dd>
+                            <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Reason for Delay</dt>
+                            <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $incident->delay_reason }}</dd>
                         </div>
                         @endif
                     </dl>
@@ -395,8 +395,8 @@
             </div>
 
             <!-- Timeline Updates -->
-            <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
-                <div class="border-b border-gray-200/50 bg-gradient-to-r from-indigo-50/80 to-white/60 px-6 py-4">
+            <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg">
+                <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-indigo-50/80 to-white/60 px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-md">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -404,8 +404,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Timeline Updates</h3>
-                            <p class="text-sm text-gray-600">Add updates and notes about this incident</p>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Timeline Updates</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Add updates and notes about this incident</p>
                         </div>
                     </div>
                 </div>
@@ -416,14 +416,14 @@
                         <form action="{{ route('incidents.timeline.add', $incident) }}" method="POST" class="mb-6">
                             @csrf
                             <div class="rounded-xl bg-gradient-to-br from-indigo-50/50 to-blue-50/30 border border-indigo-100 p-4">
-                                <label for="timeline_note" class="block text-sm font-heading font-medium text-gray-700 mb-2">
+                                <label for="timeline_note" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Add Update
                                 </label>
                                 <textarea name="timeline_note" id="timeline_note" rows="3" required
                                           placeholder="Enter your update about this incident..."
-                                          class="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('timeline_note') border-red-500 @enderror"></textarea>
+                                          class="block w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 @error('timeline_note') border-red-500 @enderror"></textarea>
                                 @error('timeline_note')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                                 <div class="mt-3 flex justify-end">
                                     <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-indigo-700 px-4 py-2 text-white font-heading font-medium shadow-sm hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200">
@@ -436,8 +436,8 @@
                             </div>
                         </form>
                     @else
-                        <div class="mb-6 rounded-xl bg-gray-50 border border-gray-200 p-4">
-                            <p class="text-sm text-gray-600 flex items-center gap-2">
+                        <div class="mb-6 rounded-xl bg-gray-50 border border-gray-200 dark:border-gray-700 p-4">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
                                 <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
@@ -467,9 +467,9 @@
                                                 <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                                                     <div class="flex-1">
                                                         <p class="text-sm font-heading font-medium text-indigo-600 mb-1">{{ $entry['user_name'] }}</p>
-                                                        <p class="text-sm text-gray-900 bg-white/50 rounded-lg p-3 border border-gray-100">{{ $entry['note'] }}</p>
+                                                        <p class="text-sm text-gray-900 dark:text-gray-100 bg-white/50 rounded-lg p-3 border border-gray-100 dark:border-gray-700">{{ $entry['note'] }}</p>
                                                     </div>
-                                                    <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                                    <div class="text-right text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
                                                         <time datetime="{{ $entry['timestamp'] }}">
                                                             {{ \Carbon\Carbon::parse($entry['timestamp'])->timezone('Indian/Maldives')->format('M j, Y') }}<br>
                                                             {{ \Carbon\Carbon::parse($entry['timestamp'])->timezone('Indian/Maldives')->format('g:i A') }}
@@ -487,7 +487,7 @@
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
-                            <p class="mt-2 text-sm text-gray-500">No timeline updates yet</p>
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">No timeline updates yet</p>
                             @if($incident->status !== 'Closed')
                                 <p class="text-xs text-gray-400">Add your first update above</p>
                             @endif
@@ -498,8 +498,8 @@
 
             <!-- Incident Timeline/Logs -->
             @if($incident->logs->count() > 0)
-            <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
-                <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
+            <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg">
+                <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-600 to-green-700 shadow-md">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -507,8 +507,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900">Incident Timeline</h3>
-                            <p class="text-sm text-gray-600">{{ $incident->logs->count() }} log entries</p>
+                            <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">Incident Timeline</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">{{ $incident->logs->count() }} log entries</p>
                         </div>
                     </div>
                 </div>
@@ -532,9 +532,9 @@
                                             </div>
                                             <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                                                 <div>
-                                                    <p class="text-sm text-gray-900">{{ $log->note }}</p>
+                                                    <p class="text-sm text-gray-900 dark:text-gray-100">{{ $log->note }}</p>
                                                 </div>
-                                                <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                                <div class="text-right text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
                                                     <time datetime="{{ $log->occurred_at->toISOString() }}">
                                                         {{ $log->occurred_at->timezone('Indian/Maldives')->format('M j, Y g:i A') }}
                                                     </time>
@@ -552,8 +552,8 @@
 
             <!-- Activity Audit Trail -->
             @if($incident->activityLogs->count() > 0)
-            <div class="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm shadow-lg">
-                <div class="border-b border-gray-200/50 bg-gradient-to-r from-purple-50/80 to-white/60 px-6 py-4">
+            <div class="mt-6 overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg">
+                <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-purple-50/80 to-white/60 px-6 py-4">
                     <div class="flex items-center gap-3">
                         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-purple-700 shadow-md">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -561,8 +561,8 @@
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-heading text-lg font-semibold text-gray-900">Audit Trail</h3>
-                            <p class="text-sm text-gray-600">Complete history of all changes made to this incident</p>
+                            <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-gray-100">Audit Trail</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Complete history of all changes made to this incident</p>
                         </div>
                     </div>
                 </div>
@@ -584,13 +584,13 @@
                                             @if($log->action === 'created') bg-green-100
                                             @elseif($log->action === 'updated') bg-blue-100
                                             @elseif($log->action === 'deleted') bg-red-100
-                                            @else bg-gray-100
+                                            @else bg-gray-100 dark:bg-gray-900
                                             @endif">
                                             <div class="
                                                 @if($log->action === 'created') text-green-600
                                                 @elseif($log->action === 'updated') text-blue-600
-                                                @elseif($log->action === 'deleted') text-red-600
-                                                @else text-gray-600
+                                                @elseif($log->action === 'deleted') text-red-600 dark:text-red-400
+                                                @else text-gray-600 dark:text-gray-400
                                                 @endif">
                                                 {!! $log->action_icon !!}
                                             </div>
@@ -600,40 +600,40 @@
                                         <div class="flex-auto">
                                             <div class="flex items-start justify-between gap-x-4">
                                                 <div class="flex-1">
-                                                    <p class="text-sm font-heading font-semibold text-gray-900">
+                                                    <p class="text-sm font-heading font-semibold text-gray-900 dark:text-gray-100">
                                                         {{ $log->user ? $log->user->name : 'System' }}
                                                         <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ml-2 {{ $log->action_color_class }}">
                                                             {{ ucfirst($log->action) }}
                                                         </span>
                                                     </p>
 
-                                                    <p class="mt-1 text-sm text-gray-700">
+                                                    <p class="mt-1 text-sm text-gray-700 dark:text-gray-300">
                                                         {{ $log->description }}
                                                     </p>
 
                                                     @if($log->field_name && $log->action === 'updated')
                                                         <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                                                            <div class="rounded-lg bg-white/80 border border-gray-200 p-2">
-                                                                <span class="font-heading font-medium text-gray-500">Previous:</span>
-                                                                <span class="text-gray-900 ml-1">{{ $log->old_value ?? '-' }}</span>
+                                                            <div class="rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 p-2">
+                                                                <span class="font-heading font-medium text-gray-500 dark:text-gray-400">Previous:</span>
+                                                                <span class="text-gray-900 dark:text-gray-100 ml-1">{{ $log->old_value ?? '-' }}</span>
                                                             </div>
-                                                            <div class="rounded-lg bg-white/80 border border-gray-200 p-2">
-                                                                <span class="font-heading font-medium text-gray-500">New:</span>
-                                                                <span class="text-gray-900 ml-1">{{ $log->new_value ?? '-' }}</span>
+                                                            <div class="rounded-lg bg-white/80 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 p-2">
+                                                                <span class="font-heading font-medium text-gray-500 dark:text-gray-400">New:</span>
+                                                                <span class="text-gray-900 dark:text-gray-100 ml-1">{{ $log->new_value ?? '-' }}</span>
                                                             </div>
                                                         </div>
                                                     @endif
                                                 </div>
 
                                                 <time datetime="{{ $log->created_at->toISOString() }}"
-                                                    class="flex-none text-xs text-gray-500 whitespace-nowrap">
+                                                    class="flex-none text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                                                     {{ $log->created_at->timezone('Indian/Maldives')->format('M j, Y') }}<br>
                                                     {{ $log->created_at->timezone('Indian/Maldives')->format('g:i A') }}
                                                 </time>
                                             </div>
 
                                             @if($log->ip_address)
-                                                <p class="mt-2 text-xs text-gray-500">
+                                                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                                                     IP: {{ $log->ip_address }}
                                                 </p>
                                             @endif
@@ -655,23 +655,23 @@
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-            <div class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+            <div class="relative inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
                 <form action="{{ route('incidents.update', $incident) }}" method="POST" id="close-incident-form">
                     @csrf
                     @method('PUT')
 
                     <div>
                         <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                         <div class="mt-3 text-center sm:mt-5">
-                            <h3 class="font-heading text-lg leading-6 font-heading font-medium text-gray-900" id="modal-title">
+                            <h3 class="font-heading text-lg leading-6 font-heading font-medium text-gray-900 dark:text-gray-100" id="modal-title">
                                 Close Incident
                             </h3>
                             <div class="mt-2">
-                                <p class="text-sm text-gray-500">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
                                     Please provide the required information to close this incident.
                                 </p>
                             </div>
@@ -688,29 +688,29 @@
 
                         <!-- Resolved At -->
                         <div>
-                            <label for="modal_resolved_at" class="block text-sm font-heading font-medium text-gray-700">
+                            <label for="modal_resolved_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">
                                 Resolved At <span class="text-red-500">*</span>
                             </label>
                             <input type="datetime-local" name="resolved_at" id="modal_resolved_at" required
                                    value="{{ old('resolved_at', $incident->resolved_at ? $incident->resolved_at->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i')) }}"
-                                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('resolved_at') border-red-500 @enderror">
+                                   class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 @error('resolved_at') border-red-500 @enderror">
                             @error('resolved_at')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Root Cause -->
                         <div>
-                            <label for="modal_root_cause" class="block text-sm font-heading font-medium text-gray-700">
+                            <label for="modal_root_cause" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">
                                 Root Cause <span class="text-red-500">*</span>
                             </label>
                             <textarea name="root_cause" id="modal_root_cause" rows="4" required
                                       placeholder="Enter the root cause of this incident..."
-                                      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('root_cause') border-red-500 @enderror">{{ old('root_cause', $incident->root_cause) }}</textarea>
+                                      class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 @error('root_cause') border-red-500 @enderror">{{ old('root_cause', $incident->root_cause) }}</textarea>
                             @error('root_cause')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
-                            <p class="mt-1 text-xs text-gray-500">Root cause is required when closing an incident</p>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Root cause is required when closing an incident</p>
                         </div>
 
                         <!-- Conditional Fields based on duration and severity -->
@@ -720,27 +720,27 @@
                         <div id="conditional-fields" class="space-y-4">
                             <!-- Travel Time (for Medium/High/Critical) -->
                             <div id="travel-time-field" class="{{ $showTravelWork ? '' : 'hidden' }}">
-                                <label for="modal_travel_time" class="block text-sm font-heading font-medium text-gray-700">
+                                <label for="modal_travel_time" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">
                                     Travel Time (minutes) <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" name="travel_time" id="modal_travel_time" min="0"
                                        value="{{ old('travel_time', $incident->travel_time) }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('travel_time') border-red-500 @enderror">
+                                       class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 @error('travel_time') border-red-500 @enderror">
                                 @error('travel_time')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <!-- Work Time (for Medium/High/Critical) -->
                             <div id="work-time-field" class="{{ $showTravelWork ? '' : 'hidden' }}">
-                                <label for="modal_work_time" class="block text-sm font-heading font-medium text-gray-700">
+                                <label for="modal_work_time" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">
                                     Work Time (minutes) <span class="text-red-500">*</span>
                                 </label>
                                 <input type="number" name="work_time" id="modal_work_time" min="0"
                                        value="{{ old('work_time', $incident->work_time) }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('work_time') border-red-500 @enderror">
+                                       class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 @error('work_time') border-red-500 @enderror">
                                 @error('work_time')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
@@ -764,16 +764,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <label for="modal_delay_reason" class="block text-sm font-heading font-medium text-gray-700">
+                                <label for="modal_delay_reason" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300">
                                     Reason for Delay <span class="text-red-500">*</span>
                                 </label>
                                 <textarea name="delay_reason" id="modal_delay_reason" rows="4"
                                           placeholder="Please provide a detailed explanation for why this incident took more than 5 hours to resolve..."
-                                          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 @error('delay_reason') border-red-500 @enderror">{{ old('delay_reason', $incident->delay_reason) }}</textarea>
+                                          class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 @error('delay_reason') border-red-500 @enderror">{{ old('delay_reason', $incident->delay_reason) }}</textarea>
                                 @error('delay_reason')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
-                                <p class="mt-1 text-xs text-gray-500">This field is required for incidents with duration exceeding 5 hours.</p>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">This field is required for incidents with duration exceeding 5 hours.</p>
                             </div>
                         </div>
                     </div>
@@ -784,7 +784,7 @@
                             Close Incident
                         </button>
                         <button type="button" id="cancel-close"
-                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-heading font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm">
+                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-heading font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm">
                             Cancel
                         </button>
                     </div>

@@ -6,7 +6,7 @@
             <h2 class="font-heading text-2xl lg:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
                 {{ $temporarySite->temp_site_id }}
             </h2>
-            <p class="mt-2 text-lg text-gray-600 font-medium">{{ $temporarySite->site_name }}</p>
+            <p class="mt-2 text-lg text-gray-600 dark:text-gray-400 font-medium">{{ $temporarySite->site_name }}</p>
         </div>
 
         <div class="flex gap-3">
@@ -19,7 +19,7 @@
             </a>
             @if(Auth::user()->canManageTemporarySites())
                 <a href="{{ route('temporary-sites.edit', $temporarySite) }}"
-                    class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-2.5 text-white shadow-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5">
+                    class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-2.5 text-white shadow-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400/30 transition-all duration-300 transform hover:-translate-y-0.5">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
@@ -37,8 +37,8 @@
                 <!-- Main Information -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Site Details -->
-                    <div class="overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-xl">
-                        <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
+                    <div class="overflow-hidden rounded-3xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl">
+                        <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 shadow-md">
                                     <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,8 +46,8 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-heading text-lg font-semibold text-gray-900">Site Information</h3>
-                                    <p class="text-sm text-gray-600">Complete details about this temporary site</p>
+                                    <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-gray-100">Site Information</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Complete details about this temporary site</p>
                                 </div>
                             </div>
                         </div>
@@ -55,43 +55,43 @@
                         <div class="p-6 sm:p-8">
                             <dl class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                                 <div>
-                                    <dt class="text-sm font-heading font-medium text-gray-500">Temp Site ID</dt>
-                                    <dd class="mt-1 text-lg font-heading font-semibold text-gray-900">{{ $temporarySite->temp_site_id }}</dd>
+                                    <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Temp Site ID</dt>
+                                    <dd class="mt-1 text-lg font-heading font-semibold text-gray-900 dark:text-gray-100">{{ $temporarySite->temp_site_id }}</dd>
                                 </div>
 
                                 <div>
-                                    <dt class="text-sm font-heading font-medium text-gray-500">Atoll Code</dt>
-                                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $temporarySite->atoll_code }}</dd>
+                                    <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Atoll Code</dt>
+                                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $temporarySite->atoll_code }}</dd>
                                 </div>
 
                                 <div class="sm:col-span-2">
-                                    <dt class="text-sm font-heading font-medium text-gray-500">Site Name</dt>
-                                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $temporarySite->site_name }}</dd>
+                                    <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Site Name</dt>
+                                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $temporarySite->site_name }}</dd>
                                 </div>
 
                                 <div>
-                                    <dt class="text-sm font-heading font-medium text-gray-500">Coverage</dt>
-                                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $temporarySite->coverage }}</dd>
+                                    <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Coverage</dt>
+                                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $temporarySite->coverage }}</dd>
                                 </div>
 
                                 <div>
-                                    <dt class="text-sm font-heading font-medium text-gray-500">Added Date</dt>
-                                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $temporarySite->added_date->format('d M Y') }}</dd>
+                                    <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Added Date</dt>
+                                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $temporarySite->added_date->format('d M Y') }}</dd>
                                 </div>
 
                                 <div class="sm:col-span-2">
-                                    <dt class="text-sm font-heading font-medium text-gray-500">Transmission / Backhaul</dt>
-                                    <dd class="mt-1 text-base text-gray-900">{{ $temporarySite->transmission_or_backhaul }}</dd>
+                                    <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Transmission / Backhaul</dt>
+                                    <dd class="mt-1 text-base text-gray-900 dark:text-gray-100">{{ $temporarySite->transmission_or_backhaul }}</dd>
                                 </div>
 
                                 <div>
-                                    <dt class="text-sm font-heading font-medium text-gray-500">Status</dt>
+                                    <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Status</dt>
                                     <dd class="mt-1">
                                         <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold
                                             @if($temporarySite->status === 'Temporary') bg-yellow-100 text-yellow-800
                                             @elseif($temporarySite->status === 'Resolved') bg-green-100 text-green-800
                                             @elseif($temporarySite->status === 'Monitoring') bg-blue-100 text-blue-800
-                                            @else bg-gray-100 text-gray-800
+                                            @else bg-gray-100 dark:bg-gray-900 text-gray-800
                                             @endif">
                                             {{ $temporarySite->status }}
                                         </span>
@@ -100,15 +100,15 @@
 
                                 @if($temporarySite->review_date)
                                     <div>
-                                        <dt class="text-sm font-heading font-medium text-gray-500">Review Date</dt>
-                                        <dd class="mt-1 text-lg font-semibold text-gray-900">{{ $temporarySite->review_date->format('d M Y') }}</dd>
+                                        <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Review Date</dt>
+                                        <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $temporarySite->review_date->format('d M Y') }}</dd>
                                     </div>
                                 @endif
 
                                 @if($temporarySite->remarks)
                                     <div class="sm:col-span-2">
-                                        <dt class="text-sm font-heading font-medium text-gray-500">Remarks</dt>
-                                        <dd class="mt-2 text-sm text-gray-900 leading-relaxed bg-gray-50 rounded-xl p-4">
+                                        <dt class="text-sm font-heading font-medium text-gray-500 dark:text-gray-400">Remarks</dt>
+                                        <dd class="mt-2 text-sm text-gray-900 dark:text-gray-100 leading-relaxed bg-gray-50 rounded-xl p-4">
                                             {{ $temporarySite->remarks }}
                                         </dd>
                                     </div>
@@ -118,8 +118,8 @@
                     </div>
 
                     <!-- Audit History -->
-                    <div class="overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-xl">
-                        <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
+                    <div class="overflow-hidden rounded-3xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl">
+                        <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-purple-700 shadow-md">
                                     <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,8 +127,8 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-heading text-lg font-semibold text-gray-900">Change History</h3>
-                                    <p class="text-sm text-gray-600">Audit trail of all modifications</p>
+                                    <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-gray-100">Change History</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Audit trail of all modifications</p>
                                 </div>
                             </div>
                         </div>
@@ -137,7 +137,7 @@
                             @if($temporarySite->audits->count() > 0)
                                 <div class="space-y-4">
                                     @foreach($temporarySite->audits as $audit)
-                                        <div class="relative pl-8 pb-4 border-l-2 border-gray-200 last:border-l-0 last:pb-0">
+                                        <div class="relative pl-8 pb-4 border-l-2 border-gray-200 dark:border-gray-700 last:border-l-0 last:pb-0">
                                             <div class="absolute -left-2 top-0 h-4 w-4 rounded-full
                                                 @if($audit->action === 'created') bg-green-500
                                                 @elseif($audit->action === 'updated') bg-blue-500
@@ -150,11 +150,11 @@
                                                 <div class="flex items-start justify-between mb-2">
                                                     <div>
                                                         <span class="inline-flex items-center gap-1.5 text-sm font-semibold
-                                                            @if($audit->action === 'created') text-green-700
-                                                            @elseif($audit->action === 'updated') text-blue-700
+                                                            @if($audit->action === 'created') text-green-700 dark:text-green-400
+                                                            @elseif($audit->action === 'updated') text-blue-700 dark:text-blue-400
                                                             @elseif($audit->action === 'deleted') text-red-700
-                                                            @elseif($audit->action === 'imported') text-purple-700
-                                                            @else text-gray-700
+                                                            @elseif($audit->action === 'imported') text-purple-700 dark:text-purple-400
+                                                            @else text-gray-700 dark:text-gray-300
                                                             @endif">
                                                             @if($audit->action === 'created')
                                                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,10 +176,10 @@
                                                             {{ ucfirst($audit->action) }}
                                                         </span>
                                                     </div>
-                                                    <span class="text-xs text-gray-500">{{ $audit->created_at->diffForHumans() }}</span>
+                                                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ $audit->created_at->diffForHumans() }}</span>
                                                 </div>
 
-                                                <div class="text-sm text-gray-600 mb-1">
+                                                <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">
                                                     @if($audit->user)
                                                         <span class="font-medium">{{ $audit->user->name }}</span>
                                                     @else
@@ -194,9 +194,9 @@
                                                         @foreach($audit->new_values as $field => $newValue)
                                                             @if(!in_array($field, ['updated_at', 'updated_by']) && isset($audit->old_values[$field]))
                                                                 <div class="text-xs">
-                                                                    <span class="font-medium text-gray-700">{{ ucfirst(str_replace('_', ' ', $field)) }}:</span>
+                                                                    <span class="font-medium text-gray-700 dark:text-gray-300">{{ ucfirst(str_replace('_', ' ', $field)) }}:</span>
                                                                     <div class="ml-4 mt-1">
-                                                                        <div class="line-through text-red-600">{{ $audit->old_values[$field] ?? 'N/A' }}</div>
+                                                                        <div class="line-through text-red-600 dark:text-red-400">{{ $audit->old_values[$field] ?? 'N/A' }}</div>
                                                                         <div class="text-green-600">{{ $newValue }}</div>
                                                                     </div>
                                                                 </div>
@@ -213,7 +213,7 @@
                                     <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <p class="mt-4 text-sm text-gray-500">No audit history available</p>
+                                    <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">No audit history available</p>
                                 </div>
                             @endif
                         </div>
@@ -223,8 +223,8 @@
                 <!-- Sidebar -->
                 <div class="lg:col-span-1 space-y-6">
                     <!-- Metadata -->
-                    <div class="overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-xl">
-                        <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
+                    <div class="overflow-hidden rounded-3xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl">
+                        <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-gray-600 to-gray-700 shadow-md">
                                     <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,8 +232,8 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-heading text-lg font-semibold text-gray-900">Metadata</h3>
-                                    <p class="text-sm text-gray-600">Record information</p>
+                                    <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-gray-100">Metadata</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Record information</p>
                                 </div>
                             </div>
                         </div>
@@ -242,17 +242,17 @@
                             <dl class="space-y-4">
                                 @if($temporarySite->creator)
                                     <div>
-                                        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Created By</dt>
-                                        <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $temporarySite->creator->name }}</dd>
-                                        <dd class="text-xs text-gray-500">{{ $temporarySite->created_at->format('d M Y, h:i A') }}</dd>
+                                        <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Created By</dt>
+                                        <dd class="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $temporarySite->creator->name }}</dd>
+                                        <dd class="text-xs text-gray-500 dark:text-gray-400">{{ $temporarySite->created_at->format('d M Y, h:i A') }}</dd>
                                     </div>
                                 @endif
 
                                 @if($temporarySite->updater)
                                     <div>
-                                        <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Last Updated By</dt>
-                                        <dd class="mt-1 text-sm font-semibold text-gray-900">{{ $temporarySite->updater->name }}</dd>
-                                        <dd class="text-xs text-gray-500">{{ $temporarySite->updated_at->format('d M Y, h:i A') }}</dd>
+                                        <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Last Updated By</dt>
+                                        <dd class="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">{{ $temporarySite->updater->name }}</dd>
+                                        <dd class="text-xs text-gray-500 dark:text-gray-400">{{ $temporarySite->updated_at->format('d M Y, h:i A') }}</dd>
                                     </div>
                                 @endif
                             </dl>
@@ -261,8 +261,8 @@
 
                     <!-- Quick Actions -->
                     @if(Auth::user()->canManageTemporarySites())
-                        <div class="overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-xl">
-                            <div class="border-b border-gray-200/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
+                        <div class="overflow-hidden rounded-3xl border border-gray-100 dark:border-gray-700/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-xl">
+                            <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-slate-50/80 to-white/60 px-6 py-5">
                                 <div class="flex items-center gap-3">
                                     <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-md">
                                         <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -270,8 +270,8 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <h3 class="font-heading text-lg font-semibold text-gray-900">Quick Actions</h3>
-                                        <p class="text-sm text-gray-600">Manage this site</p>
+                                        <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-gray-100">Quick Actions</h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">Manage this site</p>
                                     </div>
                                 </div>
                             </div>
