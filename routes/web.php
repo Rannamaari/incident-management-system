@@ -54,6 +54,12 @@ Route::get('/health', function () {
     ]);
 })->name('health');
 
+// Log test route
+Route::get('/__logtest', function () {
+    \Log::error('WEB_LOG_TEST '.now());
+    return 'ok';
+});
+
 // Debug route to test basic Laravel functionality
 Route::get('/debug', function () {
     try {
