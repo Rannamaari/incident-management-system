@@ -75,9 +75,20 @@
                         </div>
                         <div>
                             <p class="text-sm text-gray-600 dark:text-gray-400">Status</p>
-                            <span class="mt-1 inline-block px-3 py-1 rounded-full text-sm font-medium {{ $ispLink->status_color_class }}">
-                                {{ $ispLink->status }}
-                            </span>
+                            @if($ispLink->hasActiveIncidents())
+                                <div class="mt-1 flex flex-col gap-1">
+                                    <span class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 border border-red-300 dark:border-red-700 animate-pulse">
+                                        ⚠️ Under Incident
+                                    </span>
+                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-medium {{ $ispLink->status_color_class }} opacity-60">
+                                        Base: {{ $ispLink->status }}
+                                    </span>
+                                </div>
+                            @else
+                                <span class="mt-1 inline-block px-3 py-1 rounded-full text-sm font-medium {{ $ispLink->status_color_class }}">
+                                    {{ $ispLink->status }}
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
