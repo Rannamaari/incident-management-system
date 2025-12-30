@@ -373,14 +373,6 @@
                                                 </svg>
                                                 {{ $incident->created_at->diffForHumans() }}
                                             </span>
-                                            @if($incident->assignedTo)
-                                                <span class="flex items-center">
-                                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                                    </svg>
-                                                    {{ $incident->assignedTo->name }}
-                                                </span>
-                                            @endif
                                         </div>
                                         <a href="{{ route('incidents.show', $incident) }}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 font-medium">
                                             View Details →

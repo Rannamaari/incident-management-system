@@ -257,14 +257,14 @@ class IspLinkController extends Controller
         // Load incidents for this ISP link from BOTH old and new systems (most recent first)
         // Old system: incidents where isp_link_id matches
         $oldSystemIncidents = $ispLink->incidents()
-            ->with(['category', 'assignedTo'])
+            ->with('category')
             ->get();
 
         // New system: incidents linked via many-to-many pivot table
         $newSystemIncidents = \App\Models\Incident::whereHas('ispLinks', function($query) use ($ispLink) {
                 $query->where('isp_links.id', $ispLink->id);
             })
-            ->with(['category', 'assignedTo'])
+            ->with('category')
             ->get();
 
         // Merge and remove duplicates (in case an incident exists in both systems)
