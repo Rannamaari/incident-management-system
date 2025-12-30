@@ -574,6 +574,11 @@
                                                     });
                                                 },
 
+                                                // Check if ISP link is selected
+                                                isLinkSelected(linkId) {
+                                                    return this.selectedIspLinks.hasOwnProperty(linkId);
+                                                },
+
                                                 // Toggle ISP link selection
                                                 toggleIspLink(linkId) {
                                                     if (this.selectedIspLinks[linkId]) {
