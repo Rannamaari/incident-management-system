@@ -284,6 +284,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/{ispLink}', [App\Http\Controllers\IspLinkController::class, 'update'])->name('update');
         Route::delete('/{ispLink}', [App\Http\Controllers\IspLinkController::class, 'destroy'])->name('destroy');
     });
+
+    // Log Viewer routes (admin only)
+    Route::get('/logs/viewer', [App\Http\Controllers\LogViewerController::class, 'index'])->name('logs.viewer');
+    Route::get('/logs/download', [App\Http\Controllers\LogViewerController::class, 'download'])->name('logs.download');
+    Route::post('/logs/clear', [App\Http\Controllers\LogViewerController::class, 'clear'])->name('logs.clear');
 });
 
 require __DIR__.'/auth.php';
