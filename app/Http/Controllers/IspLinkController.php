@@ -254,12 +254,24 @@ class IspLinkController extends Controller
     {
         $ispLink->load(['escalationContacts', 'creator', 'updater']);
 
-        // Load incidents for this ISP link (most recent first)
-        $incidents = $ispLink->incidents()
+        // Load incidents for this ISP link from BOTH old and new systems (most recent first)
+        // Old system: incidents where isp_link_id matches
+        $oldSystemIncidents = $ispLink->incidents()
             ->with(['category', 'assignedTo'])
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
             ->get();
+
+        // New system: incidents linked via many-to-many pivot table
+        $newSystemIncidents = \App\Models\Incident::whereHas('ispLinks', function($query) use ($ispLink) {
+                $query->where('isp_links.id', $ispLink->id);
+            })
+            ->with(['category', 'assignedTo'])
+            ->get();
+
+        // Merge and remove duplicates (in case an incident exists in both systems)
+        $incidents = $oldSystemIncidents->merge($newSystemIncidents)
+            ->unique('id')
+            ->sortByDesc('created_at')
+            ->take(10);
 
         return view('isp.show', compact('ispLink', 'incidents'));
     }
