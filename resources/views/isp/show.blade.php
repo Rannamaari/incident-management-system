@@ -20,7 +20,7 @@
             @if(Auth::user()->canEditIncidents())
                 @if($ispLink->hasActiveIncidents())
                     <form method="POST" action="{{ route('isp.restore', $ispLink) }}" class="inline"
-                          onsubmit="return confirm('This will close all active incidents affecting this ISP link. Are you sure the link has been restored?');">
+                          onsubmit="return confirm('Are you sure you want to restore this ISP link and close all active incidents affecting it? Note: Incidents open for more than 5 hours cannot be closed this way and must be closed individually with a delay reason.');">
                         @csrf
                         <button type="submit"
                                 class="inline-flex items-center px-4 py-2 bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">

@@ -379,7 +379,32 @@ class IspLinkController extends Controller
                 ->with('info', 'No active incidents found for this ISP link.');
         }
 
-        // Close all active incidents
+        // Check if any incidents require delayed reason (duration > 5 hours)
+        $incidentsRequiringDelayReason = [];
+        foreach ($activeIncidents as $incident) {
+            if ($incident->started_at) {
+                $durationHours = $incident->started_at->diffInHours(now());
+                if ($durationHours > 5) {
+                    $incidentsRequiringDelayReason[] = $incident;
+                }
+            }
+        }
+
+        // If any incidents require delayed reason, prevent bulk close
+        if (count($incidentsRequiringDelayReason) > 0) {
+            $incidentCodes = collect($incidentsRequiringDelayReason)
+                ->pluck('incident_code')
+                ->take(5)
+                ->implode(', ');
+
+            $moreCount = count($incidentsRequiringDelayReason) - 5;
+            $moreText = $moreCount > 0 ? " and {$moreCount} more" : "";
+
+            return redirect()->back()
+                ->with('error', "Cannot restore link: Some incidents have been open for more than 5 hours and require a delay reason. Please close these incidents individually: {$incidentCodes}{$moreText}.");
+        }
+
+        // Close all active incidents (only if none require delayed reason)
         $closedCount = 0;
         foreach ($activeIncidents as $incident) {
             $incident->status = 'Closed';

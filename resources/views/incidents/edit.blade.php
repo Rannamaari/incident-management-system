@@ -270,6 +270,13 @@
                             </div>
 
                             <!-- ISP Outage Section with Multi-Select -->
+                            <script>
+                                window.ispOutageData = {
+                                    ispLinks: @json($ispLinks),
+                                    selectedIspLinks: @json(old('isp_links', $selectedIspLinksData)),
+                                    expandedLinks: @json($expandedLinksData)
+                                };
+                            </script>
                             <div x-show="showIspField"
                                  x-transition:enter="transition ease-out duration-300"
                                  x-transition:enter-start="opacity-0 transform -translate-y-2"
@@ -279,18 +286,11 @@
                                  x-transition:leave-end="opacity-0"
                                  class="bg-red-50/50 border border-red-200 dark:border-red-700 rounded-xl p-6 mt-4"
                                  x-data="{
-                                     ispLinks: @json($ispLinks ?? []),
-                                     selectedIspLinks: @json(old('isp_links', $incident->ispLinks->mapWithKeys(function($link) {
-                                         return [$link->id => [
-                                             'capacity_lost' => $link->pivot->capacity_lost_gbps ?? 0,
-                                             'services_impacted' => $link->pivot->services_impacted ?? '',
-                                             'traffic_rerouted' => $link->pivot->traffic_rerouted ?? false,
-                                             'reroute_details' => $link->pivot->reroute_details ?? ''
-                                         ]];
-                                     })->toArray())),
+                                     ispLinks: window.ispOutageData.ispLinks,
+                                     selectedIspLinks: window.ispOutageData.selectedIspLinks,
                                      searchIsp: '',
                                      selectedLinkType: '',
-                                     expandedLinks: {},
+                                     expandedLinks: window.ispOutageData.expandedLinks,
 
                                      get filteredIspLinks() {
                                          return this.ispLinks.filter(link => {

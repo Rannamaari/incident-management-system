@@ -324,7 +324,33 @@ class IncidentController extends Controller
         // Load ISP links for ISP outage reporting
         $ispLinks = \App\Models\IspLink::orderBy('circuit_id')->get();
 
-        return view('incidents.edit', compact('incident', 'categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'ispLinks'));
+        // Prepare selected ISP links data structure for the view
+        // Use (object) to ensure empty arrays become {} instead of []
+        $selectedIspLinksData = $incident->ispLinks->mapWithKeys(function($link) {
+            return [$link->id => [
+                'capacity_lost' => $link->pivot->capacity_lost_gbps ?? 0,
+                'services_impacted' => $link->pivot->services_impacted ?? '',
+                'traffic_rerouted' => (bool)($link->pivot->traffic_rerouted ?? false),
+                'reroute_details' => $link->pivot->reroute_details ?? ''
+            ]];
+        })->toArray();
+
+        // If empty, convert to object for proper JSON encoding
+        if (empty($selectedIspLinksData)) {
+            $selectedIspLinksData = new \stdClass();
+        }
+
+        // Prepare expanded links (all selected links should be expanded by default)
+        $expandedLinksData = $incident->ispLinks->pluck('id')->mapWithKeys(function($id) {
+            return [$id => true];
+        })->toArray();
+
+        // If empty, convert to object for proper JSON encoding
+        if (empty($expandedLinksData)) {
+            $expandedLinksData = new \stdClass();
+        }
+
+        return view('incidents.edit', compact('incident', 'categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'ispLinks', 'selectedIspLinksData', 'expandedLinksData'));
     }
 
     /**
@@ -466,6 +492,10 @@ class IncidentController extends Controller
         } else {
             // If ISP is not in affected services, detach all ISP links
             $affectedServices = $request->input('affected_services', []);
+            // Ensure affected_services is always an array
+            if (!is_array($affectedServices)) {
+                $affectedServices = [];
+            }
             if (!in_array('ISP', $affectedServices)) {
                 $incident->ispLinks()->detach();
             }
