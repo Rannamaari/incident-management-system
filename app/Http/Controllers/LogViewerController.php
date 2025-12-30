@@ -22,6 +22,9 @@ class LogViewerController extends Controller
                 'fileSize' => 0,
                 'lastModified' => null,
                 'noFile' => true,
+                'currentLines' => $request->input('lines', 100),
+                'currentSearch' => $request->input('search', ''),
+                'currentLevel' => $request->input('level', ''),
             ]);
         }
 
