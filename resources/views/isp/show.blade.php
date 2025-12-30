@@ -18,13 +18,27 @@
                 Back to List
             </a>
             @if(Auth::user()->canEditIncidents())
-                <a href="{{ route('incidents.create', ['isp_link_id' => $ispLink->id]) }}"
-                   class="inline-flex items-center px-4 py-2 bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
-                    Report Outage
-                </a>
+                @if($ispLink->hasActiveIncidents())
+                    <form method="POST" action="{{ route('isp.restore', $ispLink) }}" class="inline"
+                          onsubmit="return confirm('This will close all active incidents affecting this ISP link. Are you sure the link has been restored?');">
+                        @csrf
+                        <button type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Restore Link
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('incidents.create', ['isp_link_id' => $ispLink->id]) }}"
+                       class="inline-flex items-center px-4 py-2 bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        Report Outage
+                    </a>
+                @endif
             @endif
             @if(Auth::user()->isAdmin())
                 <a href="{{ route('isp.edit', $ispLink) }}"

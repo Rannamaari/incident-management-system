@@ -333,4 +333,46 @@ class IspLinkController extends Controller
         return redirect()->route('isp.index')
             ->with('success', 'ISP Link deleted successfully.');
     }
+
+    /**
+     * Restore ISP link by closing all active incidents affecting it
+     */
+    public function restoreLink(IspLink $ispLink)
+    {
+        // Find all active incidents affecting this ISP link (both old and new systems)
+        $activeIncidents = \App\Models\Incident::where(function($query) use ($ispLink) {
+            // Old single ISP link system
+            $query->where('isp_link_id', $ispLink->id)
+                  // New many-to-many system
+                  ->orWhereHas('ispLinks', function($q) use ($ispLink) {
+                      $q->where('isp_links.id', $ispLink->id);
+                  });
+        })
+        ->whereIn('status', ['Open', 'In Progress', 'Monitoring'])
+        ->get();
+
+        if ($activeIncidents->count() === 0) {
+            return redirect()->back()
+                ->with('info', 'No active incidents found for this ISP link.');
+        }
+
+        // Close all active incidents
+        $closedCount = 0;
+        foreach ($activeIncidents as $incident) {
+            $incident->status = 'Closed';
+            $incident->resolved_at = now();
+            $incident->updated_by = auth()->id();
+
+            // Calculate duration if not already set
+            if (!$incident->duration_minutes && $incident->started_at) {
+                $incident->duration_minutes = $incident->started_at->diffInMinutes($incident->resolved_at);
+            }
+
+            $incident->save();
+            $closedCount++;
+        }
+
+        return redirect()->back()
+            ->with('success', "ISP link restored successfully. Closed {$closedCount} active incident(s).");
+    }
 }

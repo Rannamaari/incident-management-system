@@ -163,6 +163,9 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     Route::put('rcas/{rca}', [RcaController::class, 'update'])->where('rca', '[0-9]+')->name('rcas.update');
     Route::patch('rcas/{rca}', [RcaController::class, 'update'])->where('rca', '[0-9]+');
     Route::delete('rcas/{rca}', [RcaController::class, 'destroy'])->where('rca', '[0-9]+')->name('rcas.destroy');
+
+    // ISP Link Restore (editor and admin only)
+    Route::post('isp/{ispLink}/restore', [App\Http\Controllers\IspLinkController::class, 'restoreLink'])->where('ispLink', '[0-9]+')->name('isp.restore');
 });
 
 // Public routes that require only authentication (viewer and above)
