@@ -75,7 +75,7 @@
                         <!-- Extra Dropdown -->
                         <div class="relative" x-data="{ extraOpen: false }">
                             <button @click="extraOpen = !extraOpen"
-                                class="inline-flex items-center px-3 py-2 text-sm font-medium transition-colors {{ request()->routeIs('smart-parser.*') || request()->routeIs('contacts.*') || request()->routeIs('temporary-sites.*') || request()->routeIs('sites.*') || request()->routeIs('fbb-islands.*') ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 border-b-2 border-transparent' }}">
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium transition-colors {{ request()->routeIs('smart-parser.*') || request()->routeIs('contacts.*') || request()->routeIs('temporary-sites.*') || request()->routeIs('sites.*') || request()->routeIs('fbb-islands.*') || request()->routeIs('isp.*') ? 'text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 border-b-2 border-transparent' }}">
                                 <span>More</span>
                                 <svg class="w-4 h-4 ml-1 transition-transform" :class="{ 'rotate-180': extraOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -133,6 +133,14 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                         <span>FBB Islands</span>
+                                    </a>
+
+                                    <a href="{{ route('isp.dashboard') }}"
+                                        class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors {{ request()->routeIs('isp.*') ? 'bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100' : '' }}">
+                                        <svg class="w-4 h-4 mr-2 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                        </svg>
+                                        <span>ISP Links</span>
                                     </a>
                                 </div>
                             </div>

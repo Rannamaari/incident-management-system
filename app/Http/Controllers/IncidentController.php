@@ -95,7 +95,10 @@ class IncidentController extends Controller
             ->orderBy('island_name')
             ->get();
 
-        return view('incidents.create', compact('categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'regions', 'sites', 'fbbIslands'));
+        // Load ISP links for ISP outage reporting
+        $ispLinks = \App\Models\IspLink::orderBy('circuit_id')->get();
+
+        return view('incidents.create', compact('categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'regions', 'sites', 'fbbIslands', 'ispLinks'));
     }
 
     /**
@@ -135,6 +138,34 @@ class IncidentController extends Controller
                 return back()->withErrors([
                     'fbb_impacted' => 'Please specify the number of impacted FBB when Single FBB is selected.'
                 ])->withInput();
+            }
+        }
+
+        // Custom validation: ISP outage fields required when ISP service selected
+        if (in_array('ISP', $affectedServices)) {
+            $errors = [];
+
+            if (empty($validated['isp_links']) || count($validated['isp_links']) === 0) {
+                $errors['isp_links'] = 'Please select at least one ISP link when ISP is selected as affected service.';
+            } else {
+                // Validate each ISP link
+                foreach ($validated['isp_links'] as $linkId => $linkData) {
+                    $ispLink = \App\Models\IspLink::find($linkId);
+
+                    if (!$ispLink) {
+                        $errors["isp_links.{$linkId}"] = "Invalid ISP link selected.";
+                        continue;
+                    }
+
+                    // Validate capacity lost doesn't exceed ISP link's total capacity
+                    if (isset($linkData['capacity_lost']) && $linkData['capacity_lost'] > $ispLink->total_capacity_gbps) {
+                        $errors["isp_links.{$linkId}.capacity_lost"] = "Capacity lost ({$linkData['capacity_lost']} Gbps) cannot exceed {$ispLink->circuit_id}'s total capacity ({$ispLink->total_capacity_gbps} Gbps).";
+                    }
+                }
+            }
+
+            if (!empty($errors)) {
+                return back()->withErrors($errors)->withInput();
             }
         }
 
@@ -227,6 +258,20 @@ class IncidentController extends Controller
         // Handle FBB island attachments
         $this->handleFbbIslandAttachments($incident, $request);
 
+        // Handle ISP links attachments with metrics
+        if (isset($validated['isp_links']) && is_array($validated['isp_links'])) {
+            $ispLinksData = [];
+            foreach ($validated['isp_links'] as $linkId => $linkData) {
+                $ispLinksData[$linkId] = [
+                    'capacity_lost_gbps' => $linkData['capacity_lost'] ?? 0,
+                    'services_impacted' => $linkData['services_impacted'] ?? '',
+                    'traffic_rerouted' => $linkData['traffic_rerouted'] ?? false,
+                    'reroute_details' => $linkData['reroute_details'] ?? null,
+                ];
+            }
+            $incident->ispLinks()->sync($ispLinksData);
+        }
+
         return redirect()->route('incidents.index')
             ->with('success', 'Incident created successfully.');
     }
@@ -247,6 +292,7 @@ class IncidentController extends Controller
             'sites.location',
             'sites.technologies',
             'fbbIslands.region',
+            'ispLinks',
             'category',
             'outageCategory',
             'faultType',
@@ -264,14 +310,17 @@ class IncidentController extends Controller
      */
     public function edit(Incident $incident)
     {
-        $incident->load(['logs', 'actionPoints']); // Eager load logs and action points
-        
+        $incident->load(['logs', 'actionPoints', 'ispLinks']); // Eager load logs, action points, and ISP links with pivot data
+
         $categories = Category::orderBy('name')->get();
         $outageCategories = OutageCategory::orderBy('name')->get();
         $faultTypes = FaultType::orderBy('name')->get();
         $resolutionTeams = ResolutionTeam::orderBy('name')->get();
 
-        return view('incidents.edit', compact('incident', 'categories', 'outageCategories', 'faultTypes', 'resolutionTeams'));
+        // Load ISP links for ISP outage reporting
+        $ispLinks = \App\Models\IspLink::orderBy('circuit_id')->get();
+
+        return view('incidents.edit', compact('incident', 'categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'ispLinks'));
     }
 
     /**
@@ -311,6 +360,35 @@ class IncidentController extends Controller
                 return back()->withErrors([
                     'fbb_impacted' => 'Please specify the number of impacted FBB when Single FBB is selected.'
                 ])->withInput();
+            }
+        }
+
+        // Custom validation: ISP links required when ISP service selected
+        if (in_array('ISP', $affectedServices)) {
+            $errors = [];
+
+            // Check if at least one ISP link is selected
+            if (empty($validated['isp_links']) || count($validated['isp_links']) === 0) {
+                $errors['isp_links'] = 'Please select at least one ISP link when ISP is selected as affected service.';
+            } else {
+                // Validate each selected ISP link
+                foreach ($validated['isp_links'] as $linkId => $linkData) {
+                    $ispLink = \App\Models\IspLink::find($linkId);
+
+                    if (!$ispLink) {
+                        $errors["isp_links.{$linkId}"] = "Invalid ISP link selected.";
+                        continue;
+                    }
+
+                    // Validate capacity lost doesn't exceed ISP link's total capacity
+                    if (isset($linkData['capacity_lost']) && $linkData['capacity_lost'] > $ispLink->total_capacity_gbps) {
+                        $errors["isp_links.{$linkId}.capacity_lost"] = "Capacity lost ({$linkData['capacity_lost']} Gbps) cannot exceed {$ispLink->circuit_id}'s total capacity ({$ispLink->total_capacity_gbps} Gbps).";
+                    }
+                }
+            }
+
+            if (!empty($errors)) {
+                return back()->withErrors($errors)->withInput();
             }
         }
 
@@ -364,6 +442,26 @@ class IncidentController extends Controller
         // Handle log entries and action points
         $this->handleIncidentLogs($incident, $validated);
         $this->handleIncidentActionPoints($incident, $validated);
+
+        // Handle ISP links attachments with metrics
+        if (isset($validated['isp_links']) && is_array($validated['isp_links'])) {
+            $ispLinksData = [];
+            foreach ($validated['isp_links'] as $linkId => $linkData) {
+                $ispLinksData[$linkId] = [
+                    'capacity_lost_gbps' => $linkData['capacity_lost'] ?? 0,
+                    'services_impacted' => $linkData['services_impacted'] ?? '',
+                    'traffic_rerouted' => $linkData['traffic_rerouted'] ?? false,
+                    'reroute_details' => $linkData['reroute_details'] ?? null,
+                ];
+            }
+            $incident->ispLinks()->sync($ispLinksData);
+        } else {
+            // If ISP is not in affected services, detach all ISP links
+            $affectedServices = $request->input('affected_services', []);
+            if (!in_array('ISP', $affectedServices)) {
+                $incident->ispLinks()->detach();
+            }
+        }
 
         return redirect()->route('incidents.index')
             ->with('success', 'Incident updated successfully.');
@@ -622,12 +720,17 @@ class IncidentController extends Controller
             'category_id' => ['nullable', 'exists:categories,id'],
             'fault_type_id' => ['nullable', 'exists:fault_types,id'],
             'resolution_team_id' => ['nullable', 'exists:resolution_teams,id'],
+            'isp_links' => ['nullable', 'array'],
+            'isp_links.*.capacity_lost' => ['required', 'numeric', 'min:0'],
+            'isp_links.*.services_impacted' => ['required', 'string'],
+            'isp_links.*.traffic_rerouted' => ['required', 'boolean'],
+            'isp_links.*.reroute_details' => ['nullable', 'string'],
             'new_outage_category_name' => ['nullable', 'string', 'max:255'],
             'new_category_name' => ['nullable', 'string', 'max:255'],
             'new_fault_type_name' => ['nullable', 'string', 'max:255'],
             'new_resolution_team_name' => ['nullable', 'string', 'max:255'],
             'affected_services' => ['required', 'array', 'min:1'],
-            'affected_services.*' => ['required', 'string', 'in:Cell,Single FBB,Single Site,Multiple Site,P2P,ILL,SIP,IPTV,Peering,Mobile Data'],
+            'affected_services.*' => ['required', 'string', 'in:Cell,Single FBB,Single Site,Multiple Site,P2P,ILL,SIP,IPTV,Peering,Mobile Data,ISP,Others'],
             'sites_2g_impacted' => ['nullable', 'integer', 'min:0'],
             'sites_3g_impacted' => ['nullable', 'integer', 'min:0'],
             'sites_4g_impacted' => ['nullable', 'integer', 'min:0'],

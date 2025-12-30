@@ -164,7 +164,7 @@
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Select one or more affected systems/services</p>
                                     <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
                                         @php
-                                            $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data', 'Others'];
+                                            $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data', 'ISP', 'Others'];
                                             $oldValues = old('affected_services', []);
                                             if (is_string($oldValues)) {
                                                 $oldValues = explode(',', $oldValues);
@@ -176,7 +176,7 @@
                                                        name="affected_services[]"
                                                        id="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}"
                                                        value="{{ $option }}"
-                                                       {{ in_array($option, $oldValues) ? 'checked' : '' }}
+                                                       {{ in_array($option, $oldValues) || ($option === 'ISP' && request('isp_link_id')) ? 'checked' : '' }}
                                                        class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-2 transition-all duration-200"
                                                        onchange="toggleOthersInput()">
                                                 <label for="affected_services_{{ str_replace(' ', '_', strtolower($option)) }}"
@@ -213,6 +213,7 @@
                                             Alpine.data('siteImpactForm', () => ({
                                                 showSiteFields: {{ old('affected_services') ? (in_array('Single Site', old('affected_services', [])) || in_array('Multiple Site', old('affected_services', [])) ? 'true' : 'false') : 'false' }},
                                                 showFbbField: {{ old('affected_services') ? (in_array('Single FBB', old('affected_services', [])) ? 'true' : 'false') : 'false' }},
+                                                showIspField: {{ (old('affected_services') ? in_array('ISP', old('affected_services', [])) : (request('isp_link_id') ? true : false)) ? 'true' : 'false' }},
 
                                                 // Site selection data
                                                 selectedSites: {},
@@ -226,6 +227,12 @@
                                                 searchFbbIsland: '',
                                                 selectedFbbRegion: '',
                                                 fbbIslands: {{ Js::from($fbbIslands ?? []) }},
+
+                                                // ISP Links selection data
+                                                ispLinks: @json($ispLinks ?? []),
+                                                selectedIspLinks: {},
+                                                searchIsp: '',
+                                                selectedLinkType: '',
 
                                                 init() {
                                                     console.log('Sites data:', this.sites);
@@ -247,8 +254,10 @@
                                                     console.log('Checked services:', values);
                                                     this.showSiteFields = hasSiteFields;
                                                     this.showFbbField = values.includes('Single FBB');
+                                                    this.showIspField = values.includes('ISP');
                                                     console.log('Show Site Fields:', this.showSiteFields);
                                                     console.log('Show FBB Field:', this.showFbbField);
+                                                    console.log('Show ISP Field:', this.showIspField);
 
                                                     // If all site-related services are unchecked, clear selected sites
                                                     if (hadSiteFields && !hasSiteFields && Object.keys(this.selectedSites).length > 0) {
@@ -414,26 +423,28 @@
                                                     console.log('updateSummary called');
                                                     console.log('selectedSites:', this.selectedSites);
                                                     console.log('selectedFbbIslands:', this.selectedFbbIslands);
+                                                    console.log('selectedIspLinks:', this.selectedIspLinks);
 
                                                     const summaryField = document.getElementById('summary');
                                                     const selectedSitesCount = Object.keys(this.selectedSites).length;
                                                     const selectedFbbCount = this.selectedFbbIslands.length;
+                                                    const selectedIspCount = Object.keys(this.selectedIspLinks).length;
 
-                                                    console.log('Sites count:', selectedSitesCount, 'FBB count:', selectedFbbCount);
+                                                    console.log('Sites count:', selectedSitesCount, 'FBB count:', selectedFbbCount, 'ISP count:', selectedIspCount);
 
-                                                    if (selectedSitesCount === 0 && selectedFbbCount === 0) {
+                                                    if (selectedSitesCount === 0 && selectedFbbCount === 0 && selectedIspCount === 0) {
                                                         summaryField.readOnly = false;
                                                         summaryField.classList.remove('bg-gray-50', 'cursor-not-allowed');
-                                                        summaryField.classList.add('bg-white dark:bg-gray-800');
+                                                        summaryField.classList.add('bg-white', 'dark:bg-gray-800');
                                                         return;
                                                     }
 
                                                     // Make field readonly
                                                     summaryField.readOnly = true;
                                                     summaryField.classList.add('bg-gray-50', 'cursor-not-allowed');
-                                                    summaryField.classList.remove('bg-white dark:bg-gray-800');
+                                                    summaryField.classList.remove('bg-white', 'dark:bg-gray-800');
 
-                                                    // Generate summary - sites and FBB islands, separated by commas
+                                                    // Generate summary - sites, FBB islands, and ISP links, separated by commas
                                                     let summaryLines = [];
 
                                                     // Add sites with technologies
@@ -453,6 +464,18 @@
                                                         console.log('Processing FBB island ID:', islandId, 'Found:', island);
                                                         if (island) {
                                                             summaryLines.push(`${island.full_name} FBB`);
+                                                        }
+                                                    }
+
+                                                    console.log('After FBB islands, summaryLines:', summaryLines);
+
+                                                    // Add ISP links with capacity lost
+                                                    for (const [linkId, metrics] of Object.entries(this.selectedIspLinks)) {
+                                                        const link = this.ispLinks.find(l => l.id == linkId);
+                                                        console.log('Processing ISP link ID:', linkId, 'Found:', link, 'Metrics:', metrics);
+                                                        if (link) {
+                                                            const capacityLost = metrics.capacity_lost || '0.00';
+                                                            summaryLines.push(`${link.isp_name} - ${link.circuit_id} - ${capacityLost} Gbps lost`);
                                                         }
                                                     }
 
@@ -536,6 +559,35 @@
                                                     // Update FBB count
                                                     document.getElementById('fbb_impacted').value = this.selectedFbbIslands.length;
                                                     // Update summary to include FBB islands
+                                                    this.updateSummary();
+                                                },
+
+                                                // ISP Links computed property for filtering
+                                                get filteredIspLinks() {
+                                                    return this.ispLinks.filter(link => {
+                                                        const searchMatch = !this.searchIsp ||
+                                                            link.circuit_id.toLowerCase().includes(this.searchIsp.toLowerCase()) ||
+                                                            link.isp_name.toLowerCase().includes(this.searchIsp.toLowerCase()) ||
+                                                            link.location_b.toLowerCase().includes(this.searchIsp.toLowerCase());
+                                                        const typeMatch = !this.selectedLinkType || link.link_type === this.selectedLinkType;
+                                                        return searchMatch && typeMatch;
+                                                    });
+                                                },
+
+                                                // Toggle ISP link selection
+                                                toggleIspLink(linkId) {
+                                                    if (this.selectedIspLinks[linkId]) {
+                                                        delete this.selectedIspLinks[linkId];
+                                                    } else {
+                                                        const link = this.ispLinks.find(l => l.id == linkId);
+                                                        const lostCapacity = link ? (parseFloat(link.total_capacity_gbps) - parseFloat(link.current_capacity_gbps)).toFixed(2) : '0.00';
+                                                        this.selectedIspLinks[linkId] = {
+                                                            capacity_lost: lostCapacity,
+                                                            services_impacted: '',
+                                                            traffic_rerouted: false,
+                                                            reroute_details: ''
+                                                        };
+                                                    }
                                                     this.updateSummary();
                                                 }
                                             }));
@@ -831,6 +883,237 @@
                                         </div>
                                     </div>
 
+                                    <!-- ISP Link Selection Section -->
+                                    <!-- ISP Outage Section (Multi-select with Search) -->
+                                    <div x-show="showIspField"
+                                         x-transition:enter="transition ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                                         x-transition:leave="transition ease-in duration-200"
+                                         x-transition:leave-start="opacity-100"
+                                         x-transition:leave-end="opacity-0"
+                                         class="bg-red-50/50 border border-red-200 dark:border-red-700 rounded-xl p-6 mt-4">
+
+                                        <h5 class="font-heading text-sm font-semibold text-red-900 dark:text-red-300 mb-4 flex items-center gap-2">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                            </svg>
+                                            Select Affected ISP Links
+                                        </h5>
+                                        <p class="text-sm text-red-700 dark:text-red-400 mb-4">Search and select ISP links experiencing outages</p>
+
+                                        <!-- Selected ISP Links Summary -->
+                                        <div x-show="Object.keys(selectedIspLinks).length > 0"
+                                             x-transition
+                                             class="mb-4 p-4 bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-700 rounded-xl">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <p class="text-sm font-semibold text-red-900 dark:text-red-300">
+                                                    <span x-text="Object.keys(selectedIspLinks).length"></span> ISP link(s) selected
+                                                </p>
+                                                <button type="button"
+                                                        @click="selectedIspLinks = {}"
+                                                        class="text-xs text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-medium transition-colors">
+                                                    Clear All
+                                                </button>
+                                            </div>
+
+                                            <!-- Selected Links with Expand/Collapse -->
+                                            <div class="space-y-2">
+                                                <template x-for="(metrics, linkId) in selectedIspLinks" :key="linkId">
+                                                    <div class="bg-white dark:bg-gray-800 border border-red-300 dark:border-red-700 rounded-lg overflow-hidden"
+                                                         x-data="{ expanded: false }">
+                                                        <!-- Link Header (Collapsible) -->
+                                                        <div class="flex items-center justify-between p-3 cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
+                                                             @click="expanded = !expanded">
+                                                            <div class="flex-1">
+                                                                <div class="flex items-center gap-2">
+                                                                    <span class="font-semibold text-gray-900 dark:text-gray-100 text-sm"
+                                                                          x-text="ispLinks.find(l => l.id == linkId)?.circuit_id || 'Unknown'"></span>
+                                                                    <span class="text-gray-500 dark:text-gray-400">•</span>
+                                                                    <span class="text-red-700 dark:text-red-400 text-xs"
+                                                                          x-text="ispLinks.find(l => l.id == linkId)?.isp_name || 'Unknown'"></span>
+                                                                </div>
+                                                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5"
+                                                                   x-text="ispLinks.find(l => l.id == linkId)?.location_b || 'Unknown'"></p>
+                                                            </div>
+                                                            <div class="flex items-center gap-2">
+                                                                <svg class="h-4 w-4 text-gray-400 transition-transform duration-200"
+                                                                     :class="{ 'rotate-180': expanded }"
+                                                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                                </svg>
+                                                                <button type="button"
+                                                                        @click.stop="removeIspLink(linkId)"
+                                                                        class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                                                                        title="Remove this ISP link">
+                                                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Metrics Form (Expandable) -->
+                                                        <div x-show="expanded"
+                                                             x-transition:enter="transition ease-out duration-200"
+                                                             x-transition:enter-start="opacity-0 max-h-0"
+                                                             x-transition:enter-end="opacity-100 max-h-screen"
+                                                             class="border-t border-red-200 dark:border-red-800 p-4 bg-red-50/30 dark:bg-red-950/10 space-y-4">
+
+                                                            <!-- Link Info Display -->
+                                                            <div class="p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                                                                <p class="text-sm text-blue-800 dark:text-blue-300">
+                                                                    <span class="font-semibold">Total Capacity:</span>
+                                                                    <span x-text="ispLinks.find(l => l.id == linkId)?.total_capacity_gbps + ' Gbps' || 'N/A'"></span>
+                                                                    <span class="mx-2">•</span>
+                                                                    <span class="font-semibold">Current:</span>
+                                                                    <span x-text="ispLinks.find(l => l.id == linkId)?.current_capacity_gbps + ' Gbps' || 'N/A'"></span>
+                                                                </p>
+                                                            </div>
+
+                                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                <!-- Capacity Lost -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                        Capacity Lost (Gbps) <span class="text-red-500">*</span>
+                                                                    </label>
+                                                                    <input type="number"
+                                                                           x-model="selectedIspLinks[linkId].capacity_lost"
+                                                                           @input="updateSummary()"
+                                                                           :name="'isp_links[' + linkId + '][capacity_lost]'"
+                                                                           step="0.01"
+                                                                           min="0"
+                                                                           :max="ispLinks.find(l => l.id == linkId)?.total_capacity_gbps || 999999"
+                                                                           placeholder="e.g., 10.00"
+                                                                           class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm focus:border-red-500 dark:focus:border-red-400 focus:ring-2 focus:ring-red-500/20 dark:focus:ring-red-400/20 bg-white dark:bg-gray-800">
+                                                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                                        Max: <span x-text="ispLinks.find(l => l.id == linkId)?.total_capacity_gbps + ' Gbps' || 'N/A'"></span>
+                                                                    </p>
+                                                                </div>
+
+                                                                <!-- Traffic Rerouted -->
+                                                                <div>
+                                                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                                        Traffic Rerouted?
+                                                                    </label>
+                                                                    <div class="flex items-center gap-4 mt-2">
+                                                                        <label class="flex items-center cursor-pointer">
+                                                                            <input type="radio"
+                                                                                   :name="'isp_links[' + linkId + '][traffic_rerouted]'"
+                                                                                   value="1"
+                                                                                   @change="selectedIspLinks[linkId].traffic_rerouted = true"
+                                                                                   :checked="selectedIspLinks[linkId].traffic_rerouted"
+                                                                                   class="h-4 w-4 border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500">
+                                                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Yes</span>
+                                                                        </label>
+                                                                        <label class="flex items-center cursor-pointer">
+                                                                            <input type="radio"
+                                                                                   :name="'isp_links[' + linkId + '][traffic_rerouted]'"
+                                                                                   value="0"
+                                                                                   @change="selectedIspLinks[linkId].traffic_rerouted = false"
+                                                                                   :checked="!selectedIspLinks[linkId].traffic_rerouted"
+                                                                                   class="h-4 w-4 border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500">
+                                                                            <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">No</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Services Impacted -->
+                                                            <div>
+                                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                    Services Impacted <span class="text-red-500">*</span>
+                                                                </label>
+                                                                <textarea x-model="selectedIspLinks[linkId].services_impacted"
+                                                                          :name="'isp_links[' + linkId + '][services_impacted]'"
+                                                                          rows="2"
+                                                                          placeholder="Describe impacted services..."
+                                                                          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm focus:border-red-500 dark:focus:border-red-400 focus:ring-2 focus:ring-red-500/20 dark:focus:ring-red-400/20 bg-white dark:bg-gray-800"></textarea>
+                                                            </div>
+
+                                                            <!-- Reroute Details (Conditional) -->
+                                                            <div x-show="selectedIspLinks[linkId].traffic_rerouted"
+                                                                 x-transition>
+                                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                    Reroute Details
+                                                                </label>
+                                                                <textarea x-model="selectedIspLinks[linkId].reroute_details"
+                                                                          :name="'isp_links[' + linkId + '][reroute_details]'"
+                                                                          rows="2"
+                                                                          placeholder="Describe how traffic was rerouted..."
+                                                                          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm shadow-sm focus:border-red-500 dark:focus:border-red-400 focus:ring-2 focus:ring-red-500/20 dark:focus:ring-red-400/20 bg-white dark:bg-gray-800"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </div>
+
+                                        <!-- Search and Filter -->
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search ISP Links</label>
+                                                <input type="text"
+                                                       x-model="searchIsp"
+                                                       placeholder="Search by circuit, ISP name, location..."
+                                                       class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm shadow-sm focus:border-red-600 dark:focus:border-red-400 focus:ring-2 focus:ring-red-600/20 dark:focus:ring-red-400/20 bg-white dark:bg-gray-800">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filter by Type</label>
+                                                <select x-model="selectedLinkType"
+                                                        class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm shadow-sm focus:border-red-600 dark:focus:border-red-400 focus:ring-2 focus:ring-red-600/20 dark:focus:ring-red-400/20 bg-white dark:bg-gray-800">
+                                                    <option value="">All Types</option>
+                                                    <option value="Backhaul">Backhaul</option>
+                                                    <option value="Peering">Peering</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- ISP Links List (Checkboxes) -->
+                                        <div class="max-h-96 overflow-y-auto border border-red-200 dark:border-red-700 rounded-lg p-4 bg-white dark:bg-gray-800 space-y-2">
+                                            <template x-for="link in filteredIspLinks" :key="link.id">
+                                                <label class="flex items-start gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                                       :class="{ 'bg-red-100 dark:bg-red-950/30 border border-red-300 dark:border-red-700': isLinkSelected(link.id) }">
+                                                    <input type="checkbox"
+                                                           :checked="isLinkSelected(link.id)"
+                                                           @change="toggleIspLink(link.id)"
+                                                           class="mt-0.5 h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500 dark:focus:ring-red-400">
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="flex items-center gap-2 flex-wrap">
+                                                            <span class="font-semibold text-gray-900 dark:text-gray-100 text-sm" x-text="link.circuit_id"></span>
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                                                  :class="link.link_type === 'Backhaul' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' : 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300'"
+                                                                  x-text="link.link_type"></span>
+                                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                                                                  :class="link.status === 'Up' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'"
+                                                                  x-text="link.status"></span>
+                                                        </div>
+                                                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1" x-text="link.isp_name"></p>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+                                                            <span x-text="link.location_b"></span>
+                                                            <span class="mx-1">•</span>
+                                                            <span class="font-medium" x-text="link.total_capacity_gbps + ' Gbps'"></span>
+                                                            <span class="text-gray-400">(Current: </span><span x-text="link.current_capacity_gbps + ' Gbps'"></span><span class="text-gray-400">)</span>
+                                                        </p>
+                                                    </div>
+                                                </label>
+                                            </template>
+
+                                            <!-- No Results Message -->
+                                            <div x-show="filteredIspLinks.length === 0" class="text-center py-8">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                                </svg>
+                                                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">No ISP links found</p>
+                                            </div>
+                                        </div>
+
+                                        @error('isp_links')
+                                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+
                                 </div>
 
                                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -928,7 +1211,7 @@
                                         <div>
                                             <label for="summary" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">Outage
                                                 Details (Incident Summary) <span class="text-red-500">*</span></label>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Auto-fills when sites or FBB islands are selected, or enter manually</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Auto-fills when sites, FBB islands, or ISP links are selected, or enter manually</p>
                                             <textarea name="summary" id="summary" rows="8" maxlength="1000"
                                                 placeholder="Provide detailed description of the incident..."
                                                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-blue-600 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-600/20 dark:focus:ring-blue-400/20 bg-white dark:bg-gray-800 transition-all duration-300 resize-y @error('summary') border-red-300 dark:border-red-700 @enderror"

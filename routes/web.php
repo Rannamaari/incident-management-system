@@ -193,6 +193,11 @@ Route::middleware(['auth', 'role:viewer'])->group(function () {
     Route::get('fbb-islands', [App\Http\Controllers\FbbIslandController::class, 'index'])->name('fbb-islands.index');
     Route::get('fbb-islands/{fbbIsland}', [App\Http\Controllers\FbbIslandController::class, 'show'])->where('fbbIsland', '[0-9]+')->name('fbb-islands.show');
 
+    // ISP Links routes (viewer and above)
+    Route::get('isp/dashboard', [App\Http\Controllers\IspLinkController::class, 'dashboard'])->name('isp.dashboard');
+    Route::get('isp', [App\Http\Controllers\IspLinkController::class, 'index'])->name('isp.index');
+    Route::get('isp/{ispLink}', [App\Http\Controllers\IspLinkController::class, 'show'])->where('ispLink', '[0-9]+')->name('isp.show');
+
     // RCA view routes (viewer and above)
     Route::get('rcas', [RcaController::class, 'index'])->name('rcas.index');
     Route::get('rcas/{rca}', [RcaController::class, 'show'])->where('rca', '[0-9]+')->name('rcas.show');
@@ -263,6 +268,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/{fbbIsland}', [App\Http\Controllers\FbbIslandController::class, 'update'])->name('update');
         Route::delete('/{fbbIsland}', [App\Http\Controllers\FbbIslandController::class, 'destroy'])->name('destroy');
         Route::post('/bulk-delete', [App\Http\Controllers\FbbIslandController::class, 'destroyBulk'])->name('bulk-delete');
+    });
+
+    // ISP Links management routes (admin only)
+    Route::prefix('isp')->name('isp.')->group(function () {
+        Route::get('/create', [App\Http\Controllers\IspLinkController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\IspLinkController::class, 'store'])->name('store');
+        Route::get('/{ispLink}/edit', [App\Http\Controllers\IspLinkController::class, 'edit'])->name('edit');
+        Route::put('/{ispLink}', [App\Http\Controllers\IspLinkController::class, 'update'])->name('update');
+        Route::delete('/{ispLink}', [App\Http\Controllers\IspLinkController::class, 'destroy'])->name('destroy');
     });
 });
 

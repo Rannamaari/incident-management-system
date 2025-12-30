@@ -394,6 +394,295 @@
                 </div>
             </div>
 
+            <!-- ISP Outage Metrics (multiple ISP links - new system) -->
+            @if($incident->ispLinks && $incident->ispLinks->count() > 0)
+            <div class="overflow-hidden rounded-2xl border border-red-200 dark:border-red-900/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg mb-6">
+                <div class="border-b border-red-200 dark:border-red-900/50 bg-gradient-to-r from-red-50/80 to-orange-50/60 dark:from-red-950/30 dark:to-orange-950/20 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-red-700 shadow-md">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9 3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-gray-100">ISP Outage Metrics</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Affected ISP links and outage information</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+                            {{ $incident->ispLinks->count() }} {{ $incident->ispLinks->count() === 1 ? 'Link' : 'Links' }} Affected
+                        </span>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <div class="space-y-6">
+                        @foreach($incident->ispLinks as $ispLink)
+                        <div class="rounded-xl border-2 {{ $ispLink->link_type === 'Backhaul' ? 'border-purple-200 dark:border-purple-900/50 bg-gradient-to-br from-purple-50/30 to-white dark:from-purple-950/20 dark:to-gray-800' : 'border-teal-200 dark:border-teal-900/50 bg-gradient-to-br from-teal-50/30 to-white dark:from-teal-950/20 dark:to-gray-800' }} p-6">
+                            <!-- Link Header -->
+                            <div class="flex items-start justify-between mb-5 pb-4 border-b {{ $ispLink->link_type === 'Backhaul' ? 'border-purple-200 dark:border-purple-900/50' : 'border-teal-200 dark:border-teal-900/50' }}">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <a href="{{ route('isp.show', $ispLink) }}" class="font-heading text-lg font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:underline">
+                                            {{ $ispLink->circuit_id }}
+                                        </a>
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold {{ $ispLink->link_type === 'Backhaul' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' : 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300' }}">
+                                            {{ $ispLink->link_type }}
+                                        </span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $ispLink->isp_name }}</p>
+                                    <div class="flex items-center gap-2 mt-2 text-sm text-gray-700 dark:text-gray-300">
+                                        <span class="font-medium">{{ $ispLink->location_a }}</span>
+                                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                        </svg>
+                                        <span class="font-medium">{{ $ispLink->location_b }}</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Total Capacity</p>
+                                    <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ number_format($ispLink->total_capacity_gbps, 2) }} Gbps</p>
+                                </div>
+                            </div>
+
+                            <!-- Impact Metrics Grid -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                <!-- Left Column: Capacity Impact -->
+                                <div class="space-y-4">
+                                    <div class="rounded-lg border {{ $ispLink->link_type === 'Backhaul' ? 'border-purple-200 dark:border-purple-900/50 bg-purple-50/50 dark:bg-purple-950/20' : 'border-teal-200 dark:border-teal-900/50 bg-teal-50/50 dark:bg-teal-950/20' }} p-4">
+                                        <h5 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                            <svg class="h-4 w-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                                            </svg>
+                                            Capacity Impact
+                                        </h5>
+                                        <div class="flex items-baseline gap-2 mb-3">
+                                            <span class="text-2xl font-bold text-red-600 dark:text-red-400">{{ number_format($ispLink->pivot->capacity_lost_gbps, 2) }}</span>
+                                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Gbps Lost</span>
+                                        </div>
+                                        <!-- Visual capacity bar -->
+                                        <div class="mb-3">
+                                            <div class="h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                <div class="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full transition-all duration-500"
+                                                     style="width: {{ min(($ispLink->pivot->capacity_lost_gbps / $ispLink->total_capacity_gbps) * 100, 100) }}%">
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                <span>0 Gbps</span>
+                                                <span>{{ number_format($ispLink->total_capacity_gbps, 2) }} Gbps</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                                            <span class="text-sm font-semibold text-red-600 dark:text-red-400">
+                                                {{ number_format(($ispLink->pivot->capacity_lost_gbps / $ispLink->total_capacity_gbps) * 100, 1) }}% Impact
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Traffic Rerouting Status -->
+                                    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20 p-4">
+                                        <h5 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                            <svg class="h-4 w-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                            </svg>
+                                            Traffic Rerouting
+                                        </h5>
+                                        @if($ispLink->pivot->traffic_rerouted)
+                                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-900/50">
+                                                <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                                Traffic Rerouted
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-900/50">
+                                                <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                </svg>
+                                                Not Rerouted
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <!-- Right Column: Services & Reroute Details -->
+                                <div class="space-y-4">
+                                    <!-- Services Impacted -->
+                                    <div class="rounded-lg border border-orange-200 dark:border-orange-900/50 bg-orange-50/50 dark:bg-orange-950/20 p-4">
+                                        <h5 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                            <svg class="h-4 w-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.964-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                            </svg>
+                                            Impacted Services
+                                        </h5>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{{ $ispLink->pivot->services_impacted }}</p>
+                                    </div>
+
+                                    <!-- Reroute Details (if available) -->
+                                    @if($ispLink->pivot->traffic_rerouted && $ispLink->pivot->reroute_details)
+                                    <div class="rounded-lg border border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-950/20 p-4">
+                                        <h5 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                            <svg class="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Reroute Details
+                                        </h5>
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{{ $ispLink->pivot->reroute_details }}</p>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- ISP Outage Metrics (single ISP link - old system, backward compatibility) -->
+            @if($incident->ispLink && (!$incident->ispLinks || $incident->ispLinks->count() === 0))
+            <div class="overflow-hidden rounded-2xl border border-red-200 dark:border-red-900/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg mb-6">
+                <div class="border-b border-red-200 dark:border-red-900/50 bg-gradient-to-r from-red-50/80 to-orange-50/60 dark:from-red-950/30 dark:to-orange-950/20 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-red-700 shadow-md">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9 3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-heading text-lg font-semibold text-gray-900 dark:text-gray-100">ISP Outage Metrics</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Affected ISP link and outage information</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <div class="rounded-xl border-2 {{ $incident->ispLink->link_type === 'Backhaul' ? 'border-purple-200 dark:border-purple-900/50 bg-gradient-to-br from-purple-50/30 to-white dark:from-purple-950/20 dark:to-gray-800' : 'border-teal-200 dark:border-teal-900/50 bg-gradient-to-br from-teal-50/30 to-white dark:from-teal-950/20 dark:to-gray-800' }} p-6">
+                        <!-- Link Header -->
+                        <div class="flex items-start justify-between mb-5 pb-4 border-b {{ $incident->ispLink->link_type === 'Backhaul' ? 'border-purple-200 dark:border-purple-900/50' : 'border-teal-200 dark:border-teal-900/50' }}">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <a href="{{ route('isp.show', $incident->ispLink) }}" class="font-heading text-lg font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:underline">
+                                        {{ $incident->ispLink->circuit_id }}
+                                    </a>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold {{ $incident->ispLink->link_type === 'Backhaul' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' : 'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300' }}">
+                                        {{ $incident->ispLink->link_type }}
+                                    </span>
+                                </div>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ $incident->ispLink->isp_name }}</p>
+                                <div class="flex items-center gap-2 mt-2 text-sm text-gray-700 dark:text-gray-300">
+                                    <span class="font-medium">{{ $incident->ispLink->location_a }}</span>
+                                    <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                    </svg>
+                                    <span class="font-medium">{{ $incident->ispLink->location_b }}</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Total Capacity</p>
+                                <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ number_format($incident->ispLink->total_capacity_gbps, 2) }} Gbps</p>
+                            </div>
+                        </div>
+
+                        <!-- Impact Metrics Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                            <!-- Left Column: Capacity Impact -->
+                            <div class="space-y-4">
+                                @if($incident->isp_capacity_lost_gbps)
+                                <div class="rounded-lg border {{ $incident->ispLink->link_type === 'Backhaul' ? 'border-purple-200 dark:border-purple-900/50 bg-purple-50/50 dark:bg-purple-950/20' : 'border-teal-200 dark:border-teal-900/50 bg-teal-50/50 dark:bg-teal-950/20' }} p-4">
+                                    <h5 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                                        </svg>
+                                        Capacity Impact
+                                    </h5>
+                                    <div class="flex items-baseline gap-2 mb-3">
+                                        <span class="text-2xl font-bold text-red-600 dark:text-red-400">{{ number_format($incident->isp_capacity_lost_gbps, 2) }}</span>
+                                        <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Gbps Lost</span>
+                                    </div>
+                                    <!-- Visual capacity bar -->
+                                    <div class="mb-3">
+                                        <div class="h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full transition-all duration-500"
+                                                 style="width: {{ min(($incident->isp_capacity_lost_gbps / $incident->ispLink->total_capacity_gbps) * 100, 100) }}%">
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                            <span>0 Gbps</span>
+                                            <span>{{ number_format($incident->ispLink->total_capacity_gbps, 2) }} Gbps</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                                        <span class="text-sm font-semibold text-red-600 dark:text-red-400">
+                                            {{ number_format(($incident->isp_capacity_lost_gbps / $incident->ispLink->total_capacity_gbps) * 100, 1) }}% Impact
+                                        </span>
+                                    </div>
+                                </div>
+                                @endif
+
+                                <!-- Traffic Rerouting Status -->
+                                <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/20 p-4">
+                                    <h5 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                        </svg>
+                                        Traffic Rerouting
+                                    </h5>
+                                    @if($incident->isp_traffic_rerouted)
+                                        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-900/50">
+                                            <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            Traffic Rerouted
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-semibold bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-900/50">
+                                            <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                            Not Rerouted
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Services & Reroute Details -->
+                            <div class="space-y-4">
+                                <!-- Services Impacted -->
+                                @if($incident->isp_services_impacted)
+                                <div class="rounded-lg border border-orange-200 dark:border-orange-900/50 bg-orange-50/50 dark:bg-orange-950/20 p-4">
+                                    <h5 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.964-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                        </svg>
+                                        Impacted Services
+                                    </h5>
+                                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{{ $incident->isp_services_impacted }}</p>
+                                </div>
+                                @endif
+
+                                <!-- Reroute Details (if available) -->
+                                @if($incident->isp_traffic_rerouted && $incident->isp_reroute_details)
+                                <div class="rounded-lg border border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-950/20 p-4">
+                                    <h5 class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                        <svg class="h-4 w-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Reroute Details
+                                    </h5>
+                                    <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{{ $incident->isp_reroute_details }}</p>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Timeline Updates -->
             <div class="overflow-hidden rounded-2xl border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg">
                 <div class="border-b border-gray-200 dark:border-gray-700/50 bg-gradient-to-r from-indigo-50/80 to-white/60 px-6 py-4">

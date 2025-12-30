@@ -19,6 +19,11 @@ class Incident extends Model
         'category_id',
         'fault_type_id',
         'resolution_team_id',
+        'isp_link_id',
+        'isp_capacity_lost_gbps',
+        'isp_services_impacted',
+        'isp_traffic_rerouted',
+        'isp_reroute_details',
         'affected_services',
         'sites_2g_impacted',
         'sites_3g_impacted',
@@ -66,6 +71,8 @@ class Incident extends Model
         'rca_received_at' => 'datetime',
         'exceeded_sla' => 'boolean',
         'rca_required' => 'boolean',
+        'isp_traffic_rerouted' => 'boolean',
+        'isp_capacity_lost_gbps' => 'decimal:2',
         'duration_minutes' => 'integer',
         'sla_minutes' => 'integer',
         'travel_time' => 'integer',
@@ -458,6 +465,18 @@ class Incident extends Model
     public function resolutionTeam()
     {
         return $this->belongsTo(ResolutionTeam::class);
+    }
+
+    public function ispLink()
+    {
+        return $this->belongsTo(IspLink::class);
+    }
+
+    public function ispLinks()
+    {
+        return $this->belongsToMany(IspLink::class, 'incident_isp_link')
+            ->withPivot('capacity_lost_gbps', 'services_impacted', 'traffic_rerouted', 'reroute_details')
+            ->withTimestamps();
     }
 
     public function logs()

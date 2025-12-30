@@ -7,6 +7,7 @@ use App\Models\Incident;
 use App\Models\TemporarySite;
 use App\Models\Site;
 use App\Models\SiteTechnology;
+use App\Models\IspLink;
 
 class HomeController extends Controller
 {
@@ -152,6 +153,121 @@ class HomeController extends Controller
         // Get temp sites for offline list display (inactive sites)
         $tempSites = Site::where('is_active', false)->with(['region', 'location', 'technologies'])->get();
 
-        return view('home', compact('siteStats', 'siteOutages', 'cellOutages', 'fbbOutages', 'openIncidents', 'tempSites'));
+        // Calculate ISP Link Statistics
+        $allLinks = IspLink::all();
+        $backhaulLinks = $allLinks->where('link_type', 'Backhaul');
+        $peeringLinks = $allLinks->where('link_type', 'Peering');
+
+        // Get active ISP outages
+        $activeIspOutages = Incident::with(['ispLink', 'ispLinks', 'category'])
+            ->where(function($query) {
+                $query->whereNotNull('isp_link_id')
+                      ->orWhereHas('ispLinks');
+            })
+            ->whereIn('status', ['Open', 'In Progress', 'Monitoring'])
+            ->get();
+
+        // Build set of link IDs that have active incidents and collect link details
+        $linksWithActiveIncidents = collect();
+        $backhaulCapacityLostFromIncidents = 0;
+        $peeringCapacityLostFromIncidents = 0;
+        $linksWithIncidentsDetails = []; // Store detailed info about affected links
+
+        foreach ($activeIspOutages as $incident) {
+            // Handle old single ISP link
+            if ($incident->isp_link_id && $incident->ispLink) {
+                $linkId = $incident->isp_link_id;
+                $linksWithActiveIncidents->push($linkId);
+                $capacityLost = $incident->isp_capacity_lost_gbps ?? 0;
+
+                if (!isset($linksWithIncidentsDetails[$linkId])) {
+                    $linksWithIncidentsDetails[$linkId] = [
+                        'link' => $incident->ispLink,
+                        'incidents' => [],
+                        'total_capacity_lost' => 0,
+                    ];
+                }
+                $linksWithIncidentsDetails[$linkId]['incidents'][] = $incident;
+                $linksWithIncidentsDetails[$linkId]['total_capacity_lost'] += $capacityLost;
+
+                if ($incident->ispLink->link_type === 'Backhaul') {
+                    $backhaulCapacityLostFromIncidents += $capacityLost;
+                } else {
+                    $peeringCapacityLostFromIncidents += $capacityLost;
+                }
+            }
+            // Handle new multi-select ISP links
+            if ($incident->ispLinks && $incident->ispLinks->count() > 0) {
+                foreach ($incident->ispLinks as $link) {
+                    $linkId = $link->id;
+                    $linksWithActiveIncidents->push($linkId);
+                    $capacityLost = $link->pivot->capacity_lost_gbps ?? 0;
+
+                    if (!isset($linksWithIncidentsDetails[$linkId])) {
+                        $linksWithIncidentsDetails[$linkId] = [
+                            'link' => $link,
+                            'incidents' => [],
+                            'total_capacity_lost' => 0,
+                        ];
+                    }
+                    $linksWithIncidentsDetails[$linkId]['incidents'][] = $incident;
+                    $linksWithIncidentsDetails[$linkId]['total_capacity_lost'] += $capacityLost;
+
+                    if ($link->link_type === 'Backhaul') {
+                        $backhaulCapacityLostFromIncidents += $capacityLost;
+                    } else {
+                        $peeringCapacityLostFromIncidents += $capacityLost;
+                    }
+                }
+            }
+        }
+        $linksWithActiveIncidents = $linksWithActiveIncidents->unique();
+
+        // Separate links by type for display
+        $backhaulLinksDown = collect($linksWithIncidentsDetails)->filter(function($item) {
+            return $item['link']->link_type === 'Backhaul';
+        });
+        $peeringLinksDown = collect($linksWithIncidentsDetails)->filter(function($item) {
+            return $item['link']->link_type === 'Peering';
+        });
+
+        // Calculate statistics for Backhaul
+        $backhaulTotal = $backhaulLinks->count();
+        $backhaulDown = $linksWithActiveIncidents->intersect($backhaulLinks->pluck('id'))->count();
+        $backhaulUp = $backhaulTotal - $backhaulDown;
+        $backhaulTotalCapacity = $backhaulLinks->sum('total_capacity_gbps');
+        $backhaulAvailableCapacity = max(0, $backhaulTotalCapacity - $backhaulCapacityLostFromIncidents);
+        $backhaulAvailability = $backhaulTotalCapacity > 0 ? round(($backhaulAvailableCapacity / $backhaulTotalCapacity) * 100, 1) : 100;
+
+        // Calculate statistics for Peering
+        $peeringTotal = $peeringLinks->count();
+        $peeringDown = $linksWithActiveIncidents->intersect($peeringLinks->pluck('id'))->count();
+        $peeringUp = $peeringTotal - $peeringDown;
+        $peeringTotalCapacity = $peeringLinks->sum('total_capacity_gbps');
+        $peeringAvailableCapacity = max(0, $peeringTotalCapacity - $peeringCapacityLostFromIncidents);
+        $peeringAvailability = $peeringTotalCapacity > 0 ? round(($peeringAvailableCapacity / $peeringTotalCapacity) * 100, 1) : 100;
+
+        $ispStats = [
+            'backhaul' => [
+                'total' => $backhaulTotal,
+                'up' => $backhaulUp,
+                'down' => $backhaulDown,
+                'total_capacity' => $backhaulTotalCapacity,
+                'available_capacity' => $backhaulAvailableCapacity,
+                'lost_capacity' => $backhaulCapacityLostFromIncidents,
+                'availability_percentage' => $backhaulAvailability,
+            ],
+            'peering' => [
+                'total' => $peeringTotal,
+                'up' => $peeringUp,
+                'down' => $peeringDown,
+                'total_capacity' => $peeringTotalCapacity,
+                'available_capacity' => $peeringAvailableCapacity,
+                'lost_capacity' => $peeringCapacityLostFromIncidents,
+                'availability_percentage' => $peeringAvailability,
+            ],
+        ];
+
+        return view('home', compact('siteStats', 'siteOutages', 'cellOutages', 'fbbOutages', 'openIncidents', 'tempSites', 'ispStats', 'backhaulLinksDown', 'peeringLinksDown'));
     }
 }

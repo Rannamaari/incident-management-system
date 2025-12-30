@@ -47,12 +47,20 @@
                     @foreach(['2g', '3g', '4g', '5g', 'fbb'] as $type)
                         @php
                             $stats = $siteStats[$type] ?? ['offline' => 0, 'online' => 0, 'total' => 0, 'online_percentage' => 100];
-                            $label = config('sites.labels')[$type] ?? strtoupper($type);
+                            // Custom labels for each type
+                            $labels = [
+                                '2g' => '2G',
+                                '3g' => '3G',
+                                '4g' => '4G',
+                                '5g' => '5G',
+                                'fbb' => 'SUPERNET (FBB)',
+                            ];
+                            $label = $labels[$type] ?? strtoupper($type);
                         @endphp
                         <div class="bg-white dark:bg-slate-900 border border-gray-400 dark:border-white/10 rounded shadow-sm dark:shadow-black/40">
                             <!-- Card Header -->
                             <div class="border-b border-gray-200 dark:border-white/10 px-4 py-3">
-                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">{{ $label }} SITES</h3>
+                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">{{ $label }}</h3>
                             </div>
 
                             <!-- Card Body -->
@@ -79,6 +87,188 @@
                     @endforeach
                 </div>
             </div>
+
+            <!-- ISP BACKHAUL & PEERING CARDS -->
+            <div class="bg-gray-50 dark:bg-slate-900 border-b border-gray-300 dark:border-white/10 px-4 sm:px-6 py-6 sm:py-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+                    <!-- BACKHAUL CARD -->
+                    @php
+                        $backhaul = $ispStats['backhaul'];
+                    @endphp
+                    <div class="bg-white dark:bg-slate-900 border border-gray-400 dark:border-white/10 rounded shadow-sm dark:shadow-black/40">
+                        <!-- Card Header -->
+                        <div class="border-b border-gray-200 dark:border-white/10 px-4 py-3">
+                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">ISP BACKHAUL LINKS</h3>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="px-5 py-6">
+                            <!-- Links Down (Dominant) -->
+                            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">LINKS DOWN</div>
+                            <div class="text-4xl sm:text-5xl font-bold text-red-600 dark:text-red-400 tabular-nums mb-4">
+                                {{ $backhaul['down'] }}
+                            </div>
+
+                            <!-- Links Up (Secondary) -->
+                            <div class="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="font-medium tabular-nums">{{ $backhaul['up'] }} / {{ $backhaul['total'] }}</span> links up
+                            </div>
+
+                            <!-- Capacity Lost -->
+                            @if($backhaul['lost_capacity'] > 0)
+                                <div class="text-sm text-red-600 dark:text-red-400 mb-2">
+                                    <span class="font-bold tabular-nums">{{ number_format($backhaul['lost_capacity'], 2) }} Gbps</span> capacity lost
+                                </div>
+                            @endif
+
+                            <!-- Availability (Tertiary) -->
+                            <div class="text-xs text-gray-500 dark:text-gray-400 tabular-nums">
+                                {{ $backhaul['availability_percentage'] }}% availability
+                            </div>
+
+                            <!-- Total Capacity -->
+                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {{ number_format($backhaul['available_capacity'], 2) }} / {{ number_format($backhaul['total_capacity'], 2) }} Gbps available
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PEERING CARD -->
+                    @php
+                        $peering = $ispStats['peering'];
+                    @endphp
+                    <div class="bg-white dark:bg-slate-900 border border-gray-400 dark:border-white/10 rounded shadow-sm dark:shadow-black/40">
+                        <!-- Card Header -->
+                        <div class="border-b border-gray-200 dark:border-white/10 px-4 py-3">
+                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide">ISP PEERING LINKS</h3>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="px-5 py-6">
+                            <!-- Links Down (Dominant) -->
+                            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">LINKS DOWN</div>
+                            <div class="text-4xl sm:text-5xl font-bold text-red-600 dark:text-red-400 tabular-nums mb-4">
+                                {{ $peering['down'] }}
+                            </div>
+
+                            <!-- Links Up (Secondary) -->
+                            <div class="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                                <span class="font-medium tabular-nums">{{ $peering['up'] }} / {{ $peering['total'] }}</span> links up
+                            </div>
+
+                            <!-- Capacity Lost -->
+                            @if($peering['lost_capacity'] > 0)
+                                <div class="text-sm text-red-600 dark:text-red-400 mb-2">
+                                    <span class="font-bold tabular-nums">{{ number_format($peering['lost_capacity'], 2) }} Gbps</span> capacity lost
+                                </div>
+                            @endif
+
+                            <!-- Availability (Tertiary) -->
+                            <div class="text-xs text-gray-500 dark:text-gray-400 tabular-nums">
+                                {{ $peering['availability_percentage'] }}% availability
+                            </div>
+
+                            <!-- Total Capacity -->
+                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {{ number_format($peering['available_capacity'], 2) }} / {{ number_format($peering['total_capacity'], 2) }} Gbps available
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ISP LINKS DOWN DETAILS -->
+            @if($backhaulLinksDown->count() > 0 || $peeringLinksDown->count() > 0)
+                <div class="bg-white dark:bg-slate-900 px-4 sm:px-6 py-4 sm:py-6 border-b border-gray-300 dark:border-white/10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                        <!-- BACKHAUL LINKS DOWN -->
+                        @if($backhaulLinksDown->count() > 0)
+                            <div class="border border-gray-300 dark:border-white/10 dark:shadow-black/40">
+                                <div class="bg-gray-900 text-white px-4 py-2 border-b-2 border-blue-600">
+                                    <h3 class="text-sm font-bold uppercase">Backhaul Links Down ({{ $backhaulLinksDown->count() }})</h3>
+                                </div>
+                                <div class="divide-y divide-gray-200 dark:divide-white/10">
+                                    @foreach($backhaulLinksDown as $linkData)
+                                        @php
+                                            $link = $linkData['link'];
+                                            $totalCapacityLost = $linkData['total_capacity_lost'];
+                                            $incidentCount = count($linkData['incidents']);
+                                            // Get the earliest started_at from all incidents affecting this link
+                                            $earliestIncident = collect($linkData['incidents'])->sortBy('started_at')->first();
+                                            $startedAt = $earliestIncident->started_at ?? null;
+                                        @endphp
+                                        <div class="px-4 py-3 hover:bg-blue-50 dark:hover:bg-white/5 transition-colors">
+                                            <div class="font-semibold text-sm text-gray-900 dark:text-white mb-2">{{ $link->circuit_id }} - {{ $link->isp_name }}</div>
+                                            <div class="flex items-center gap-4 mb-2">
+                                                <div class="text-2xl font-bold text-red-600 dark:text-red-400 tabular-nums duration-display"
+                                                     data-started="{{ $startedAt ? $startedAt->timestamp : '' }}">
+                                                    {{ $earliestIncident->duration_hms ?? '—' }}
+                                                </div>
+                                                <div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        Started {{ $startedAt ? $startedAt->format('H:i d/m') : 'N/A' }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ $link->location_b }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                                <span class="font-semibold text-red-600 dark:text-red-400 tabular-nums">{{ number_format($totalCapacityLost, 2) }} Gbps</span>
+                                                <span class="text-gray-400">•</span>
+                                                <span>{{ $incidentCount }} incident{{ $incidentCount > 1 ? 's' : '' }}</span>
+                                                <span class="text-gray-400">•</span>
+                                                <span>{{ number_format($link->total_capacity_gbps, 2) }} Gbps total</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- PEERING LINKS DOWN -->
+                        @if($peeringLinksDown->count() > 0)
+                            <div class="border border-gray-300 dark:border-white/10 dark:shadow-black/40">
+                                <div class="bg-gray-900 text-white px-4 py-2 border-b-2 border-green-600">
+                                    <h3 class="text-sm font-bold uppercase">Peering Links Down ({{ $peeringLinksDown->count() }})</h3>
+                                </div>
+                                <div class="divide-y divide-gray-200 dark:divide-white/10">
+                                    @foreach($peeringLinksDown as $linkData)
+                                        @php
+                                            $link = $linkData['link'];
+                                            $totalCapacityLost = $linkData['total_capacity_lost'];
+                                            $incidentCount = count($linkData['incidents']);
+                                            // Get the earliest started_at from all incidents affecting this link
+                                            $earliestIncident = collect($linkData['incidents'])->sortBy('started_at')->first();
+                                            $startedAt = $earliestIncident->started_at ?? null;
+                                        @endphp
+                                        <div class="px-4 py-3 hover:bg-green-50 dark:hover:bg-white/5 transition-colors">
+                                            <div class="font-semibold text-sm text-gray-900 dark:text-white mb-2">{{ $link->circuit_id }} - {{ $link->isp_name }}</div>
+                                            <div class="flex items-center gap-4 mb-2">
+                                                <div class="text-2xl font-bold text-red-600 dark:text-red-400 tabular-nums duration-display"
+                                                     data-started="{{ $startedAt ? $startedAt->timestamp : '' }}">
+                                                    {{ $earliestIncident->duration_hms ?? '—' }}
+                                                </div>
+                                                <div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        Started {{ $startedAt ? $startedAt->format('H:i d/m') : 'N/A' }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ $link->location_b }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                                <span class="font-semibold text-red-600 dark:text-red-400 tabular-nums">{{ number_format($totalCapacityLost, 2) }} Gbps</span>
+                                                <span class="text-gray-400">•</span>
+                                                <span>{{ $incidentCount }} incident{{ $incidentCount > 1 ? 's' : '' }}</span>
+                                                <span class="text-gray-400">•</span>
+                                                <span>{{ number_format($link->total_capacity_gbps, 2) }} Gbps total</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
 
             <!-- 2️⃣ ACTIVE OUTAGES (DOMINANT SECTION) -->
             @if($siteOutages->count() > 0 || $cellOutages->count() > 0 || $fbbOutages->count() > 0)
@@ -190,22 +380,48 @@
 
             <!-- 3️⃣ CONTEXT STRIP (CALM NEUTRAL METRICS) -->
             <div class="bg-gray-50 dark:bg-slate-900 border-y border-gray-300 dark:border-white/10 px-4 sm:px-6 py-3">
-                <div class="flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8 text-sm">
-                    <div>
-                        <span class="text-gray-600 dark:text-gray-400">Total Sites:</span>
-                        <span class="ml-2 font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ $totalSites }}</span>
+                <div class="space-y-2">
+                    <!-- Sites Metrics -->
+                    <div class="flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8 text-sm">
+                        <div>
+                            <span class="text-gray-600 dark:text-gray-400">Total Sites:</span>
+                            <span class="ml-2 font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ $totalSites }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 dark:text-gray-400">Online:</span>
+                            <span class="ml-2 font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ $totalOnline }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 dark:text-gray-400">Offline:</span>
+                            <span class="ml-2 font-semibold tabular-nums {{ $totalOffline > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100' }}">{{ $totalOffline }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 dark:text-gray-400">Availability:</span>
+                            <span class="ml-2 font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ $totalSites > 0 ? round(($totalOnline / $totalSites) * 100, 1) : 100 }}%</span>
+                        </div>
                     </div>
-                    <div>
-                        <span class="text-gray-600 dark:text-gray-400">Online:</span>
-                        <span class="ml-2 font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ $totalOnline }}</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-600 dark:text-gray-400">Offline:</span>
-                        <span class="ml-2 font-semibold tabular-nums {{ $totalOffline > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100' }}">{{ $totalOffline }}</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-600 dark:text-gray-400">Availability:</span>
-                        <span class="ml-2 font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ $totalSites > 0 ? round(($totalOnline / $totalSites) * 100, 1) : 100 }}%</span>
+
+                    <!-- ISP Metrics -->
+                    @php
+                        $totalIspLinks = $ispStats['backhaul']['total'] + $ispStats['peering']['total'];
+                        $totalIspDown = $ispStats['backhaul']['down'] + $ispStats['peering']['down'];
+                        $totalCapacityLost = $ispStats['backhaul']['lost_capacity'] + $ispStats['peering']['lost_capacity'];
+                    @endphp
+                    <div class="flex flex-wrap items-center gap-4 sm:gap-6 lg:gap-8 text-sm border-t border-gray-300 dark:border-white/10 pt-2">
+                        <div>
+                            <span class="text-gray-600 dark:text-gray-400">ISP Links:</span>
+                            <span class="ml-2 font-semibold text-gray-900 dark:text-gray-100 tabular-nums">{{ $totalIspLinks }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-600 dark:text-gray-400">Links Down:</span>
+                            <span class="ml-2 font-semibold tabular-nums {{ $totalIspDown > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-900 dark:text-gray-100' }}">{{ $totalIspDown }}</span>
+                        </div>
+                        @if($totalCapacityLost > 0)
+                            <div>
+                                <span class="text-gray-600 dark:text-gray-400">Capacity Lost:</span>
+                                <span class="ml-2 font-semibold text-red-600 dark:text-red-400 tabular-nums">{{ number_format($totalCapacityLost, 2) }} Gbps</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

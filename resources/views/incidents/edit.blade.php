@@ -88,11 +88,11 @@
                             <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Select one or more affected systems/services</p>
                             <div class="mt-2 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
                                 @php
-                                    $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data'];
+                                    $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data', 'ISP', 'Others'];
                                     $currentValues = old('affected_services', []);
                                     if (empty($currentValues) && $incident->affected_services) {
-                                        $currentValues = is_array($incident->affected_services) 
-                                            ? $incident->affected_services 
+                                        $currentValues = is_array($incident->affected_services)
+                                            ? $incident->affected_services
                                             : explode(', ', $incident->affected_services);
                                     }
                                     if (is_string($currentValues)) {
@@ -130,11 +130,13 @@
                                     Alpine.data('siteImpactFormEdit', () => ({
                                         showSiteFields: {{ old('affected_services') ? (in_array('Single Site', old('affected_services', [])) || in_array('Multiple Site', old('affected_services', [])) ? 'true' : 'false') : ($incident->affected_services && (str_contains($incident->affected_services, 'Single Site') || str_contains($incident->affected_services, 'Multiple Site')) ? 'true' : 'false') }},
                                         showFbbField: {{ old('affected_services') ? (in_array('Single FBB', old('affected_services', [])) ? 'true' : 'false') : ($incident->affected_services && str_contains($incident->affected_services, 'Single FBB') ? 'true' : 'false') }},
+                                        showIspField: {{ old('affected_services') ? (in_array('ISP', old('affected_services', [])) ? 'true' : 'false') : ($incident->affected_services && str_contains($incident->affected_services, 'ISP') ? 'true' : 'false') }},
 
                                         checkServices() {
                                             const checkboxes = document.querySelectorAll('input[name="affected_services[]"]:checked');
                                             const values = Array.from(checkboxes).map(cb => cb.value);
                                             this.showSiteFields = values.includes('Single Site') || values.includes('Multiple Site');
+                                            this.showIspField = values.includes('ISP');
                                             this.showFbbField = values.includes('Single FBB');
                                         },
 
@@ -264,6 +266,276 @@
                                     @error('fbb_impacted')
                                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
+                                </div>
+                            </div>
+
+                            <!-- ISP Outage Section with Multi-Select -->
+                            <div x-show="showIspField"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100"
+                                 x-transition:leave-end="opacity-0"
+                                 class="bg-red-50/50 border border-red-200 dark:border-red-700 rounded-xl p-6 mt-4"
+                                 x-data="{
+                                     ispLinks: @json($ispLinks ?? []),
+                                     selectedIspLinks: @json(old('isp_links', $incident->ispLinks->mapWithKeys(function($link) {
+                                         return [$link->id => [
+                                             'capacity_lost' => $link->pivot->capacity_lost_gbps ?? 0,
+                                             'services_impacted' => $link->pivot->services_impacted ?? '',
+                                             'traffic_rerouted' => $link->pivot->traffic_rerouted ?? false,
+                                             'reroute_details' => $link->pivot->reroute_details ?? ''
+                                         ]];
+                                     })->toArray())),
+                                     searchIsp: '',
+                                     selectedLinkType: '',
+                                     expandedLinks: {},
+
+                                     get filteredIspLinks() {
+                                         return this.ispLinks.filter(link => {
+                                             const searchMatch = !this.searchIsp ||
+                                                 link.circuit_id.toLowerCase().includes(this.searchIsp.toLowerCase()) ||
+                                                 link.isp_name.toLowerCase().includes(this.searchIsp.toLowerCase()) ||
+                                                 link.location_b.toLowerCase().includes(this.searchIsp.toLowerCase());
+                                             const typeMatch = !this.selectedLinkType || link.link_type === this.selectedLinkType;
+                                             return searchMatch && typeMatch;
+                                         });
+                                     },
+
+                                     get selectedLinksCount() {
+                                         return Object.keys(this.selectedIspLinks).length;
+                                     },
+
+                                     toggleIspLink(linkId) {
+                                         if (this.selectedIspLinks[linkId]) {
+                                             delete this.selectedIspLinks[linkId];
+                                             delete this.expandedLinks[linkId];
+                                         } else {
+                                             const link = this.ispLinks.find(l => l.id == linkId);
+                                             const lostCapacity = link ? (parseFloat(link.total_capacity_gbps) - parseFloat(link.current_capacity_gbps)).toFixed(2) : '0.00';
+                                             this.selectedIspLinks[linkId] = {
+                                                 capacity_lost: lostCapacity,
+                                                 services_impacted: '',
+                                                 traffic_rerouted: false,
+                                                 reroute_details: ''
+                                             };
+                                             this.expandedLinks[linkId] = true;
+                                         }
+                                     },
+
+                                     toggleExpand(linkId) {
+                                         this.expandedLinks[linkId] = !this.expandedLinks[linkId];
+                                     },
+
+                                     getLinkDetails(linkId) {
+                                         return this.ispLinks.find(l => l.id == linkId);
+                                     }
+                                 }">
+
+                                <h5 class="font-heading text-sm font-semibold text-red-900 dark:text-red-300 mb-4 flex items-center gap-2">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                                    </svg>
+                                    ISP Outage Details
+                                </h5>
+
+                                <!-- Selected ISP Links Summary -->
+                                <div class="mb-6">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Selected ISP Links <span class="text-red-500">*</span>
+                                            <span x-show="selectedLinksCount > 0"
+                                                  class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
+                                                <span x-text="selectedLinksCount"></span> selected
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <!-- Display selected links with expandable details -->
+                                    <div x-show="selectedLinksCount > 0" class="space-y-3 mb-4">
+                                        <template x-for="(linkData, linkId) in selectedIspLinks" :key="linkId">
+                                            <div class="bg-white dark:bg-gray-800 border border-red-300 dark:border-red-700 rounded-lg overflow-hidden">
+                                                <!-- Link Header (always visible) -->
+                                                <div class="flex items-center justify-between p-3 cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+                                                     @click="toggleExpand(linkId)">
+                                                    <div class="flex items-center gap-3 flex-1">
+                                                        <div class="flex-shrink-0">
+                                                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium"
+                                                                  :class="getLinkDetails(linkId)?.link_type === 'Backhaul' ?
+                                                                      'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' :
+                                                                      'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300'"
+                                                                  x-text="getLinkDetails(linkId)?.link_type"></span>
+                                                        </div>
+                                                        <div class="flex-1 min-w-0">
+                                                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                                                               x-text="getLinkDetails(linkId)?.circuit_id"></p>
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                                                <span x-text="getLinkDetails(linkId)?.isp_name"></span> •
+                                                                <span x-text="getLinkDetails(linkId)?.location_b"></span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="text-right mr-2">
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400">Capacity Lost</p>
+                                                            <p class="text-sm font-semibold text-red-600 dark:text-red-400"
+                                                               x-text="linkData.capacity_lost + ' Gbps'"></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-2">
+                                                        <button type="button"
+                                                                @click.stop="toggleIspLink(linkId)"
+                                                                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
+                                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                            </svg>
+                                                        </button>
+                                                        <svg class="h-5 w-5 text-gray-400 transition-transform"
+                                                             :class="{ 'rotate-180': expandedLinks[linkId] }"
+                                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Expanded Metrics (collapsible) -->
+                                                <div x-show="expandedLinks[linkId]"
+                                                     x-collapse
+                                                     class="border-t border-red-200 dark:border-red-700 bg-red-50/50 dark:bg-red-900/10 p-4">
+                                                    <div class="space-y-4">
+                                                        <!-- Capacity Lost -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                                Capacity Lost (Gbps) <span class="text-red-500">*</span>
+                                                            </label>
+                                                            <input type="number"
+                                                                   :name="'isp_links[' + linkId + '][capacity_lost]'"
+                                                                   x-model="selectedIspLinks[linkId].capacity_lost"
+                                                                   step="0.01"
+                                                                   min="0"
+                                                                   :max="getLinkDetails(linkId)?.total_capacity_gbps"
+                                                                   placeholder="e.g., 10.00"
+                                                                   class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 bg-white dark:bg-gray-800">
+                                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                                Max: <span x-text="getLinkDetails(linkId)?.total_capacity_gbps"></span> Gbps
+                                                            </p>
+                                                        </div>
+
+                                                        <!-- Services Impacted -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                                Services Impacted <span class="text-red-500">*</span>
+                                                            </label>
+                                                            <textarea :name="'isp_links[' + linkId + '][services_impacted]'"
+                                                                      x-model="selectedIspLinks[linkId].services_impacted"
+                                                                      rows="2"
+                                                                      placeholder="Describe which services/customers are affected..."
+                                                                      class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 bg-white dark:bg-gray-800"></textarea>
+                                                        </div>
+
+                                                        <!-- Traffic Rerouted -->
+                                                        <div>
+                                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                                Traffic Rerouted?
+                                                            </label>
+                                                            <div class="flex items-center gap-4">
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio"
+                                                                           :name="'isp_links[' + linkId + '][traffic_rerouted]'"
+                                                                           :value="true"
+                                                                           x-model="selectedIspLinks[linkId].traffic_rerouted"
+                                                                           class="h-4 w-4 border-gray-300 text-red-600 focus:ring-red-500">
+                                                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Yes</span>
+                                                                </label>
+                                                                <label class="flex items-center cursor-pointer">
+                                                                    <input type="radio"
+                                                                           :name="'isp_links[' + linkId + '][traffic_rerouted]'"
+                                                                           :value="false"
+                                                                           x-model="selectedIspLinks[linkId].traffic_rerouted"
+                                                                           class="h-4 w-4 border-gray-300 text-red-600 focus:ring-red-500">
+                                                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">No</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Reroute Details -->
+                                                        <div x-show="selectedIspLinks[linkId].traffic_rerouted">
+                                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                                Reroute Details
+                                                            </label>
+                                                            <textarea :name="'isp_links[' + linkId + '][reroute_details]'"
+                                                                      x-model="selectedIspLinks[linkId].reroute_details"
+                                                                      rows="2"
+                                                                      placeholder="Describe how traffic was rerouted..."
+                                                                      class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 bg-white dark:bg-gray-800"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+
+                                    <p x-show="selectedLinksCount === 0" class="text-sm text-gray-500 dark:text-gray-400 italic">
+                                        No ISP links selected. Use the search below to find and select affected links.
+                                    </p>
+                                    @error('isp_links')
+                                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Search and Filter -->
+                                <div class="mb-4 space-y-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                Search ISP Links
+                                            </label>
+                                            <input type="text"
+                                                   x-model="searchIsp"
+                                                   placeholder="Search by circuit ID, ISP name, or location..."
+                                                   class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 bg-white dark:bg-gray-800">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                Filter by Type
+                                            </label>
+                                            <select x-model="selectedLinkType"
+                                                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/20 bg-white dark:bg-gray-800">
+                                                <option value="">All Types</option>
+                                                <option value="Backhaul">Backhaul</option>
+                                                <option value="Peering">Peering</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ISP Links List -->
+                                <div class="border border-gray-300 dark:border-gray-600 rounded-lg max-h-64 overflow-y-auto">
+                                    <template x-for="link in filteredIspLinks" :key="link.id">
+                                        <label class="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700/30 cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-b-0 transition-colors">
+                                            <input type="checkbox"
+                                                   :checked="selectedIspLinks[link.id] !== undefined"
+                                                   @change="toggleIspLink(link.id)"
+                                                   class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-red-600 focus:ring-red-500">
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <span class="text-sm font-medium text-gray-900 dark:text-gray-100" x-text="link.circuit_id"></span>
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                                                          :class="link.link_type === 'Backhaul' ?
+                                                              'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300' :
+                                                              'bg-teal-100 dark:bg-teal-900/30 text-teal-800 dark:text-teal-300'"
+                                                          x-text="link.link_type"></span>
+                                                </div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                    <span x-text="link.isp_name"></span> •
+                                                    <span x-text="link.location_b"></span> •
+                                                    <span x-text="link.total_capacity_gbps + ' Gbps'"></span>
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </template>
+                                    <div x-show="filteredIspLinks.length === 0" class="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        No ISP links found matching your search.
+                                    </div>
                                 </div>
                             </div>
 
