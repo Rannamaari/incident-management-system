@@ -117,6 +117,10 @@ class IncidentController extends Controller
 
         // Custom validation: site counts required when site services selected
         $affectedServices = $request->input('affected_services', []);
+        // Ensure affected_services is always an array
+        if (!is_array($affectedServices)) {
+            $affectedServices = [];
+        }
         if (in_array('Single Site', $affectedServices) || in_array('Multiple Site', $affectedServices)) {
             $totalSites = ($validated['sites_2g_impacted'] ?? 0)
                         + ($validated['sites_3g_impacted'] ?? 0)
@@ -339,6 +343,10 @@ class IncidentController extends Controller
 
         // Custom validation: site counts required when site services selected
         $affectedServices = $request->input('affected_services', []);
+        // Ensure affected_services is always an array
+        if (!is_array($affectedServices)) {
+            $affectedServices = [];
+        }
         if (in_array('Single Site', $affectedServices) || in_array('Multiple Site', $affectedServices)) {
             $totalSites = ($validated['sites_2g_impacted'] ?? 0)
                         + ($validated['sites_3g_impacted'] ?? 0)
