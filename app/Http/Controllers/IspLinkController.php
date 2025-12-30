@@ -136,6 +136,16 @@ class IspLinkController extends Controller
             ->limit(10)
             ->get();
 
+        // Get recent ISP outages (last 10 incidents, both active and resolved)
+        $recentIspOutages = \App\Models\Incident::with(['category', 'ispLink', 'ispLinks'])
+            ->where(function($query) {
+                $query->whereNotNull('isp_link_id') // Old single ISP link system
+                      ->orWhereHas('ispLinks'); // New multi-select ISP links system
+            })
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
         return view('isp.dashboard', compact(
             'totalCapacity',
             'currentCapacity',
@@ -154,7 +164,8 @@ class IspLinkController extends Controller
             'statusCounts',
             'activeOutages',
             'linksWithIncidents',
-            'recentLinks'
+            'recentLinks',
+            'recentIspOutages'
         ));
     }
 

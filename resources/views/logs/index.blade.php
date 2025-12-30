@@ -68,7 +68,7 @@
 
             <!-- Filters (details/summary: no JS needed) -->
             <div class="mb-8 overflow-hidden rounded-3xl border border-gray-100 dark:border-white/10 bg-white/80 dark:bg-slate-900 backdrop-blur-sm shadow-lg dark:shadow-black/40">
-                <details class="group" @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached', 'has_timeline'])) open @endif>
+                <details class="group" @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached', 'has_timeline', 'isp_outages'])) open @endif>
                     <summary class="cursor-pointer list-none px-6 py-5 border-b border-gray-200 dark:border-white/10 hover:bg-gray-50/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-3">
@@ -80,7 +80,7 @@
                                     </svg>
                                 </div>
                                 <h3 class="font-heading text-lg font-heading font-semibold text-gray-900 dark:text-white">Search & Filter Logs</h3>
-                                @if(request('search') || request('status') || request('severity') || request('date_from') || request('date_to') || request('rca_required') || request('sla_breached'))
+                                @if(request('search') || request('status') || request('severity') || request('date_from') || request('date_to') || request('rca_required') || request('sla_breached') || request('isp_outages'))
                                     <span
                                         class="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-heading font-medium text-blue-800">Active</span>
                                 @endif
@@ -177,6 +177,12 @@
                                     <span class="ml-2 text-sm font-heading font-medium text-gray-700 dark:text-gray-300">Has Unread Updates</span>
                                 </label>
 
+                                <label class="inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="isp_outages" value="1" {{ request('isp_outages') ? 'checked' : '' }}
+                                           class="w-4 h-4 text-blue-600 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400 focus:ring-2">
+                                    <span class="ml-2 text-sm font-heading font-medium text-gray-700 dark:text-gray-300">ISP Outages</span>
+                                </label>
+
                                 <div class="flex items-center gap-3 ml-auto">
                                     <button type="submit"
                                         class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3.5 font-heading font-semibold text-white shadow-lg transition-all duration-300 hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:-translate-y-0.5">
@@ -186,7 +192,7 @@
                                         </svg>
                                         Filter & Search
                                     </button>
-                                    @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached', 'has_timeline']))
+                                    @if(request()->hasAny(['search', 'status', 'severity', 'date_from', 'date_to', 'rca_required', 'sla_breached', 'has_timeline', 'isp_outages']))
                                         <a href="{{ route('logs.index') }}"
                                             class="rounded-2xl bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 px-5 py-3.5 font-heading font-medium text-gray-700 dark:text-gray-200 transition-all duration-300 hover:from-gray-200 hover:to-gray-300 dark:hover:from-gray-600 dark:hover:to-gray-700 transform hover:-translate-y-0.5">Clear All</a>
                                     @endif

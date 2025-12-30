@@ -527,6 +527,14 @@ class IncidentController extends Controller
 
         $incident->delete();
 
+        // Redirect back to the page where delete was initiated
+        // Check if referer contains 'logs' to redirect to logs page
+        $referer = request()->headers->get('referer');
+        if ($referer && str_contains($referer, '/logs')) {
+            return redirect()->route('logs.index')
+                ->with('success', 'Incident deleted successfully.');
+        }
+
         return redirect()->route('incidents.index')
             ->with('success', 'Incident deleted successfully.');
     }

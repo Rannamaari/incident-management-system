@@ -370,5 +370,113 @@
         </div>
     @endif
 
+    {{-- Recent ISP Outages History --}}
+    @if($recentIspOutages->count() > 0)
+        <div class="bg-white dark:bg-slate-900 border border-gray-400 dark:border-white/10 rounded shadow-sm dark:shadow-black/40 mb-6">
+            <div class="border-b border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-slate-800 px-5 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Recent ISP Outages</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-0.5">Last {{ $recentIspOutages->count() }} ISP-related incidents</p>
+                        </div>
+                    </div>
+                    <div class="hidden sm:block">
+                        <a href="{{ route('logs.index', ['isp_outages' => '1']) }}"
+                           class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:underline">
+                            View All ISP Logs →
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-white/10">
+                    <thead class="bg-gray-50 dark:bg-slate-800">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Incident</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ISP Link</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Started</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-white/10">
+                        @foreach($recentIspOutages as $incident)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">
+                                <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                    <a href="{{ route('incidents.show', $incident) }}" class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:underline">
+                                        {{ $incident->incident_code }}
+                                    </a>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                        {{ $incident->category->name ?? 'N/A' }}
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    @if($incident->ispLink)
+                                        {{-- Old single ISP link system --}}
+                                        <a href="{{ route('isp.show', $incident->ispLink) }}" class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:underline">
+                                            {{ $incident->ispLink->circuit_id }}
+                                        </a>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $incident->ispLink->isp_name }}</div>
+                                    @elseif($incident->ispLinks && $incident->ispLinks->count() > 0)
+                                        {{-- New multi-select ISP links system --}}
+                                        <div class="flex flex-col gap-1">
+                                            @foreach($incident->ispLinks as $link)
+                                                <div>
+                                                    <a href="{{ route('isp.show', $link) }}" class="font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:underline">
+                                                        {{ $link->circuit_id }}
+                                                    </a>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ $link->isp_name }}</div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="font-medium text-gray-900 dark:text-white">Unknown</div>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 max-w-xs truncate">
+                                    {{ Str::limit($incident->description, 60) }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                    @php
+                                        $statusColors = [
+                                            'Open' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+                                            'In Progress' => 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+                                            'Monitoring' => 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300',
+                                            'Closed' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+                                        ];
+                                    @endphp
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium {{ $statusColors[$incident->status] ?? 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300' }}">
+                                        {{ $incident->status }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                                    {{ $incident->started_at ? $incident->started_at->format('M d, Y H:i') : 'N/A' }}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
+                                    @if($incident->status === 'Closed' && $incident->duration_hms)
+                                        {{ $incident->duration_hms }}
+                                    @elseif($incident->started_at)
+                                        {{ $incident->started_at->diffForHumans() }}
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @endif
+
 </div>
 @endsection

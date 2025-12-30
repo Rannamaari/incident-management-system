@@ -47,6 +47,16 @@ class LogsController extends Controller
             $query = Incident::query()->whereIn('id', $filteredIncidentIds);
         }
 
+        // Filter for ISP outages/incidents
+        if ($request->has('isp_outages') && $request->isp_outages === '1') {
+            $query->where(function($q) {
+                // Old system: has isp_link_id
+                $q->whereNotNull('isp_link_id')
+                  // OR new system: has many-to-many ISP links
+                  ->orWhereHas('ispLinks');
+            });
+        }
+
         $incidents = $query
             ->orderByDesc('started_at')
             ->paginate($perPage)
