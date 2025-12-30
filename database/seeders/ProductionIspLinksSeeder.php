@@ -280,21 +280,47 @@ class ProductionIspLinksSeeder extends Seeder
             ],
         ];
 
-        // Create Backhaul Links
+        // Create or Update Backhaul Links
         $backhaulCount = 0;
         foreach ($backhaulLinks as $linkData) {
-            $link = IspLink::create([
-                'isp_name' => $linkData['isp_name'],
-                'circuit_id' => $linkData['circuit_id'],
-                'link_type' => 'Backhaul',
-                'total_capacity_gbps' => $linkData['total_capacity_gbps'],
-                'current_capacity_gbps' => $linkData['total_capacity_gbps'],
-                'status' => 'Up',
-                'location_a' => $linkData['location_a'],
-                'location_b' => $linkData['location_b'],
-                'notes' => $linkData['notes'],
-                'created_by' => $adminUser->id,
-            ]);
+            // Check if link already exists by circuit_id
+            $link = IspLink::where('circuit_id', $linkData['circuit_id'])->first();
+
+            if ($link) {
+                // Update existing link
+                $link->update([
+                    'isp_name' => $linkData['isp_name'],
+                    'link_type' => 'Backhaul',
+                    'total_capacity_gbps' => $linkData['total_capacity_gbps'],
+                    'current_capacity_gbps' => $linkData['total_capacity_gbps'],
+                    'status' => 'Up',
+                    'location_a' => $linkData['location_a'],
+                    'location_b' => $linkData['location_b'],
+                    'notes' => $linkData['notes'],
+                    'updated_by' => $adminUser->id,
+                ]);
+
+                // Delete old escalation contacts
+                $link->escalationContacts()->delete();
+
+                $this->command->info("Updated existing backhaul link: {$linkData['circuit_id']}");
+            } else {
+                // Create new link
+                $link = IspLink::create([
+                    'isp_name' => $linkData['isp_name'],
+                    'circuit_id' => $linkData['circuit_id'],
+                    'link_type' => 'Backhaul',
+                    'total_capacity_gbps' => $linkData['total_capacity_gbps'],
+                    'current_capacity_gbps' => $linkData['total_capacity_gbps'],
+                    'status' => 'Up',
+                    'location_a' => $linkData['location_a'],
+                    'location_b' => $linkData['location_b'],
+                    'notes' => $linkData['notes'],
+                    'created_by' => $adminUser->id,
+                ]);
+
+                $this->command->info("Created new backhaul link: {$linkData['circuit_id']}");
+            }
 
             // Create escalation contacts
             foreach ($linkData['contacts'] as $contact) {
@@ -311,21 +337,47 @@ class ProductionIspLinksSeeder extends Seeder
             $backhaulCount++;
         }
 
-        // Create Peering Links
+        // Create or Update Peering Links
         $peeringCount = 0;
         foreach ($peeringLinks as $linkData) {
-            $link = IspLink::create([
-                'isp_name' => $linkData['isp_name'],
-                'circuit_id' => $linkData['circuit_id'],
-                'link_type' => 'Peering',
-                'total_capacity_gbps' => $linkData['total_capacity_gbps'],
-                'current_capacity_gbps' => $linkData['total_capacity_gbps'],
-                'status' => 'Up',
-                'location_a' => 'Maldives',
-                'location_b' => $linkData['location_b'],
-                'notes' => $linkData['notes'],
-                'created_by' => $adminUser->id,
-            ]);
+            // Check if link already exists by circuit_id
+            $link = IspLink::where('circuit_id', $linkData['circuit_id'])->first();
+
+            if ($link) {
+                // Update existing link
+                $link->update([
+                    'isp_name' => $linkData['isp_name'],
+                    'link_type' => 'Peering',
+                    'total_capacity_gbps' => $linkData['total_capacity_gbps'],
+                    'current_capacity_gbps' => $linkData['total_capacity_gbps'],
+                    'status' => 'Up',
+                    'location_a' => 'Maldives',
+                    'location_b' => $linkData['location_b'],
+                    'notes' => $linkData['notes'],
+                    'updated_by' => $adminUser->id,
+                ]);
+
+                // Delete old escalation contacts
+                $link->escalationContacts()->delete();
+
+                $this->command->info("Updated existing peering link: {$linkData['circuit_id']}");
+            } else {
+                // Create new link
+                $link = IspLink::create([
+                    'isp_name' => $linkData['isp_name'],
+                    'circuit_id' => $linkData['circuit_id'],
+                    'link_type' => 'Peering',
+                    'total_capacity_gbps' => $linkData['total_capacity_gbps'],
+                    'current_capacity_gbps' => $linkData['total_capacity_gbps'],
+                    'status' => 'Up',
+                    'location_a' => 'Maldives',
+                    'location_b' => $linkData['location_b'],
+                    'notes' => $linkData['notes'],
+                    'created_by' => $adminUser->id,
+                ]);
+
+                $this->command->info("Created new peering link: {$linkData['circuit_id']}");
+            }
 
             // Create escalation contacts
             foreach ($linkData['contacts'] as $contact) {
