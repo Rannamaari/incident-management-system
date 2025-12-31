@@ -177,10 +177,46 @@
                 </div>
             </div>
 
+            <!-- ENABLED BACKUP LINKS -->
+            @if($enabledBackupLinks->count() > 0)
+                <div class="bg-gray-50 dark:bg-slate-900 border-b border-gray-300 dark:border-white/10 px-4 sm:px-6 py-6 sm:py-8">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide mb-4">
+                        Backup Links Activated ({{ $enabledBackupLinks->count() }})
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Currently active and contributing capacity to backhaul infrastructure
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        @foreach($enabledBackupLinks as $link)
+                            <div class="bg-white dark:bg-slate-900 border border-gray-400 dark:border-white/10 rounded shadow-sm dark:shadow-black/40 p-4">
+                                <div class="mb-3">
+                                    <a href="{{ route('isp.show', $link) }}" class="font-semibold text-gray-900 dark:text-white hover:text-gray-700 dark:hover:text-gray-300 hover:underline">
+                                        {{ $link->circuit_id }}
+                                    </a>
+                                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ $link->isp_name }}</div>
+                                </div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                    {{ $link->location_a }} ↔ {{ $link->location_b }}
+                                </div>
+                                <div class="flex items-baseline justify-between pt-3 border-t border-gray-200 dark:border-white/10">
+                                    <span class="text-xs text-gray-600 dark:text-gray-400">Capacity Added</span>
+                                    <span class="text-lg font-bold text-gray-900 dark:text-white tabular-nums">
+                                        +{{ number_format($link->total_capacity_gbps, 2) }} Gbps
+                                    </span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                        Total backup capacity: <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($enabledBackupLinks->sum('total_capacity_gbps'), 2) }} Gbps</span> added to backhaul
+                    </div>
+                </div>
+            @endif
+
             <!-- ISP LINKS DOWN DETAILS -->
-            @if($backhaulLinksDown->count() > 0 || $peeringLinksDown->count() > 0)
+            @if($backhaulLinksDown->count() > 0 || $peeringLinksDown->count() > 0 || $backupLinksDown->count() > 0)
                 <div class="bg-white dark:bg-slate-900 px-4 sm:px-6 py-4 sm:py-6 border-b border-gray-300 dark:border-white/10">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-{{ $backupLinksDown->count() > 0 ? '3' : '2' }} gap-4 sm:gap-6">
                         <!-- BACKHAUL LINKS DOWN -->
                         @if($backhaulLinksDown->count() > 0)
                             <div class="border border-gray-300 dark:border-white/10 dark:shadow-black/40">
@@ -266,6 +302,49 @@
                                 </div>
                             </div>
                         @endif
+
+                        <!-- BACKUP LINKS DOWN -->
+                        @if($backupLinksDown->count() > 0)
+                            <div class="border border-gray-300 dark:border-white/10 dark:shadow-black/40">
+                                <div class="bg-gray-900 text-white px-4 py-2 border-b-2 border-amber-600">
+                                    <h3 class="text-sm font-bold uppercase">Backup Links Down ({{ $backupLinksDown->count() }})</h3>
+                                </div>
+                                <div class="divide-y divide-gray-200 dark:divide-white/10">
+                                    @foreach($backupLinksDown as $linkData)
+                                        @php
+                                            $link = $linkData['link'];
+                                            $totalCapacityLost = $linkData['total_capacity_lost'];
+                                            $incidentCount = count($linkData['incidents']);
+                                            // Get the earliest started_at from all incidents affecting this link
+                                            $earliestIncident = collect($linkData['incidents'])->sortBy('started_at')->first();
+                                            $startedAt = $earliestIncident->started_at ?? null;
+                                        @endphp
+                                        <div class="px-4 py-3 hover:bg-amber-50 dark:hover:bg-white/5 transition-colors">
+                                            <div class="font-semibold text-sm text-gray-900 dark:text-white mb-2">{{ $link->circuit_id }} - {{ $link->isp_name }}</div>
+                                            <div class="flex items-center gap-4 mb-2">
+                                                <div class="text-2xl font-bold text-red-600 dark:text-red-400 tabular-nums duration-display"
+                                                     data-started="{{ $startedAt ? $startedAt->timestamp : '' }}">
+                                                    {{ $earliestIncident->duration_hms ?? '—' }}
+                                                </div>
+                                                <div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                        Started {{ $startedAt ? $startedAt->format('H:i d/m') : 'N/A' }}
+                                                    </div>
+                                                    <div class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ $link->location_b }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                                <span class="font-semibold text-red-600 dark:text-red-400 tabular-nums">{{ number_format($totalCapacityLost, 2) }} Gbps</span>
+                                                <span class="text-gray-400">•</span>
+                                                <span>{{ $incidentCount }} incident{{ $incidentCount > 1 ? 's' : '' }}</span>
+                                                <span class="text-gray-400">•</span>
+                                                <span>{{ number_format($link->total_capacity_gbps, 2) }} Gbps total</span>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -291,7 +370,7 @@
                                                         $techs = json_decode($techs, true) ?? [];
                                                     }
                                                     if (!empty($techs) && is_array($techs)) {
-                                                        $siteSummary[] = $site->site_code . ' ' . implode('/', $techs);
+                                                        $siteSummary[] = $site->display_name . ' ' . implode('/', $techs);
                                                     }
                                                 }
                                             }

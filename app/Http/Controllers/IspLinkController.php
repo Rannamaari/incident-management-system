@@ -20,6 +20,7 @@ class IspLinkController extends Controller
         // Separate links by type
         $backhaulLinks = $allLinks->where('link_type', 'Backhaul');
         $peeringLinks = $allLinks->where('link_type', 'Peering');
+        $backupLinks = $allLinks->where('link_type', 'Backup');
 
         // Get active ISP outages (incidents with ISP links that are still open)
         // Include both old single ISP link and new multi-select ISP links
@@ -58,6 +59,7 @@ class IspLinkController extends Controller
         $linksWithIncidents = [];
         $backhaulCapacityLostFromIncidents = 0;
         $peeringCapacityLostFromIncidents = 0;
+        $backupCapacityLostFromIncidents = 0;
 
         foreach ($activeOutages as $incident) {
             // Handle old single ISP link
@@ -78,8 +80,10 @@ class IspLinkController extends Controller
                 // Add to type-specific capacity lost
                 if ($incident->ispLink->link_type === 'Backhaul') {
                     $backhaulCapacityLostFromIncidents += $capacityLost;
-                } else {
+                } elseif ($incident->ispLink->link_type === 'Peering') {
                     $peeringCapacityLostFromIncidents += $capacityLost;
+                } else {
+                    $backupCapacityLostFromIncidents += $capacityLost;
                 }
             }
 
@@ -102,19 +106,31 @@ class IspLinkController extends Controller
                     // Add to type-specific capacity lost
                     if ($link->link_type === 'Backhaul') {
                         $backhaulCapacityLostFromIncidents += $capacityLost;
-                    } else {
+                    } elseif ($link->link_type === 'Peering') {
                         $peeringCapacityLostFromIncidents += $capacityLost;
+                    } else {
+                        $backupCapacityLostFromIncidents += $capacityLost;
                     }
                 }
             }
         }
 
-        // Calculate Backhaul capacity statistics (accounting for active incidents)
-        $backhaulTotalCapacity = $backhaulLinks->sum('total_capacity_gbps');
+        // Get enabled backup links capacity
+        $enabledBackupCapacity = $backupLinks->where('is_enabled', true)->sum('total_capacity_gbps');
+
+        // Calculate Backhaul capacity statistics (accounting for active incidents + enabled backup links)
+        $backhaulTotalCapacity = $backhaulLinks->sum('total_capacity_gbps') + $enabledBackupCapacity;
         $backhaulCurrentCapacity = max(0, $backhaulTotalCapacity - $backhaulCapacityLostFromIncidents);
         $backhaulLostCapacity = $backhaulCapacityLostFromIncidents;
         $backhaulAvailability = $backhaulTotalCapacity > 0 ? round(($backhaulCurrentCapacity / $backhaulTotalCapacity) * 100, 2) : 0;
         $backhaulCount = $backhaulLinks->count();
+
+        // Calculate Backup links statistics
+        $backupTotalCapacity = $backupLinks->sum('total_capacity_gbps');
+        $backupEnabledCapacity = $enabledBackupCapacity;
+        $backupDisabledCapacity = $backupTotalCapacity - $backupEnabledCapacity;
+        $backupCount = $backupLinks->count();
+        $backupEnabledCount = $backupLinks->where('is_enabled', true)->count();
 
         // Calculate Peering capacity statistics (accounting for active incidents)
         $peeringTotalCapacity = $peeringLinks->sum('total_capacity_gbps');
@@ -161,6 +177,11 @@ class IspLinkController extends Controller
             'peeringLostCapacity',
             'peeringAvailability',
             'peeringCount',
+            'backupTotalCapacity',
+            'backupEnabledCapacity',
+            'backupDisabledCapacity',
+            'backupCount',
+            'backupEnabledCount',
             'statusCounts',
             'activeOutages',
             'linksWithIncidents',
@@ -360,8 +381,19 @@ class IspLinkController extends Controller
     /**
      * Restore ISP link by closing all active incidents affecting it
      */
-    public function restoreLink(IspLink $ispLink)
+    public function restoreLink(Request $request, IspLink $ispLink)
     {
+        // Validate the request
+        $validated = $request->validate([
+            'restored_at' => 'required|date',
+            'root_cause' => 'required|string',
+            'delay_reason' => 'nullable|string',
+        ]);
+
+        $restoredAt = \Carbon\Carbon::parse($validated['restored_at']);
+        $rootCause = $validated['root_cause'];
+        $delayReason = $validated['delay_reason'] ?? null;
+
         // Find all active incidents affecting this ISP link (both old and new systems)
         $activeIncidents = \App\Models\Incident::where(function($query) use ($ispLink) {
             // Old single ISP link system
@@ -383,36 +415,35 @@ class IspLinkController extends Controller
         $incidentsRequiringDelayReason = [];
         foreach ($activeIncidents as $incident) {
             if ($incident->started_at) {
-                $durationHours = $incident->started_at->diffInHours(now());
+                $durationHours = $incident->started_at->diffInHours($restoredAt);
                 if ($durationHours > 5) {
                     $incidentsRequiringDelayReason[] = $incident;
                 }
             }
         }
 
-        // If any incidents require delayed reason, prevent bulk close
-        if (count($incidentsRequiringDelayReason) > 0) {
-            $incidentCodes = collect($incidentsRequiringDelayReason)
-                ->pluck('incident_code')
-                ->take(5)
-                ->implode(', ');
-
-            $moreCount = count($incidentsRequiringDelayReason) - 5;
-            $moreText = $moreCount > 0 ? " and {$moreCount} more" : "";
-
+        // If any incidents require delayed reason but it wasn't provided
+        if (count($incidentsRequiringDelayReason) > 0 && empty($delayReason)) {
             return redirect()->back()
-                ->with('error', "Cannot restore link: Some incidents have been open for more than 5 hours and require a delay reason. Please close these incidents individually: {$incidentCodes}{$moreText}.");
+                ->withErrors(['delay_reason' => 'Delay reason is required as some incidents have been open for more than 5 hours.'])
+                ->withInput();
         }
 
-        // Close all active incidents (only if none require delayed reason)
+        // Close all active incidents
         $closedCount = 0;
         foreach ($activeIncidents as $incident) {
             $incident->status = 'Closed';
-            $incident->resolved_at = now();
+            $incident->resolved_at = $restoredAt;
+            $incident->root_cause = $rootCause;
             $incident->updated_by = auth()->id();
 
-            // Calculate duration if not already set
-            if (!$incident->duration_minutes && $incident->started_at) {
+            // Add delay reason if this incident was open > 5 hours
+            if ($incident->started_at && $incident->started_at->diffInHours($restoredAt) > 5) {
+                $incident->delay_reason = $delayReason;
+            }
+
+            // Calculate duration
+            if ($incident->started_at) {
                 $incident->duration_minutes = $incident->started_at->diffInMinutes($incident->resolved_at);
             }
 
@@ -422,5 +453,24 @@ class IspLinkController extends Controller
 
         return redirect()->back()
             ->with('success', "ISP link restored successfully. Closed {$closedCount} active incident(s).");
+    }
+
+    /**
+     * Toggle the enabled status of a backup link
+     */
+    public function toggleEnabled(IspLink $ispLink)
+    {
+        if ($ispLink->link_type !== 'Backup') {
+            return redirect()->back()
+                ->with('error', 'Only backup links can be enabled/disabled.');
+        }
+
+        $ispLink->is_enabled = !$ispLink->is_enabled;
+        $ispLink->updated_by = auth()->id();
+        $ispLink->save();
+
+        $status = $ispLink->is_enabled ? 'enabled' : 'disabled';
+        return redirect()->back()
+            ->with('success', "Backup link {$status} successfully.");
     }
 }

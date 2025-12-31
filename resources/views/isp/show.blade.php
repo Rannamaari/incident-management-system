@@ -19,17 +19,13 @@
             </a>
             @if(Auth::user()->canEditIncidents())
                 @if($ispLink->hasActiveIncidents())
-                    <form method="POST" action="{{ route('isp.restore', $ispLink) }}" class="inline"
-                          onsubmit="return confirm('Are you sure you want to restore this ISP link and close all active incidents affecting it? Note: Incidents open for more than 5 hours cannot be closed this way and must be closed individually with a delay reason.');">
-                        @csrf
-                        <button type="submit"
-                                class="inline-flex items-center px-4 py-2 bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Restore Link
-                        </button>
-                    </form>
+                    <button type="button" onclick="openRestoreModal()"
+                            class="inline-flex items-center px-4 py-2 bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Restore Link
+                    </button>
                 @else
                     <a href="{{ route('incidents.create', ['isp_link_id' => $ispLink->id]) }}"
                        class="inline-flex items-center px-4 py-2 bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-600 text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
@@ -38,6 +34,22 @@
                         </svg>
                         Report Outage
                     </a>
+                @endif
+                @if($ispLink->link_type === 'Backup')
+                    <form method="POST" action="{{ route('isp.toggle-enabled', $ispLink) }}" class="inline">
+                        @csrf
+                        <button type="submit"
+                                class="inline-flex items-center px-4 py-2 {{ $ispLink->is_enabled ? 'bg-gray-500 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-700' : 'bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600' }} text-white text-sm font-medium rounded-lg shadow-sm transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                @if($ispLink->is_enabled)
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                @else
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                @endif
+                            </svg>
+                            {{ $ispLink->is_enabled ? 'Disable Link' : 'Enable Link' }}
+                        </button>
+                    </form>
                 @endif
             @endif
             @if(Auth::user()->isAdmin())
@@ -401,5 +413,173 @@
             </div>
         </div>
     </div>
+
+    <!-- Restore Link Modal -->
+    <div id="restoreModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-2xl bg-white dark:bg-gray-800">
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-2xl font-heading font-bold text-gray-900 dark:text-gray-100">Restore ISP Link</h3>
+                    <button onclick="closeRestoreModal()" class="text-gray-400 hover:text-gray-600 dark:text-gray-400">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form id="restoreLinkForm" method="POST" action="{{ route('isp.restore', $ispLink) }}">
+                    @csrf
+
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                            This will close all <span id="activeIncidentCount" class="font-semibold text-gray-900 dark:text-gray-100"></span> active incident(s) affecting this ISP link.
+                        </p>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="restored_at" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Restored Date and Time <span class="text-red-500">*</span>
+                        </label>
+                        <input type="datetime-local" id="restored_at" name="restored_at" required
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="root_cause" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Root Cause <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="root_cause" name="root_cause" rows="4" required
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300"
+                            placeholder="Enter the root cause for this ISP link outage..."></textarea>
+                    </div>
+
+                    <!-- Delay Reason Field (conditional) -->
+                    <div id="delayReasonField" class="hidden mb-4">
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-3 mb-2 rounded-r-lg">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.964-1.333-2.732 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-yellow-700 dark:text-yellow-200">
+                                        Some incidents have been open for more than 5 hours. Please explain the reason for the delay.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <label for="delay_reason" class="block text-sm font-heading font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Reason for Delay <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="delay_reason" name="delay_reason" rows="4"
+                            class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 shadow-sm focus:border-green-600 dark:focus:border-green-400 focus:ring-2 focus:ring-green-600/20 dark:focus:ring-green-400/20 bg-white dark:bg-gray-800 transition-all duration-300"
+                            placeholder="Please provide a detailed explanation for why this outage took more than 5 hours to resolve..."></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeRestoreModal()"
+                            class="px-6 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-heading font-medium hover:bg-gray-200 transition-colors duration-200">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-green-600 to-green-700 text-white font-heading font-semibold shadow-lg transition-all duration-300 hover:from-green-700 hover:to-green-800 hover:shadow-xl">
+                            Restore Link
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get active incidents data from the server (from both old and new systems)
+        @php
+            $allActiveIncidents = \App\Models\Incident::where(function($query) use ($ispLink) {
+                $query->where('isp_link_id', $ispLink->id)
+                      ->orWhereHas('ispLinks', function($q) use ($ispLink) {
+                          $q->where('isp_links.id', $ispLink->id);
+                      });
+            })
+            ->whereIn('status', ['Open', 'In Progress', 'Monitoring'])
+            ->get();
+        @endphp
+        const activeIncidentsData = @json($allActiveIncidents->map(function($incident) {
+            return [
+                'id' => $incident->id,
+                'started_at' => $incident->started_at ? $incident->started_at->toIso8601String() : null
+            ];
+        }));
+
+        function openRestoreModal() {
+            const modal = document.getElementById('restoreModal');
+            const restoredAtInput = document.getElementById('restored_at');
+            const incidentCountSpan = document.getElementById('activeIncidentCount');
+
+            // Set incident count
+            incidentCountSpan.textContent = activeIncidentsData.length;
+
+            // Set default restored time to now
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            restoredAtInput.value = now.toISOString().slice(0, 16);
+
+            // Update conditional fields
+            updateConditionalFields();
+
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+
+        function updateConditionalFields() {
+            const restoredAtInput = document.getElementById('restored_at');
+            const delayReasonField = document.getElementById('delayReasonField');
+            const delayReasonInput = document.getElementById('delay_reason');
+
+            // Check if any incident requires delay reason (duration > 5 hours)
+            let requiresDelayReason = false;
+            const restoredDate = new Date(restoredAtInput.value);
+
+            for (const incident of activeIncidentsData) {
+                if (incident.started_at) {
+                    const startDate = new Date(incident.started_at);
+                    const durationHours = (restoredDate - startDate) / (1000 * 60 * 60);
+                    if (durationHours > 5) {
+                        requiresDelayReason = true;
+                        break;
+                    }
+                }
+            }
+
+            // Show/hide delay reason field
+            if (requiresDelayReason) {
+                delayReasonField.classList.remove('hidden');
+                delayReasonInput.required = true;
+            } else {
+                delayReasonField.classList.add('hidden');
+                delayReasonInput.required = false;
+            }
+        }
+
+        function closeRestoreModal() {
+            const modal = document.getElementById('restoreModal');
+            modal.classList.add('hidden');
+        }
+
+        // Update conditional fields when restored_at changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const restoredAtInput = document.getElementById('restored_at');
+            if (restoredAtInput) {
+                restoredAtInput.addEventListener('change', updateConditionalFields);
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('restoreModal')?.addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeRestoreModal();
+            }
+        });
+    </script>
 </div>
 @endsection

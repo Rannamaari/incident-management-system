@@ -157,6 +157,7 @@ class HomeController extends Controller
         $allLinks = IspLink::all();
         $backhaulLinks = $allLinks->where('link_type', 'Backhaul');
         $peeringLinks = $allLinks->where('link_type', 'Peering');
+        $backupLinks = $allLinks->where('link_type', 'Backup');
 
         // Get active ISP outages
         $activeIspOutages = Incident::with(['ispLink', 'ispLinks', 'category'])
@@ -230,14 +231,27 @@ class HomeController extends Controller
         $peeringLinksDown = collect($linksWithIncidentsDetails)->filter(function($item) {
             return $item['link']->link_type === 'Peering';
         });
+        $backupLinksDown = collect($linksWithIncidentsDetails)->filter(function($item) {
+            return $item['link']->link_type === 'Backup';
+        });
 
-        // Calculate statistics for Backhaul
+        // Get enabled backup links capacity and list
+        $enabledBackupLinks = $backupLinks->where('is_enabled', true);
+        $enabledBackupCapacity = $enabledBackupLinks->sum('total_capacity_gbps');
+
+        // Calculate statistics for Backhaul (including enabled backup links)
         $backhaulTotal = $backhaulLinks->count();
         $backhaulDown = $linksWithActiveIncidents->intersect($backhaulLinks->pluck('id'))->count();
         $backhaulUp = $backhaulTotal - $backhaulDown;
-        $backhaulTotalCapacity = $backhaulLinks->sum('total_capacity_gbps');
+        $backhaulTotalCapacity = $backhaulLinks->sum('total_capacity_gbps') + $enabledBackupCapacity;
         $backhaulAvailableCapacity = max(0, $backhaulTotalCapacity - $backhaulCapacityLostFromIncidents);
         $backhaulAvailability = $backhaulTotalCapacity > 0 ? round(($backhaulAvailableCapacity / $backhaulTotalCapacity) * 100, 1) : 100;
+
+        // Calculate statistics for Backup Links
+        $backupTotal = $backupLinks->count();
+        $backupEnabled = $backupLinks->where('is_enabled', true)->count();
+        $backupTotalCapacity = $backupLinks->sum('total_capacity_gbps');
+        $backupEnabledCapacity = $enabledBackupCapacity;
 
         // Calculate statistics for Peering
         $peeringTotal = $peeringLinks->count();
@@ -266,8 +280,15 @@ class HomeController extends Controller
                 'lost_capacity' => $peeringCapacityLostFromIncidents,
                 'availability_percentage' => $peeringAvailability,
             ],
+            'backup' => [
+                'total' => $backupTotal,
+                'enabled' => $backupEnabled,
+                'disabled' => $backupTotal - $backupEnabled,
+                'total_capacity' => $backupTotalCapacity,
+                'enabled_capacity' => $backupEnabledCapacity,
+            ],
         ];
 
-        return view('home', compact('siteStats', 'siteOutages', 'cellOutages', 'fbbOutages', 'openIncidents', 'tempSites', 'ispStats', 'backhaulLinksDown', 'peeringLinksDown'));
+        return view('home', compact('siteStats', 'siteOutages', 'cellOutages', 'fbbOutages', 'openIncidents', 'tempSites', 'ispStats', 'backhaulLinksDown', 'peeringLinksDown', 'backupLinksDown', 'enabledBackupLinks'));
     }
 }

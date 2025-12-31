@@ -72,6 +72,7 @@
                         <option value="">All Types</option>
                         <option value="Backhaul" {{ request('link_type') == 'Backhaul' ? 'selected' : '' }}>Backhaul</option>
                         <option value="Peering" {{ request('link_type') == 'Peering' ? 'selected' : '' }}>Peering</option>
+                        <option value="Backup" {{ request('link_type') == 'Backup' ? 'selected' : '' }}>Backup</option>
                     </select>
                 </div>
             </div>

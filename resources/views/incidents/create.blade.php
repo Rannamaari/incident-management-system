@@ -452,7 +452,7 @@
                                                         const site = this.sites.find(s => s.id == siteId);
                                                         if (site && Array.isArray(techs) && techs.length > 0) {
                                                             const techStr = techs.sort().join('/');
-                                                            summaryLines.push(`${site.site_code} ${techStr}`);
+                                                            summaryLines.push(`${site.display_name} ${techStr}`);
                                                         }
                                                     }
 
@@ -645,7 +645,7 @@
                                                 <template x-for="(techs, siteId) in selectedSites" :key="siteId">
                                                     <div class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 border border-green-300 dark:border-green-700 rounded-lg px-3 py-1.5 shadow-sm">
                                                         <div class="text-xs">
-                                                            <span class="font-semibold text-gray-900 dark:text-gray-100" x-text="sites.find(s => s.id == siteId)?.site_code || 'Unknown'"></span>
+                                                            <span class="font-semibold text-gray-900 dark:text-gray-100" x-text="sites.find(s => s.id == siteId)?.display_name || 'Unknown'"></span>
                                                             <span class="text-gray-500 dark:text-gray-400 mx-1">•</span>
                                                             <span class="text-green-700 dark:text-green-400 font-medium" x-text="Array.isArray(techs) ? techs.join('/') : ''"></span>
                                                         </div>

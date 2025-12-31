@@ -38,8 +38,8 @@
         </div>
     </div>
 
-    {{-- Backhaul vs Peering Capacity Breakdown --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    {{-- Backhaul, Peering & Backup Capacity Breakdown --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {{-- Backhaul Capacity Section --}}
         <div class="bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/20 dark:to-indigo-950/20 border-2 border-purple-200 dark:border-purple-900/50 rounded-xl shadow-lg dark:shadow-black/40 p-6">
             <div class="flex items-center justify-between mb-6">
@@ -131,6 +131,55 @@
                     </p>
                     <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Uptime</p>
                 </div>
+            </div>
+        </div>
+
+        {{-- Backup Links Section --}}
+        <div class="bg-gradient-to-br from-blue-50 to-sky-50 dark:from-blue-950/20 dark:to-sky-950/20 border-2 border-blue-200 dark:border-blue-900/50 rounded-xl shadow-lg dark:shadow-black/40 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-xl font-bold text-blue-900 dark:text-blue-100 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        Backup Links
+                    </h3>
+                    <p class="text-sm text-blue-700 dark:text-blue-300 mt-1">{{ $backupCount }} link{{ $backupCount != 1 ? 's' : '' }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-4xl font-bold text-blue-600 dark:text-blue-400 tabular-nums">
+                        {{ $backupEnabledCount }}
+                    </p>
+                    <p class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Enabled</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-white/60 dark:bg-gray-900/40 rounded-lg p-4 border border-blue-200 dark:border-blue-900/30">
+                    <p class="text-xs text-blue-700 dark:text-blue-300 font-semibold mb-1">Total</p>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums">{{ number_format($backupTotalCapacity, 2) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Gbps</p>
+                </div>
+
+                <div class="bg-white/60 dark:bg-gray-900/40 rounded-lg p-4 border border-blue-200 dark:border-blue-900/30">
+                    <p class="text-xs text-blue-700 dark:text-blue-300 font-semibold mb-1">Enabled</p>
+                    <p class="text-2xl font-bold text-green-600 dark:text-green-400 tabular-nums">{{ number_format($backupEnabledCapacity, 2) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Gbps</p>
+                </div>
+
+                <div class="bg-white/60 dark:bg-gray-900/40 rounded-lg p-4 border border-blue-200 dark:border-blue-900/30">
+                    <p class="text-xs text-blue-700 dark:text-blue-300 font-semibold mb-1">Disabled</p>
+                    <p class="text-2xl font-bold text-gray-600 dark:text-gray-400 tabular-nums">{{ number_format($backupDisabledCapacity, 2) }}</p>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Gbps</p>
+                </div>
+            </div>
+
+            {{-- Note about backup links --}}
+            <div class="mt-4 text-xs text-blue-700 dark:text-blue-300 bg-blue-100/50 dark:bg-blue-900/20 rounded-lg p-3 border border-blue-200 dark:border-blue-900/30">
+                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Enabled capacity is automatically added to backhaul totals
             </div>
         </div>
     </div>

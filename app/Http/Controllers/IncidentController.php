@@ -269,7 +269,7 @@ class IncidentController extends Controller
                 $ispLinksData[$linkId] = [
                     'capacity_lost_gbps' => $linkData['capacity_lost'] ?? 0,
                     'services_impacted' => $linkData['services_impacted'] ?? '',
-                    'traffic_rerouted' => $linkData['traffic_rerouted'] ?? false,
+                    'traffic_rerouted' => filter_var($linkData['traffic_rerouted'] ?? false, FILTER_VALIDATE_BOOLEAN),
                     'reroute_details' => $linkData['reroute_details'] ?? null,
                 ];
             }
@@ -484,7 +484,7 @@ class IncidentController extends Controller
                 $ispLinksData[$linkId] = [
                     'capacity_lost_gbps' => $linkData['capacity_lost'] ?? 0,
                     'services_impacted' => $linkData['services_impacted'] ?? '',
-                    'traffic_rerouted' => $linkData['traffic_rerouted'] ?? false,
+                    'traffic_rerouted' => filter_var($linkData['traffic_rerouted'] ?? false, FILTER_VALIDATE_BOOLEAN),
                     'reroute_details' => $linkData['reroute_details'] ?? null,
                 ];
             }
@@ -769,7 +769,7 @@ class IncidentController extends Controller
             'isp_links' => ['nullable', 'array'],
             'isp_links.*.capacity_lost' => ['required', 'numeric', 'min:0'],
             'isp_links.*.services_impacted' => ['required', 'string'],
-            'isp_links.*.traffic_rerouted' => ['required', 'boolean'],
+            'isp_links.*.traffic_rerouted' => ['required', 'in:true,false,1,0'],
             'isp_links.*.reroute_details' => ['nullable', 'string'],
             'new_outage_category_name' => ['nullable', 'string', 'max:255'],
             'new_category_name' => ['nullable', 'string', 'max:255'],

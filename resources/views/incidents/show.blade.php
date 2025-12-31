@@ -266,8 +266,8 @@
                                         <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-gradient-to-br from-blue-50/30 to-white p-4 hover:shadow-md transition-shadow">
                                             <div class="flex items-start justify-between mb-2">
                                                 <div class="flex-1">
-                                                    <h4 class="font-heading font-semibold text-gray-900 dark:text-gray-100 text-base">{{ $site->site_code }}</h4>
-                                                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ $site->display_name }}</p>
+                                                    <h4 class="font-heading font-semibold text-gray-900 dark:text-gray-100 text-base">{{ $site->display_name }}</h4>
+                                                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ $site->site_code }}</p>
                                                 </div>
                                             </div>
 

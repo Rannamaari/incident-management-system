@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class IspLink extends Model
 {
     const STATUSES = ['Up', 'Down', 'Degraded'];
-    const LINK_TYPES = ['Backhaul', 'Peering'];
+    const LINK_TYPES = ['Backhaul', 'Peering', 'Backup'];
 
     protected $fillable = [
         'isp_name',
@@ -19,6 +19,7 @@ class IspLink extends Model
         'total_capacity_gbps',
         'current_capacity_gbps',
         'status',
+        'is_enabled',
         'location_a',
         'location_b',
         'prtg_sensor_id',
@@ -32,6 +33,7 @@ class IspLink extends Model
     protected $casts = [
         'total_capacity_gbps' => 'decimal:2',
         'current_capacity_gbps' => 'decimal:2',
+        'is_enabled' => 'boolean',
         'last_prtg_sync' => 'datetime',
     ];
 

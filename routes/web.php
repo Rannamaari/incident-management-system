@@ -166,6 +166,9 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
 
     // ISP Link Restore (editor and admin only)
     Route::post('isp/{ispLink}/restore', [App\Http\Controllers\IspLinkController::class, 'restoreLink'])->where('ispLink', '[0-9]+')->name('isp.restore');
+
+    // ISP Link Toggle Enabled (editor and admin only, for backup links)
+    Route::post('isp/{ispLink}/toggle-enabled', [App\Http\Controllers\IspLinkController::class, 'toggleEnabled'])->where('ispLink', '[0-9]+')->name('isp.toggle-enabled');
 });
 
 // Public routes that require only authentication (viewer and above)
