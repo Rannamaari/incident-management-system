@@ -159,7 +159,7 @@
                                     </label>
                                     <textarea name="summary" id="summary" rows="6" maxlength="1000"
                                         class="w-full rounded-xl border border-purple-300 px-4 py-3 shadow-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 bg-purple-50/30 transition-all duration-300 resize-y @error('summary') border-red-300 @enderror"
-                                    >{{ old('summary', $parsedData['summary']) }}</textarea>
+                                    >{{ old('summary', $parsedData['summary'] ?? '') }}</textarea>
                                     @error('summary')
                                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -176,7 +176,7 @@
                                             <option value="">Select Outage Category</option>
                                             @foreach($outageCategories as $outageCategory)
                                                 <option value="{{ $outageCategory->id }}"
-                                                    {{ (old('outage_category_id') == $outageCategory->id) || ($outageCategory->name == $parsedData['outage_category']) ? 'selected' : '' }}>
+                                                    {{ (old('outage_category_id') == $outageCategory->id) || ($outageCategory->name == ($parsedData['outage_category'] ?? '')) ? 'selected' : '' }}>
                                                     {{ $outageCategory->name }}
                                                 </option>
                                             @endforeach
@@ -196,7 +196,7 @@
                                             <option value="">Select Category</option>
                                             @foreach($categories as $category)
                                                 <option value="{{ $category->id }}"
-                                                    {{ (old('category_id') == $category->id) || ($category->name == $parsedData['category']) ? 'selected' : '' }}>
+                                                    {{ (old('category_id') == $category->id) || ($category->name == ($parsedData['category'] ?? '')) ? 'selected' : '' }}>
                                                     {{ $category->name }}
                                                 </option>
                                             @endforeach
@@ -465,9 +465,9 @@
                                         Duration (minutes)
                                     </label>
                                     <input type="number" name="duration_minutes" id="duration_minutes" min="0"
-                                        value="{{ old('duration_minutes', $parsedData['duration_minutes']) }}"
+                                        value="{{ old('duration_minutes', $parsedData['duration_minutes'] ?? '') }}"
                                         class="w-full rounded-xl border border-purple-300 px-4 py-3 shadow-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 bg-purple-50/30 transition-all duration-300 @error('duration_minutes') border-red-300 @enderror">
-                                    <p class="mt-1 text-xs text-gray-500">{{ $parsedData['duration'] }}</p>
+                                    <p class="mt-1 text-xs text-gray-500">{{ $parsedData['duration'] ?? '' }}</p>
                                     @error('duration_minutes')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -502,7 +502,7 @@
                                     </label>
                                     <textarea name="root_cause" id="root_cause" rows="3"
                                         class="w-full rounded-xl border border-purple-300 px-4 py-3 shadow-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 bg-purple-50/30 transition-all duration-300 @error('root_cause') border-red-300 @enderror"
-                                    >{{ old('root_cause', $parsedData['root_cause']) }}</textarea>
+                                    >{{ old('root_cause', $parsedData['root_cause'] ?? '') }}</textarea>
                                     @error('root_cause')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
