@@ -264,19 +264,19 @@ class Incident extends Model
     }
 
     /**
-     * Scope for filtering by search term.
+     * Scope for filtering by search term (case-insensitive).
      */
     public function scopeSearch($query, $search)
     {
         if ($search) {
             return $query->where(function ($q) use ($search) {
-                $q->where('incident_code', 'LIKE', "%{$search}%")
-                  ->orWhere('summary', 'LIKE', "%{$search}%")
-                  ->orWhere('category', 'LIKE', "%{$search}%")
-                  ->orWhere('affected_services', 'LIKE', "%{$search}%");
+                $q->where('incident_code', 'ILIKE', "%{$search}%")
+                  ->orWhere('summary', 'ILIKE', "%{$search}%")
+                  ->orWhere('category', 'ILIKE', "%{$search}%")
+                  ->orWhere('affected_services', 'ILIKE', "%{$search}%");
             });
         }
-        
+
         return $query;
     }
 
