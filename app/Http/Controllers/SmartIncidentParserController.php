@@ -39,8 +39,14 @@ class SmartIncidentParserController extends Controller
         // Fallback to regex parsing if AI fails
         $regexData = $this->extractIncidentDetails($message);
 
+        // Log both parsing results for debugging
+        \Log::info('Smart Parser - AI Result', ['status' => $aiData['status'] ?? 'null', 'data' => $aiData]);
+        \Log::info('Smart Parser - Regex Result', ['status' => $regexData['status'] ?? 'null', 'data' => $regexData]);
+
         // Merge AI and regex results (AI takes priority, regex fills gaps)
         $parsedData = $this->mergeParsingResults($aiData, $regexData);
+
+        \Log::info('Smart Parser - Final Merged Result', ['status' => $parsedData['status'] ?? 'null', 'data' => $parsedData]);
 
         // Get available options for dropdowns
         $categories = Category::orderBy('name')->get();
