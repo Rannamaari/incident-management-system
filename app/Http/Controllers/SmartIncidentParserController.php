@@ -145,6 +145,24 @@ class SmartIncidentParserController extends Controller
             }
         }
 
+        // CRITICAL FIX: Validate AI status against regex
+        // If regex detected "Closed" with high confidence but AI says "Open", trust regex
+        // This handles cases where AI misinterprets "on service since" as start time instead of restoration time
+        if ($regexData['status'] === 'Closed' &&
+            isset($aiData['status']) &&
+            $aiData['status'] === 'Open' &&
+            !empty($regexData['restoration_datetime'])) {
+
+            // Regex has restoration time and detected Closed, AI says Open - regex is likely correct
+            $merged['status'] = 'Closed';
+            \Log::warning('Smart Parser - AI Status Override', [
+                'ai_status' => 'Open',
+                'regex_status' => 'Closed',
+                'action' => 'Using Regex status (AI misinterpreted restoration as start time)',
+                'restoration_datetime' => $regexData['restoration_datetime']
+            ]);
+        }
+
         // Add marker that AI was used
         $merged['ai_enhanced'] = true;
 
