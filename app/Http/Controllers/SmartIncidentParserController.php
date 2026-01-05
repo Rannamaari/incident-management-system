@@ -266,6 +266,15 @@ class SmartIncidentParserController extends Controller
                     // Prepare parsed data from validated request data
                     $parsedData = $validated;
 
+                    // Map form field names back to parsedData field names for the view
+                    // The form uses 'started_at' and 'resolved_at', but the view expects 'outage_start_datetime' and 'restoration_datetime'
+                    if (isset($parsedData['started_at'])) {
+                        $parsedData['outage_start_datetime'] = $parsedData['started_at'];
+                    }
+                    if (isset($parsedData['resolved_at'])) {
+                        $parsedData['restoration_datetime'] = $parsedData['resolved_at'];
+                    }
+
                     // Restore affected_services array format for the view
                     if (isset($parsedData['affected_services']) && is_string($parsedData['affected_services'])) {
                         $parsedData['affected_services'] = array_filter(array_map('trim', explode(',', $parsedData['affected_services'])));
@@ -311,6 +320,14 @@ class SmartIncidentParserController extends Controller
             // Prepare parsed data from request input
             $parsedData = $request->except(['_token', 'confirm_duplicate', 'original_message']);
 
+            // Map form field names back to parsedData field names for the view
+            if (isset($parsedData['started_at'])) {
+                $parsedData['outage_start_datetime'] = $parsedData['started_at'];
+            }
+            if (isset($parsedData['resolved_at'])) {
+                $parsedData['restoration_datetime'] = $parsedData['resolved_at'];
+            }
+
             // Ensure affected_services is an array for the view
             if (isset($parsedData['affected_services']) && is_string($parsedData['affected_services'])) {
                 $parsedData['affected_services'] = array_filter(array_map('trim', explode(',', $parsedData['affected_services'])));
@@ -339,6 +356,14 @@ class SmartIncidentParserController extends Controller
 
             // Prepare parsed data from request input
             $parsedData = $request->except(['_token', 'confirm_duplicate', 'original_message']);
+
+            // Map form field names back to parsedData field names for the view
+            if (isset($parsedData['started_at'])) {
+                $parsedData['outage_start_datetime'] = $parsedData['started_at'];
+            }
+            if (isset($parsedData['resolved_at'])) {
+                $parsedData['restoration_datetime'] = $parsedData['resolved_at'];
+            }
 
             // Ensure affected_services is an array for the view
             if (isset($parsedData['affected_services']) && is_string($parsedData['affected_services'])) {
