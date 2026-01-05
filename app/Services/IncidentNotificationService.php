@@ -32,21 +32,31 @@ class IncidentNotificationService
             return;
         }
 
-        try {
-            Mail::to($recipients)->send(new IncidentCreatedNotification($incident));
+        $successCount = 0;
+        $failedRecipients = [];
 
-            Log::info('Incident created notification sent', [
-                'incident_id' => $incident->id,
-                'incident_code' => $incident->incident_code,
-                'recipients' => $recipients,
-                'severity' => $incident->severity,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Failed to send incident created notification', [
-                'incident_id' => $incident->id,
-                'error' => $e->getMessage(),
-            ]);
+        foreach ($recipients as $recipient) {
+            try {
+                Mail::to($recipient)->send(new IncidentCreatedNotification($incident));
+                $successCount++;
+            } catch (\Exception $e) {
+                $failedRecipients[] = $recipient;
+                Log::error('Failed to send incident created notification to recipient', [
+                    'incident_id' => $incident->id,
+                    'recipient' => $recipient,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
+
+        Log::info('Incident created notification sent', [
+            'incident_id' => $incident->id,
+            'incident_code' => $incident->incident_code,
+            'total_recipients' => count($recipients),
+            'successful' => $successCount,
+            'failed' => count($failedRecipients),
+            'severity' => $incident->severity,
+        ]);
     }
 
     /**
@@ -64,22 +74,32 @@ class IncidentNotificationService
             return;
         }
 
-        try {
-            Mail::to($recipients)->send(new IncidentUpdatedNotification($incident, $updateMessage, $userName));
+        $successCount = 0;
+        $failedRecipients = [];
 
-            Log::info('Incident updated notification sent', [
-                'incident_id' => $incident->id,
-                'incident_code' => $incident->incident_code,
-                'recipients' => $recipients,
-                'update' => $updateMessage,
-                'updated_by' => $userName,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Failed to send incident updated notification', [
-                'incident_id' => $incident->id,
-                'error' => $e->getMessage(),
-            ]);
+        foreach ($recipients as $recipient) {
+            try {
+                Mail::to($recipient)->send(new IncidentUpdatedNotification($incident, $updateMessage, $userName));
+                $successCount++;
+            } catch (\Exception $e) {
+                $failedRecipients[] = $recipient;
+                Log::error('Failed to send incident updated notification to recipient', [
+                    'incident_id' => $incident->id,
+                    'recipient' => $recipient,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
+
+        Log::info('Incident updated notification sent', [
+            'incident_id' => $incident->id,
+            'incident_code' => $incident->incident_code,
+            'total_recipients' => count($recipients),
+            'successful' => $successCount,
+            'failed' => count($failedRecipients),
+            'update' => $updateMessage,
+            'updated_by' => $userName,
+        ]);
     }
 
     /**
@@ -97,20 +117,30 @@ class IncidentNotificationService
             return;
         }
 
-        try {
-            Mail::to($recipients)->send(new IncidentClosedNotification($incident));
+        $successCount = 0;
+        $failedRecipients = [];
 
-            Log::info('Incident closed notification sent', [
-                'incident_id' => $incident->id,
-                'incident_code' => $incident->incident_code,
-                'recipients' => $recipients,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Failed to send incident closed notification', [
-                'incident_id' => $incident->id,
-                'error' => $e->getMessage(),
-            ]);
+        foreach ($recipients as $recipient) {
+            try {
+                Mail::to($recipient)->send(new IncidentClosedNotification($incident));
+                $successCount++;
+            } catch (\Exception $e) {
+                $failedRecipients[] = $recipient;
+                Log::error('Failed to send incident closed notification to recipient', [
+                    'incident_id' => $incident->id,
+                    'recipient' => $recipient,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
+
+        Log::info('Incident closed notification sent', [
+            'incident_id' => $incident->id,
+            'incident_code' => $incident->incident_code,
+            'total_recipients' => count($recipients),
+            'successful' => $successCount,
+            'failed' => count($failedRecipients),
+        ]);
     }
 
     /**
@@ -168,22 +198,32 @@ class IncidentNotificationService
             return;
         }
 
-        try {
-            Mail::to($recipients)->send(new IncidentSlaBreachedNotification($incident));
+        $successCount = 0;
+        $failedRecipients = [];
 
-            Log::info('Incident SLA breach notification sent', [
-                'incident_id' => $incident->id,
-                'incident_code' => $incident->incident_code,
-                'recipients' => $recipients,
-                'severity' => $incident->severity,
-                'sla_minutes' => $incident->sla_minutes,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Failed to send incident SLA breach notification', [
-                'incident_id' => $incident->id,
-                'error' => $e->getMessage(),
-            ]);
+        foreach ($recipients as $recipient) {
+            try {
+                Mail::to($recipient)->send(new IncidentSlaBreachedNotification($incident));
+                $successCount++;
+            } catch (\Exception $e) {
+                $failedRecipients[] = $recipient;
+                Log::error('Failed to send SLA breach notification to recipient', [
+                    'incident_id' => $incident->id,
+                    'recipient' => $recipient,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
+
+        Log::info('Incident SLA breach notification sent', [
+            'incident_id' => $incident->id,
+            'incident_code' => $incident->incident_code,
+            'total_recipients' => count($recipients),
+            'successful' => $successCount,
+            'failed' => count($failedRecipients),
+            'severity' => $incident->severity,
+            'sla_minutes' => $incident->sla_minutes,
+        ]);
     }
 
     /**
