@@ -295,15 +295,62 @@ class SmartIncidentParserController extends Controller
                 ->with('success', 'Incident created successfully from parsed message!');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // If validation fails, redirect back to the parser index with errors
-            return redirect()->route('smart-parser.index')
-                ->withErrors($e->validator)
-                ->withInput();
+            // If validation fails, redirect back to the review page with errors
+            // This is important for the "Create Anyway" flow to work properly
+            \Log::error('Smart Parser - Validation Error', [
+                'errors' => $e->errors(),
+                'input' => $request->except(['_token'])
+            ]);
+
+            // Get all form data to pass back to review view
+            $categories = Category::orderBy('name')->get();
+            $outageCategories = OutageCategory::orderBy('name')->get();
+            $faultTypes = FaultType::orderBy('name')->get();
+            $resolutionTeams = ResolutionTeam::orderBy('name')->get();
+
+            // Prepare parsed data from request input
+            $parsedData = $request->except(['_token', 'confirm_duplicate', 'original_message']);
+
+            // Ensure affected_services is an array for the view
+            if (isset($parsedData['affected_services']) && is_string($parsedData['affected_services'])) {
+                $parsedData['affected_services'] = array_filter(array_map('trim', explode(',', $parsedData['affected_services'])));
+            }
+
+            // Get original message from request if available
+            $message = $request->input('original_message', 'Message not available');
+
+            // Return to review view with validation errors
+            return view('smart-parser.review', compact('parsedData', 'categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'message'))
+                ->withErrors($e->errors());
+
         } catch (\Exception $e) {
-            // If any other error occurs, redirect back with error message
-            return redirect()->route('smart-parser.index')
-                ->with('error', 'Failed to create incident: ' . $e->getMessage())
-                ->withInput();
+            // If any other error occurs, log it and redirect back with error message
+            \Log::error('Smart Parser - Store Error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->except(['_token'])
+            ]);
+
+            // Get all form data to pass back to review view
+            $categories = Category::orderBy('name')->get();
+            $outageCategories = OutageCategory::orderBy('name')->get();
+            $faultTypes = FaultType::orderBy('name')->get();
+            $resolutionTeams = ResolutionTeam::orderBy('name')->get();
+
+            // Prepare parsed data from request input
+            $parsedData = $request->except(['_token', 'confirm_duplicate', 'original_message']);
+
+            // Ensure affected_services is an array for the view
+            if (isset($parsedData['affected_services']) && is_string($parsedData['affected_services'])) {
+                $parsedData['affected_services'] = array_filter(array_map('trim', explode(',', $parsedData['affected_services'])));
+            }
+
+            // Get original message from request if available
+            $message = $request->input('original_message', 'Message not available');
+
+            // Return to review view with error
+            return view('smart-parser.review', compact('parsedData', 'categories', 'outageCategories', 'faultTypes', 'resolutionTeams', 'message'))
+                ->withErrors(['error' => 'Failed to create incident: ' . $e->getMessage()]);
         }
     }
 
