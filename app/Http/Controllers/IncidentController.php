@@ -11,8 +11,10 @@ use App\Models\FaultType;
 use App\Models\ResolutionTeam;
 use App\Models\Rca;
 use App\Http\Requests\CloseIncidentRequest;
+use App\Services\IncidentNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Validation\Rule;
 
 class IncidentController extends Controller
@@ -200,6 +202,7 @@ class IncidentController extends Controller
         // Try to save with retry logic for concurrent incident_code generation
         $maxRetries = 3;
         $attempt = 0;
+        $incidentSaved = false;
 
         while ($attempt < $maxRetries) {
             try {
@@ -209,6 +212,7 @@ class IncidentController extends Controller
                 });
 
                 // Success - break out of retry loop
+                $incidentSaved = true;
                 break;
 
             } catch (\Illuminate\Database\QueryException $e) {
@@ -274,6 +278,20 @@ class IncidentController extends Controller
                 ];
             }
             $incident->ispLinks()->sync($ispLinksData);
+        }
+
+        // Send email notification for incident creation
+        if ($incidentSaved) {
+            try {
+                $notificationService = new IncidentNotificationService();
+                $notificationService->sendCreatedNotification($incident);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send incident created notification', [
+                    'incident_id' => $incident->id,
+                    'error' => $e->getMessage(),
+                ]);
+                // Don't fail the request if notification fails
+            }
         }
 
         return redirect()->route('incidents.index')
@@ -437,6 +455,10 @@ class IncidentController extends Controller
             ])->withInput();
         }
 
+        // Track if incident status is changing to Closed (for notification)
+        $wasOpen = $incident->status !== 'Closed';
+        $isNowClosed = $validated['status'] === 'Closed';
+
         $this->fillIncidentData($incident, $validated, $request);
         $incident->updated_by = auth()->id();
 
@@ -448,6 +470,20 @@ class IncidentController extends Controller
             return back()->withErrors([
                 'delay_reason' => $e->getMessage()
             ])->withInput();
+        }
+
+        // Send email notification if incident was just closed
+        if ($wasOpen && $isNowClosed) {
+            try {
+                $notificationService = new IncidentNotificationService();
+                $notificationService->sendClosedNotification($incident);
+            } catch (\Exception $e) {
+                \Log::error('Failed to send incident closed notification', [
+                    'incident_id' => $incident->id,
+                    'error' => $e->getMessage(),
+                ]);
+                // Don't fail the request if notification fails
+            }
         }
 
         // Auto-create RCA for Critical or High severity incidents when closed
@@ -536,6 +572,18 @@ class IncidentController extends Controller
             return back()->withErrors([
                 'delay_reason' => $e->getMessage()
             ])->withInput();
+        }
+
+        // Send email notification for incident closure
+        try {
+            $notificationService = new IncidentNotificationService();
+            $notificationService->sendClosedNotification($incident);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send incident closed notification', [
+                'incident_id' => $incident->id,
+                'error' => $e->getMessage(),
+            ]);
+            // Don't fail the request if notification fails
         }
 
         return redirect()->route('incidents.index')
@@ -1372,7 +1420,71 @@ class IncidentController extends Controller
         $incident->updated_by = auth()->id();
         $incident->save();
 
+        // Send email notification for incident update
+        try {
+            $notificationService = new IncidentNotificationService();
+            $notificationService->sendUpdatedNotification($incident, $validated['timeline_note'], auth()->user()->name);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send incident updated notification', [
+                'incident_id' => $incident->id,
+                'error' => $e->getMessage(),
+            ]);
+            // Don't fail the request if notification fails
+        }
+
         return back()->with('success', 'Timeline update added successfully.');
+    }
+
+    /**
+     * Manually send notification for an incident
+     */
+    public function sendNotification(Incident $incident)
+    {
+        // Check if notifications are enabled
+        if (!Config::get('incident-notifications.enabled', false)) {
+            return back()->with('error', 'Email notifications are disabled. Please enable INCIDENT_NOTIFICATIONS_ENABLED in your .env file.');
+        }
+
+        // Initialize notification service
+        $notificationService = new IncidentNotificationService();
+
+        // Check if there are any recipients configured for this severity
+        $recipients = $notificationService->getConfiguredLevels()
+            ->filter(function ($level) use ($incident) {
+                return $level->shouldReceiveForSeverity($incident->severity);
+            })
+            ->flatMap(function ($level) {
+                return $level->activeRecipients;
+            })
+            ->pluck('email')
+            ->unique()
+            ->values()
+            ->toArray();
+
+        if (empty($recipients)) {
+            return back()->with('warning', 'No email recipients configured for ' . $incident->severity . ' severity incidents. Please add recipients in Notification Settings.');
+        }
+
+        try {
+            // Send appropriate notification based on incident status
+            if ($incident->status === 'Closed') {
+                $notificationService->sendClosedNotification($incident);
+                $message = 'Incident closure notification sent successfully to ' . count($recipients) . ' recipient(s).';
+            } else {
+                $notificationService->sendCreatedNotification($incident);
+                $message = 'Incident notification sent successfully to ' . count($recipients) . ' recipient(s).';
+            }
+
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to manually send incident notification', [
+                'incident_id' => $incident->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to send notification: ' . $e->getMessage());
+        }
     }
 
     /**

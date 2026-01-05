@@ -11,6 +11,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TemporarySiteController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SmartIncidentParserController;
+use App\Http\Controllers\NotificationSettingsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 
@@ -134,6 +135,7 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     Route::patch('incidents/{incident}', [IncidentController::class, 'update'])->where('incident', '[0-9]+');
     Route::put('incidents/{incident}/close', [IncidentController::class, 'close'])->where('incident', '[0-9]+')->name('incidents.close');
     Route::post('incidents/{incident}/timeline', [IncidentController::class, 'addTimelineUpdate'])->where('incident', '[0-9]+')->name('incidents.timeline.add');
+    Route::post('incidents/{incident}/send-notification', [IncidentController::class, 'sendNotification'])->where('incident', '[0-9]+')->name('incidents.send-notification');
 
     // Import routes
     Route::get('incidents/import', [IncidentController::class, 'showImport'])->name('incidents.import');
@@ -289,6 +291,23 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/{ispLink}/edit', [App\Http\Controllers\IspLinkController::class, 'edit'])->name('edit');
         Route::put('/{ispLink}', [App\Http\Controllers\IspLinkController::class, 'update'])->name('update');
         Route::delete('/{ispLink}', [App\Http\Controllers\IspLinkController::class, 'destroy'])->name('destroy');
+    });
+
+    // Notification Settings routes (admin only)
+    Route::prefix('notification-settings')->name('notification-settings.')->group(function () {
+        Route::get('/', [NotificationSettingsController::class, 'index'])->name('index');
+
+        // Notification Level routes
+        Route::post('/levels', [NotificationSettingsController::class, 'storeLevel'])->name('levels.store');
+        Route::put('/levels/{level}', [NotificationSettingsController::class, 'updateLevel'])->name('levels.update');
+        Route::delete('/levels/{level}', [NotificationSettingsController::class, 'destroyLevel'])->name('levels.destroy');
+        Route::post('/levels/{level}/toggle', [NotificationSettingsController::class, 'toggleLevel'])->name('levels.toggle');
+
+        // Notification Recipient routes
+        Route::post('/levels/{level}/recipients', [NotificationSettingsController::class, 'storeRecipient'])->name('recipients.store');
+        Route::put('/recipients/{recipient}', [NotificationSettingsController::class, 'updateRecipient'])->name('recipients.update');
+        Route::delete('/recipients/{recipient}', [NotificationSettingsController::class, 'destroyRecipient'])->name('recipients.destroy');
+        Route::post('/recipients/{recipient}/toggle', [NotificationSettingsController::class, 'toggleRecipient'])->name('recipients.toggle');
     });
 
     // Log Viewer routes (admin only)

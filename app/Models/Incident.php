@@ -49,6 +49,7 @@ class Incident extends Model
         'sla_minutes',
         'exceeded_sla',
         'sla_status',
+        'sla_breach_notified_at',
         'rca_required',
         'rca_file_path',
         'rca_received_at',
@@ -69,6 +70,7 @@ class Incident extends Model
         'work_started_at' => 'datetime',
         'work_completed_at' => 'datetime',
         'rca_received_at' => 'datetime',
+        'sla_breach_notified_at' => 'datetime',
         'exceeded_sla' => 'boolean',
         'rca_required' => 'boolean',
         'isp_traffic_rerouted' => 'boolean',
@@ -187,6 +189,32 @@ class Incident extends Model
 
             // Set rca_required for High/Critical incidents
             $incident->rca_required = in_array($incident->severity, ['High', 'Critical']);
+        });
+
+        // After saving, check if SLA was just breached and send notification
+        static::saved(function (Incident $incident) {
+            // Only send notification if SLA just breached (wasn't breached before, but is now)
+            $wasExceeded = $incident->getOriginal('exceeded_sla');
+            $isNowExceeded = $incident->exceeded_sla;
+            $wasNotified = $incident->sla_breach_notified_at !== null;
+
+            if (!$wasExceeded && $isNowExceeded && !$wasNotified) {
+                // SLA just breached - send notification and mark as notified
+                try {
+                    $notificationService = new \App\Services\IncidentNotificationService();
+                    $notificationService->sendSlaBreachedNotification($incident);
+
+                    // Mark as notified (using update to avoid triggering events again)
+                    \DB::table('incidents')
+                        ->where('id', $incident->id)
+                        ->update(['sla_breach_notified_at' => now()]);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send SLA breach notification in model', [
+                        'incident_id' => $incident->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
         });
     }
 
