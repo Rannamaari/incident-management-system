@@ -58,11 +58,18 @@
                 </div>
 
                 <div class="p-6">
-                    <form method="GET" action="{{ route('logs.recurring-incidents') }}" class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                        <!-- Month Selection -->
+                    <form method="GET" action="{{ route('logs.recurring-incidents') }}" class="grid grid-cols-1 gap-6 sm:grid-cols-4">
+                        <!-- Start Date -->
                         <div>
-                            <label for="month" class="block text-sm font-medium text-gray-700 mb-2">Month</label>
-                            <input type="month" id="month" name="month" value="{{ $selectedMonth }}"
+                            <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                            <input type="date" id="start_date" name="start_date" value="{{ $startDate }}"
+                                class="w-full rounded-xl border border-gray-300 px-4 py-2.5 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-300">
+                        </div>
+
+                        <!-- End Date -->
+                        <div>
+                            <label for="end_date" class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                            <input type="date" id="end_date" name="end_date" value="{{ $endDate }}"
                                 class="w-full rounded-xl border border-gray-300 px-4 py-2.5 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-300">
                         </div>
 

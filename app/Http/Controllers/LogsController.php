@@ -223,10 +223,13 @@ class LogsController extends Controller
      */
     public function recurringIncidents(Request $request)
     {
-        // Get selected month for filtering (default to current month)
-        $selectedMonth = $request->input('month', now()->format('Y-m'));
-        $monthStart = \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->startOfMonth();
-        $monthEnd = \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->endOfMonth();
+        // Get date range for filtering (default to last 3 months)
+        $startDate = $request->input('start_date', now()->subMonths(3)->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->input('end_date', now()->endOfMonth()->format('Y-m-d'));
+
+        // Parse dates
+        $dateStart = \Carbon\Carbon::parse($startDate)->startOfDay();
+        $dateEnd = \Carbon\Carbon::parse($endDate)->endOfDay();
 
         // Get minimum occurrence count filter (default to 2 - incidents that occurred at least twice)
         $minOccurrences = $request->input('min_occurrences', 2);
@@ -243,7 +246,7 @@ class LogsController extends Controller
                 string_agg(DISTINCT COALESCE(category, 'N/A'), ', ') as categories,
                 string_agg(DISTINCT COALESCE(outage_category, 'N/A'), ', ') as outage_categories
             ")
-            ->whereBetween('started_at', [$monthStart, $monthEnd])
+            ->whereBetween('started_at', [$dateStart, $dateEnd])
             ->groupBy('summary')
             ->havingRaw('COUNT(*) >= ?', [$minOccurrences])
             ->orderByDesc('occurrence_count')
@@ -266,7 +269,7 @@ class LogsController extends Controller
                 ->toArray();
         }
 
-        return view('logs.recurring-incidents', compact('recurringIncidents', 'selectedMonth', 'minOccurrences', 'monthlyTrends'));
+        return view('logs.recurring-incidents', compact('recurringIncidents', 'startDate', 'endDate', 'minOccurrences', 'monthlyTrends'));
     }
 
     /**
