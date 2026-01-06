@@ -122,8 +122,8 @@ Route::get('/test-ai', function () {
     }
 });
 
-// Public home/network dashboard - no auth required
-Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Home/network dashboard - requires authentication
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
 
 // Editor routes (editor and admin only) - Must come before viewer routes to avoid conflicts
 Route::middleware(['auth', 'role:editor'])->group(function () {
