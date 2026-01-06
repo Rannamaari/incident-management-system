@@ -523,6 +523,32 @@ class Incident extends Model
     }
 
     /**
+     * Get pending notifications for this incident
+     */
+    public function pendingNotifications()
+    {
+        return $this->hasMany(PendingNotification::class)->where('status', 'pending');
+    }
+
+    /**
+     * Check if incident has a pending notification
+     */
+    public function hasPendingNotification(): bool
+    {
+        return $this->pendingNotifications()->exists();
+    }
+
+    /**
+     * Check if incident has a sent notification
+     */
+    public function hasSentNotification(): bool
+    {
+        return $this->hasMany(PendingNotification::class)
+            ->where('status', 'sent')
+            ->exists();
+    }
+
+    /**
      * Check if all action points are completed (for Critical incidents)
      */
     public function hasAllActionPointsCompleted(): bool

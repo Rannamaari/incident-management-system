@@ -280,21 +280,22 @@ class IncidentController extends Controller
             $incident->ispLinks()->sync($ispLinksData);
         }
 
-        // Send email notification for incident creation
+        // Queue delayed email notification for incident creation (5 minutes)
         if ($incidentSaved) {
             try {
                 $notificationService = new IncidentNotificationService();
-                $notificationService->sendCreatedNotification($incident);
+                $notificationService->queueDelayedNotification($incident, 'created');
             } catch (\Exception $e) {
-                \Log::error('Failed to send incident created notification', [
+                \Log::error('Failed to queue incident notification', [
                     'incident_id' => $incident->id,
                     'error' => $e->getMessage(),
                 ]);
-                // Don't fail the request if notification fails
+                // Don't fail the request if notification queueing fails
             }
         }
 
-        return redirect()->route('incidents.index')
+        // Redirect to the incident detail page to show pending notification banner
+        return redirect()->route('incidents.show', $incident)
             ->with('success', 'Incident created successfully.');
     }
 
@@ -318,7 +319,8 @@ class IncidentController extends Controller
             'category',
             'outageCategory',
             'faultType',
-            'resolutionTeam'
+            'resolutionTeam',
+            'pendingNotifications'
         ]); // Eager load all relationships needed for display and copy function
 
         // Mark incident as viewed by current user
@@ -1484,6 +1486,73 @@ class IncidentController extends Controller
             ]);
 
             return back()->with('error', 'Failed to send notification: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Cancel a pending notification
+     */
+    public function cancelNotification(Incident $incident)
+    {
+        // Only creator can cancel
+        if ($incident->created_by !== auth()->id()) {
+            return back()->with('error', 'Only the incident creator can cancel notifications.');
+        }
+
+        $pending = $incident->pendingNotifications()
+            ->where('notification_type', 'created')
+            ->first();
+
+        if (!$pending) {
+            return back()->with('error', 'No pending notification found.');
+        }
+
+        $pending->cancel();
+
+        return back()->with('success', 'Email notification cancelled successfully.');
+    }
+
+    /**
+     * Send pending notification immediately
+     */
+    public function sendNowNotification(Incident $incident)
+    {
+        // Only creator can send now
+        if ($incident->created_by !== auth()->id()) {
+            return back()->with('error', 'Only the incident creator can send notifications early.');
+        }
+
+        $pending = $incident->pendingNotifications()
+            ->where('notification_type', 'created')
+            ->first();
+
+        if (!$pending) {
+            return back()->with('error', 'No pending notification found.');
+        }
+
+        try {
+            // Cancel the delayed job
+            $pending->cancel();
+
+            // Send notification immediately
+            $notificationService = new IncidentNotificationService();
+            $notificationService->sendCreatedNotification($incident);
+
+            // Mark as sent
+            $pending->update([
+                'status' => 'sent',
+                'cancelled_at' => null,
+                'cancelled_by' => null,
+            ]);
+
+            return back()->with('success', 'Email notification sent successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Failed to send notification now', [
+                'incident_id' => $incident->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to send notification. Please try again.');
         }
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\NotificationLevel;
 use App\Models\NotificationRecipient;
+use App\Models\NotificationSetting;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -168,5 +169,21 @@ class NotificationSettingsController extends Controller
         ]);
 
         return back()->with('success', 'Recipient status updated successfully.');
+    }
+
+    /**
+     * Update auto-send setting
+     */
+    public function updateAutoSendSetting(Request $request)
+    {
+        $validated = $request->validate([
+            'enabled' => 'required|boolean',
+        ]);
+
+        NotificationSetting::set('auto_send_enabled', $validated['enabled']);
+
+        $status = $validated['enabled'] ? 'enabled' : 'disabled';
+
+        return back()->with('success', "Auto-send notifications {$status} successfully.");
     }
 }

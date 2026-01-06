@@ -3,6 +3,9 @@
 namespace App\Services;
 
 use App\Models\Incident;
+use App\Models\NotificationSetting;
+use App\Models\PendingNotification;
+use App\Jobs\SendDelayedIncidentNotification;
 use App\Mail\IncidentCreatedNotification;
 use App\Mail\IncidentUpdatedNotification;
 use App\Mail\IncidentClosedNotification;
@@ -224,6 +227,61 @@ class IncidentNotificationService
             'severity' => $incident->severity,
             'sla_minutes' => $incident->sla_minutes,
         ]);
+    }
+
+    /**
+     * Queue a delayed notification (5 minutes) with ability to cancel
+     */
+    public function queueDelayedNotification(Incident $incident, string $type): ?PendingNotification
+    {
+        // Don't queue if auto-send is disabled
+        if (!NotificationSetting::isAutoSendEnabled()) {
+            Log::info('Auto-send disabled, skipping queue', [
+                'incident_id' => $incident->id
+            ]);
+            return null;
+        }
+
+        // Don't queue if no recipients
+        $recipients = $this->getRecipientsForSeverity($incident->severity);
+        if (empty($recipients)) {
+            Log::warning('No recipients configured, skipping notification', [
+                'incident_id' => $incident->id,
+                'severity' => $incident->severity
+            ]);
+            return null;
+        }
+
+        // Create pending notification record
+        $pending = PendingNotification::create([
+            'incident_id' => $incident->id,
+            'notification_type' => $type,
+            'scheduled_for' => now()->addMinutes(5),
+            'status' => 'pending',
+        ]);
+
+        // Dispatch job with 5-minute delay
+        $job = new SendDelayedIncidentNotification($incident, $type, $pending->id);
+        $dispatchedJob = dispatch($job->delay(now()->addMinutes(5)));
+
+        // Try to get job ID (depends on queue driver)
+        try {
+            $jobId = $dispatchedJob->id ?? null;
+            if ($jobId) {
+                $pending->update(['job_id' => $jobId]);
+            }
+        } catch (\Exception $e) {
+            Log::warning('Could not store job ID', ['error' => $e->getMessage()]);
+        }
+
+        Log::info('Queued delayed notification', [
+            'incident_id' => $incident->id,
+            'pending_id' => $pending->id,
+            'scheduled_for' => $pending->scheduled_for,
+            'type' => $type
+        ]);
+
+        return $pending;
     }
 
     /**

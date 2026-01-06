@@ -136,6 +136,8 @@ Route::middleware(['auth', 'role:editor'])->group(function () {
     Route::put('incidents/{incident}/close', [IncidentController::class, 'close'])->where('incident', '[0-9]+')->name('incidents.close');
     Route::post('incidents/{incident}/timeline', [IncidentController::class, 'addTimelineUpdate'])->where('incident', '[0-9]+')->name('incidents.timeline.add');
     Route::post('incidents/{incident}/send-notification', [IncidentController::class, 'sendNotification'])->where('incident', '[0-9]+')->name('incidents.send-notification');
+    Route::post('incidents/{incident}/cancel-notification', [IncidentController::class, 'cancelNotification'])->where('incident', '[0-9]+')->name('incidents.cancel-notification');
+    Route::post('incidents/{incident}/send-now-notification', [IncidentController::class, 'sendNowNotification'])->where('incident', '[0-9]+')->name('incidents.send-now-notification');
 
     // Import routes
     Route::get('incidents/import', [IncidentController::class, 'showImport'])->name('incidents.import');
@@ -308,6 +310,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::put('/recipients/{recipient}', [NotificationSettingsController::class, 'updateRecipient'])->name('recipients.update');
         Route::delete('/recipients/{recipient}', [NotificationSettingsController::class, 'destroyRecipient'])->name('recipients.destroy');
         Route::post('/recipients/{recipient}/toggle', [NotificationSettingsController::class, 'toggleRecipient'])->name('recipients.toggle');
+
+        // Auto-send setting route
+        Route::post('/auto-send/update', [NotificationSettingsController::class, 'updateAutoSendSetting'])->name('auto-send.update');
     });
 
     // Log Viewer routes (admin only)

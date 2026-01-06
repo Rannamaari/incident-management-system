@@ -90,6 +90,92 @@
                 </div>
             @endif
 
+            <!-- Pending Notification Alert -->
+            @if($incident->hasPendingNotification())
+                @php
+                    $pending = $incident->pendingNotifications()->first();
+                    $secondsRemaining = max(0, now()->diffInSeconds($pending->scheduled_for, false));
+                @endphp
+
+                @if($secondsRemaining > 0)
+                <div class="mb-6 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 shadow-lg p-5">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center">
+                                <svg class="h-7 w-7 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-amber-900 mb-2">📧 Email Notification Queued</h3>
+                            <p class="text-base text-amber-800 mb-3">
+                                An email notification will be automatically sent in
+                                <span id="countdown-timer" class="inline-flex items-center px-3 py-1 rounded-full bg-amber-200 text-amber-900 font-bold text-lg" data-seconds="{{ $secondsRemaining }}">
+                                    {{ gmdate('i:s', $secondsRemaining) }}
+                                </span>
+                            </p>
+                            <p class="text-sm text-amber-700">
+                                You can edit this incident or cancel the notification during this time if you made a mistake.
+                            </p>
+                        </div>
+
+                        @if($incident->created_by === auth()->id())
+                        <div class="flex-shrink-0 flex flex-col gap-2">
+                            <form action="{{ route('incidents.send-now-notification', $incident) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    onclick="return confirm('Send the email notification now instead of waiting?');"
+                                    class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-base font-bold text-white shadow-md hover:bg-indigo-700 transition-all duration-200">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Send Now
+                                </button>
+                            </form>
+                            <form action="{{ route('incidents.cancel-notification', $incident) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    onclick="return confirm('Are you sure you want to cancel the pending email notification?');"
+                                    class="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-base font-bold text-amber-900 shadow-md ring-2 ring-amber-400 hover:bg-amber-50 hover:ring-amber-500 transition-all duration-200">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Cancel Notification
+                                </button>
+                            </form>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                <script>
+                    (function() {
+                        const timerEl = document.getElementById('countdown-timer');
+                        if (!timerEl) return;
+
+                        let secondsLeft = parseInt(timerEl.dataset.seconds);
+
+                        const updateTimer = () => {
+                            if (secondsLeft <= 0) {
+                                location.reload();
+                                return;
+                            }
+
+                            const minutes = Math.floor(secondsLeft / 60);
+                            const seconds = secondsLeft % 60;
+                            timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                            secondsLeft--;
+                            setTimeout(updateTimer, 1000);
+                        };
+
+                        updateTimer();
+                    })();
+                </script>
+                @endif
+            @endif
+
             <!-- Action Buttons -->
             <div class="flex flex-wrap justify-between items-center gap-3 mb-6">
                 <!-- Left Side: Back Button -->
@@ -283,6 +369,45 @@
                                 @endif
                             </dd>
                         </div>
+                        @php
+                            $notificationStatus = null;
+                            $sentNotification = $incident->hasMany(App\Models\PendingNotification::class)
+                                ->where('status', 'sent')
+                                ->first();
+                            $pendingNotification = $incident->pendingNotifications()->first();
+                            $cancelledNotification = $incident->hasMany(App\Models\PendingNotification::class)
+                                ->where('status', 'cancelled')
+                                ->first();
+
+                            if ($pendingNotification) {
+                                $notificationStatus = 'pending';
+                            } elseif ($sentNotification) {
+                                $notificationStatus = 'sent';
+                            } elseif ($cancelledNotification) {
+                                $notificationStatus = 'cancelled';
+                            }
+                        @endphp
+
+                        @if($notificationStatus)
+                        <div class="flex justify-between items-center">
+                            <dt class="text-xs text-gray-500 dark:text-gray-400">Email Notification</dt>
+                            <dd class="text-sm">
+                                @if($notificationStatus === 'pending')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                        ⏱ Pending
+                                    </span>
+                                @elseif($notificationStatus === 'sent')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        ✓ Sent
+                                    </span>
+                                @elseif($notificationStatus === 'cancelled')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        ✕ Cancelled
+                                    </span>
+                                @endif
+                            </dd>
+                        </div>
+                        @endif
                         @if($incident->logs->count() > 0)
                         <div class="flex justify-between">
                             <dt class="text-xs text-gray-500 dark:text-gray-400">Log Entries</dt>

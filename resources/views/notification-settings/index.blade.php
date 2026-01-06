@@ -74,6 +74,58 @@
                 </div>
             </div>
 
+            <!-- Auto-Send Settings (Admin Only) -->
+            @if(auth()->user()->isAdmin())
+            <div class="mb-6 overflow-hidden rounded-3xl border border-gray-100/50 bg-white/80 backdrop-blur-sm shadow-lg">
+                <div class="px-6 py-5 border-b border-gray-200/50">
+                    <div class="flex items-center gap-3">
+                        <div class="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-200">
+                            <svg class="h-4 w-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-heading text-lg font-semibold text-gray-900">Auto-Send Settings</h3>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h4 class="text-base font-semibold text-gray-900">Automatic Email Notifications</h4>
+                            <p class="mt-1 text-sm text-gray-600">
+                                When enabled, new incidents will automatically send email notifications after a 5-minute delay.
+                                Creators can cancel the notification during this window if they made a mistake.
+                            </p>
+                        </div>
+                        <form action="{{ route('notification-settings.auto-send.update') }}" method="POST" class="ml-4">
+                            @csrf
+                            <input type="hidden" name="enabled" value="{{ \App\Models\NotificationSetting::isAutoSendEnabled() ? 0 : 1 }}">
+                            <button type="submit"
+                                class="inline-flex items-center rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-all duration-300
+                                {{ \App\Models\NotificationSetting::isAutoSendEnabled()
+                                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                                {{ \App\Models\NotificationSetting::isAutoSendEnabled() ? 'Enabled' : 'Disabled' }}
+                            </button>
+                        </form>
+                    </div>
+
+                    @if(\App\Models\NotificationSetting::isAutoSendEnabled())
+                    <div class="mt-4 rounded-xl bg-blue-50 border border-blue-200 p-4">
+                        <div class="flex gap-3">
+                            <svg class="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            <div class="text-sm text-blue-700">
+                                <strong>Important:</strong> Email notifications will be sent 5 minutes after incident creation.
+                                Manual notifications (bell icon) are sent immediately. Ensure your queue worker is running.
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+
             <!-- Notification Levels -->
             <div class="space-y-6">
                 @forelse($levels as $level)
