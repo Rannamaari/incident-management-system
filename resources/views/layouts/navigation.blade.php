@@ -17,7 +17,7 @@
                             </div>
                             <div class="hidden sm:flex items-baseline space-x-2">
                                 <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Incident Management System</span>
-                                <span class="text-xs text-gray-500 dark:text-gray-400">v3.6</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">v4.0</span>
                             </div>
                             <span class="sm:hidden text-sm font-semibold text-gray-900 dark:text-gray-100">IMS</span>
                         </a>
