@@ -111,12 +111,12 @@
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-heading font-semibold uppercase tracking-wider text-gray-700">First Occurrence</th>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-heading font-semibold uppercase tracking-wider text-gray-700">Last Occurrence</th>
                                 <th scope="col" class="px-6 py-4 text-left text-xs font-heading font-semibold uppercase tracking-wider text-gray-700">Categories</th>
-                                <th scope="col" class="px-6 py-4 text-center text-xs font-heading font-semibold uppercase tracking-wider text-gray-700">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 bg-white">
                             @forelse($recurringIncidents as $incident)
-                                <tr class="hover:bg-orange-50/30 transition-colors duration-200">
+                                <tr class="hover:bg-orange-50/50 transition-colors duration-200 cursor-pointer"
+                                    onclick="window.location='{{ route('logs.incidents-by-summary', ['summary' => $incident->summary]) }}'">
                                     <td class="px-6 py-4">
                                         <div class="text-sm font-medium text-gray-900">{{ Str::limit($incident->summary, 80) }}</div>
                                     </td>
@@ -138,20 +138,10 @@
                                     <td class="px-6 py-4">
                                         <div class="text-sm text-gray-600">{{ $incident->categories ?? 'N/A' }}</div>
                                     </td>
-                                    <td class="px-6 py-4 text-center">
-                                        <a href="{{ route('logs.incidents-by-summary', ['summary' => $incident->summary]) }}"
-                                            class="inline-flex items-center gap-1 rounded-lg bg-orange-100 px-3 py-1.5 text-sm font-medium text-orange-700 hover:bg-orange-200 transition-colors duration-200">
-                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                            View All
-                                        </a>
-                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center">
+                                    <td colspan="5" class="px-6 py-12 text-center">
                                         <div class="flex flex-col items-center gap-3">
                                             <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
