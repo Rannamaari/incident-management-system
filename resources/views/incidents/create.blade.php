@@ -164,7 +164,7 @@
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Select one or more affected systems/services</p>
                                     <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
                                         @php
-                                            $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data', 'ISP', 'Others'];
+                                            $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data', 'ISP', 'RHUB', 'Others'];
                                             $oldValues = old('affected_services', []);
                                             if (is_string($oldValues)) {
                                                 $oldValues = explode(',', $oldValues);

@@ -21,11 +21,15 @@
     $isSiteOutage = in_array('Single Site', explode(', ', $incident->affected_services ?? '')) ||
                     in_array('Multiple Site', explode(', ', $incident->affected_services ?? ''));
     $isCellOutage = in_array('Cell', explode(', ', $incident->affected_services ?? ''));
+    $isRHUBOutage = str_contains($incident->affected_services ?? '', 'RHUB');
 
     // Get technology info from summary if available
     $summary = $incident->summary;
 @endphp
-@if($isCellOutage && !$isSiteOutage)
+@if($isRHUBOutage)
+Below mentioned RHUB is on service since {{ $resolvedTime }}
+{{ $summary }}
+@elseif($isCellOutage && !$isSiteOutage)
 Below mentioned cells are on service since {{ $resolvedTime }}
 {{ $summary }}
 @else

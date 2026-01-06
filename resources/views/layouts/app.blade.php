@@ -160,7 +160,7 @@
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 font-medium">
                                 Beta
                             </span>
-                            <span class="font-mono">Version 4.0</span>
+                            <span class="font-mono">Version 4.01</span>
                         </div>
                     </div>
                 </div>

@@ -88,7 +88,7 @@
                             <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Select one or more affected systems/services</p>
                             <div class="mt-2 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
                                 @php
-                                    $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data', 'ISP', 'Others'];
+                                    $affectedServicesOptions = ['Cell', 'Single FBB', 'Single Site', 'Multiple Site', 'P2P', 'ILL', 'SIP', 'IPTV', 'Peering', 'Mobile Data', 'ISP', 'RHUB', 'Others'];
                                     $currentValues = old('affected_services', []);
                                     if (empty($currentValues) && $incident->affected_services) {
                                         $currentValues = is_array($incident->affected_services)

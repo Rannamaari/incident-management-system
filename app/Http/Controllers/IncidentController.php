@@ -826,7 +826,7 @@ class IncidentController extends Controller
             'new_fault_type_name' => ['nullable', 'string', 'max:255'],
             'new_resolution_team_name' => ['nullable', 'string', 'max:255'],
             'affected_services' => ['required', 'array', 'min:1'],
-            'affected_services.*' => ['required', 'string', 'in:Cell,Single FBB,Single Site,Multiple Site,P2P,ILL,SIP,IPTV,Peering,Mobile Data,ISP,Others'],
+            'affected_services.*' => ['required', 'string', 'in:Cell,Single FBB,Single Site,Multiple Site,P2P,ILL,SIP,IPTV,Peering,Mobile Data,ISP,RHUB,Others'],
             'sites_2g_impacted' => ['nullable', 'integer', 'min:0'],
             'sites_3g_impacted' => ['nullable', 'integer', 'min:0'],
             'sites_4g_impacted' => ['nullable', 'integer', 'min:0'],
@@ -875,6 +875,11 @@ class IncidentController extends Controller
         
         // Convert affected_services array to comma-separated string
         if (isset($validated['affected_services']) && is_array($validated['affected_services'])) {
+            // If "Others" is selected and there's a text specified, replace "Others" with "Others (text)"
+            if (in_array('Others', $validated['affected_services']) && $request->filled('affected_services_others_text')) {
+                $key = array_search('Others', $validated['affected_services']);
+                $validated['affected_services'][$key] = 'Others (' . $request->input('affected_services_others_text') . ')';
+            }
             $validated['affected_services'] = implode(', ', $validated['affected_services']);
         }
         
